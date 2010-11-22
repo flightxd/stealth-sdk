@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2010 the original author or authors.
+  ~ Permission is hereby granted to use, modify, and distribute this file
+  ~ in accordance with the terms of the license agreement accompanying it.
+  -->
+
+<componentPackage>
+	
+	<!-- containers -->
+	<component id="HGroup" class="stealth.containers.HGroup"/>
+	<component id="VGroup" class="stealth.containers.VGroup"/>
+	<component id="DockGroup" class="stealth.containers.DockGroup"/>
+	
+	<!-- buttons -->
+	<component id="Button" class="stealth.buttons.Button"/>
+	<component id="CheckBox" class="stealth.buttons.CheckBox"/>
+	<component id="RadioButton" class="stealth.buttons.RadioButton"/>
+	
+	<!-- ranges -->
+	<component id="Stepper" class="stealth.ranges.Stepper"/>
+	<component id="Slider" class="stealth.ranges.Slider"/>
+	<component id="ScrollBar" class="stealth.ranges.ScrollBar"/>
+	
+</componentPackage>
