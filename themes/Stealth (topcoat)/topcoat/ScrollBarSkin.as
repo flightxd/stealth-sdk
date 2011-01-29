@@ -60,6 +60,7 @@ package topcoat
 			
 			if (background) {
 				background.style.left = background.style.top = background.style.right = background.style.bottom = 0;
+				setTimelineMargins(background);
 			}
 			
 			hostComponent.position.stepSize = 10;

@@ -26,7 +26,7 @@ package stealth.containers
 		public function get padding():Box { return horizontalLayout.padding; }
 		public function set padding(value:*):void
 		{
-			horizontalLayout = value;
+			horizontalLayout.padding = value;
 		}
 
 		/**

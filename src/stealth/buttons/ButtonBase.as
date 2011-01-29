@@ -118,12 +118,14 @@ package stealth.buttons
 		public function set content(value:*):void
 		{
 			_content.removeItems();
-			if (value is DisplayObject) {
-				_content.addItem(value);
+			if (value is IList) {
+				_content.addItems( IList(value).getItems() );
 			} else if (value is Array) {
 				_content.addItems(value);
-			} else if (value is IList) {
-				_content.addItems( IList(value).getItems() );
+			} else if (value === null) {
+				_content.removeItems();
+			} else {
+				_content.addItem(value);
 			}
 			DataChange.change(this, "content", _content, _content, true);
 		}

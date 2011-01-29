@@ -37,7 +37,6 @@ package topcoat
 		override protected function attachSkin():void
 		{
 			super.attachSkin();
-			defaultRect.right = 20;
 			
 			if (contentGroup) {
 				if (!contentGroup.layout) {
