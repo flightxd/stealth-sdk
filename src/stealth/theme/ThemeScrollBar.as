@@ -9,9 +9,9 @@ package stealth.theme
 	import flight.behaviors.SlideBehavior;
 	import flight.behaviors.StepBehavior;
 	import flight.data.DataBind;
-	
+
 	import stealth.skins.topcoat.ScrollBarSkin;
-	
+
 	public class ThemeScrollBar
 	{
 		public static function initialize(component:Object):void

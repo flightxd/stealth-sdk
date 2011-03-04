@@ -9,7 +9,7 @@ package stealth.containers
 	import flight.containers.Group;
 	import flight.layouts.Box;
 	import flight.layouts.HorizontalLayout;
-	
+
 	public class HGroup extends Group
 	{
 		protected var horizontalLayout:HorizontalLayout;

@@ -9,7 +9,7 @@ package stealth.containers
 	import flight.containers.Group;
 	import flight.layouts.Box;
 	import flight.layouts.DockLayout;
-	
+
 	public class DockGroup extends Group
 	{
 		protected var dockLayout:DockLayout;

@@ -8,9 +8,9 @@ package stealth.theme
 {
 	import flight.behaviors.ClickBehavior;
 	import flight.behaviors.SelectBehavior;
-	
+
 	import stealth.skins.topcoat.ButtonSkin;
-	
+
 	public class ThemeButton
 	{
 		public static function initialize(component:Object):void

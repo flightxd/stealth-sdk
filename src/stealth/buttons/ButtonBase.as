@@ -7,7 +7,9 @@
 package stealth.buttons
 {
 	import flash.display.DisplayObject;
-	
+
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
 	import flight.components.ButtonState;
 	import flight.components.Component;
 	import flight.containers.Group;
@@ -15,11 +17,8 @@ package stealth.buttons
 	import flight.data.DataChange;
 	import flight.events.ButtonEvent;
 	import flight.events.ListEvent;
-	import flight.events.ListEventKind;
 	import flight.layouts.ILayout;
-	import flight.list.ArrayList;
-	import flight.list.IList;
-	
+
 	[SkinState("up")]
 	[SkinState("over")]
 	[SkinState("down")]
@@ -85,7 +84,7 @@ package stealth.buttons
 		{
 			if (_contentGroup != value) {
 				if (_contentGroup) {
-					_contentGroup.content.removeItems();
+					_contentGroup.content.removeAt();
 					_content.removeEventListener(ListEvent.LIST_CHANGE, onContentChange);
 					if (_layout) {
 						_contentGroup.layout = null;
@@ -94,10 +93,10 @@ package stealth.buttons
 				DataChange.queue(this, "contentGroup", _contentGroup, _contentGroup = value);
 				if (_contentGroup) {
 					if (_content.length) {
-						_contentGroup.content.removeItems();
-						_contentGroup.content.addItems(_content.getItems());
+						_contentGroup.content.removeAt();
+						_contentGroup.content.add(_content.get());
 					} else if (contentGroup.content.length) {
-						_content.addItems(contentGroup.content.getItems());
+						_content.add(contentGroup.content.get());
 					}
 					_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
 					if (_layout) {
@@ -117,19 +116,21 @@ package stealth.buttons
 		public function get content():IList { return _content; }
 		public function set content(value:*):void
 		{
-			_content.removeItems();
+			_content.queueChanges = true;
+			_content.removeAt();
 			if (value is IList) {
-				_content.addItems( IList(value).getItems() );
+				_content.add( IList(value).get() );
 			} else if (value is Array) {
-				_content.addItems(value);
+				_content.add(value);
 			} else if (value === null) {
-				_content.removeItems();
+				_content.removeAt();						// TODO: refactor this duplicate removeAt
 			} else {
-				_content.addItem(value);
+				_content.add(value);
 			}
+			_content.queueChanges = false;					// TODO: determine if List change AND propertychange should both fire
 			DataChange.change(this, "content", _content, _content, true);
 		}
-		private var _content:IList = new ArrayList();
+		private var _content:ArrayList = new ArrayList();
 		
 		/**
 		 * @inheritDoc
@@ -162,32 +163,11 @@ package stealth.buttons
 		private function onContentChange(event:ListEvent):void
 		{
 			var child:DisplayObject;
-			var location:int = event.location1;
-			switch (event.kind) {
-				case ListEventKind.ADD:
-					_contentGroup.content.addItems(event.items, location);
-					break;
-				case ListEventKind.REMOVE:
-					_contentGroup.content.removeItems(location, event.items.length);
-					break;
-				case ListEventKind.MOVE:
-					if (event.items.length == 1) {
-						_contentGroup.content.setItemIndex(event.items[0], location);
-					} else {
-						_contentGroup.content.swapItems(location, event.location2);
-					}
-					break;
-				case ListEventKind.REPLACE:
-					removeChild(event.items[1]);
-					addChildAt(event.items[0], location);
-					break;
-				default:	// ListEventKind.RESET
-					for each (child in event.items) {
-						removeChild(child);
-					}
-					for each (child in _content) {
-						addChildAt(child, location++);
-					}
+			for each (child in event.removed) {
+				_contentGroup.content.remove(child);
+			}
+			for each (child in event.items) {
+				_contentGroup.content.add(child, _content.getIndex(child));
 			}
 		}
 	}

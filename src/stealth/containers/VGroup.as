@@ -9,7 +9,7 @@ package stealth.containers
 	import flight.containers.Group;
 	import flight.layouts.Box;
 	import flight.layouts.VerticalLayout;
-	
+
 	public class VGroup extends Group
 	{
 		protected var verticalLayout:VerticalLayout;

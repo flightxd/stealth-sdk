@@ -7,12 +7,12 @@
 package stealth.buttons
 {
 	import flash.events.Event;
-	
+
 	import flight.data.DataChange;
 	import flight.display.InitializePhase;
-	
+
 	import stealth.theme.ThemeButton;
-	
+
 	public class Button extends ButtonBase
 	{
 		public function Button()
