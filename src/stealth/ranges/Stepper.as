@@ -8,7 +8,7 @@ package stealth.ranges
 {
 	import flash.events.Event;
 
-	import flight.display.InitializePhase;
+	import flight.events.InitializeEvent;
 
 	import stealth.theme.ThemeStepper;
 
@@ -16,7 +16,7 @@ package stealth.ranges
 	{
 		public function Stepper()
 		{
-			addEventListener(InitializePhase.INITIALIZE, onInit);
+			addEventListener(InitializeEvent.INITIALIZE, onInit);
 		}
 		
 		protected function init():void

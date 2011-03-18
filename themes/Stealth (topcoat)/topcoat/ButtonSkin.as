@@ -10,7 +10,7 @@ package topcoat
 	import flash.text.TextFieldAutoSize;
 	
 	import flight.containers.Group;
-	import flight.display.LayoutPhase;
+	import flight.events.LayoutEvent;
 	import flight.display.MovieClipDisplay;
 	import flight.layouts.Align;
 	import flight.layouts.HorizontalLayout;
@@ -88,7 +88,7 @@ package topcoat
 		{
 			if (labelDisplay) {
 				labelDisplay.text = label || "";
-				invalidate(LayoutPhase.MEASURE);
+				invalidate(LayoutEvent.MEASURE);
 			}
 		}
 		

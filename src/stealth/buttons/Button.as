@@ -9,7 +9,7 @@ package stealth.buttons
 	import flash.events.Event;
 
 	import flight.data.DataChange;
-	import flight.display.InitializePhase;
+	import flight.events.InitializeEvent;
 
 	import stealth.theme.ThemeButton;
 
@@ -17,7 +17,7 @@ package stealth.buttons
 	{
 		public function Button()
 		{
-			addEventListener(InitializePhase.INITIALIZE, onInit);
+			addEventListener(InitializeEvent.INITIALIZE, onInit);
 		}
 		
 		[Bindable(event="labelChange")]

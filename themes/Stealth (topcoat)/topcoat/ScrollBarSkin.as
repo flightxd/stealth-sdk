@@ -8,7 +8,6 @@ package topcoat
 {
 	import flight.display.MovieClipDisplay;
 	import flight.layouts.Align;
-	import flight.layouts.Layout;
 	import flight.skins.MovieClipSkin;
 	
 	import stealth.buttons.ButtonBase;

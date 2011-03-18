@@ -9,7 +9,7 @@ package stealth.buttons
 	import flash.events.Event;
 
 	import flight.data.DataChange;
-	import flight.display.InitializePhase;
+	import flight.events.InitializeEvent;
 
 	import stealth.theme.ThemeCheckBox;
 
@@ -17,7 +17,7 @@ package stealth.buttons
 	{
 		public function CheckBox()
 		{
-			addEventListener(InitializePhase.INITIALIZE, onInit);
+			addEventListener(InitializeEvent.INITIALIZE, onInit);
 		}
 		
 		[Bindable(event="labelChange")]
