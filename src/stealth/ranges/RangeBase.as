@@ -6,10 +6,11 @@
 
 package stealth.ranges
 {
-	import flight.components.*;
 	import flight.data.DataChange;
 	import flight.data.ITrack;
 	import flight.data.Track;
+
+	import stealth.components.Component;
 
 	public class RangeBase extends Component
 	{

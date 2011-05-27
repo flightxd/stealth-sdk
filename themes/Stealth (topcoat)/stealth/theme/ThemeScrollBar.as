@@ -6,8 +6,8 @@
 
 package stealth.theme
 {
-	import flight.behaviors.SlideBehavior;
-	import flight.behaviors.StepBehavior;
+	import stealth.behaviors.SlideBehavior;
+	import stealth.behaviors.StepBehavior;
 
 	import flight.data.DataBind;
 

@@ -9,8 +9,8 @@ package topcoat
 	import flash.text.TextField;
 
 	import flight.display.MovieClipDisplay;
-	import flight.layouts.Align;
-	import flight.skins.MovieClipSkin;
+	import stealth.layouts.Align;
+	import MovieClipSkin;
 	
 	import stealth.buttons.ButtonBase;
 	import stealth.ranges.RangeBase;

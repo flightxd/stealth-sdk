@@ -12,6 +12,12 @@ package stealth.skins.topcoat
 	{
 		public function ButtonSkin()
 		{
+//			if (!component.style.click) {
+//				component.style.click = new ClickBehavior();
+//			}
+//			if (!component.style.select) {
+//				component.style.select = new SelectBehavior();
+//			}
 		}
 	}
 }

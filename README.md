@@ -1,3 +1,3 @@
-# Reflex Components
+# Stealth Components
 
-Reflex Components are a standard component set built on the Reflex component framework. You can find more information at [reflex.io](http://reflex.io).
+The Stealth Components are an opensource set of components leveraging the Flight-Stealth component framework. You can find more information at [FlightXD.com](http://flightxd.com).

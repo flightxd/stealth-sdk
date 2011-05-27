@@ -7,7 +7,7 @@
 package topcoat
 {
 	import flight.display.MovieClipDisplay;
-	import flight.skins.MovieClipSkin;
+	import MovieClipSkin;
 	
 	import stealth.buttons.ButtonBase;
 	import stealth.ranges.RangeBase;

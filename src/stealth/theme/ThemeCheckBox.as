@@ -6,9 +6,8 @@
 
 package stealth.theme
 {
-	import flight.behaviors.ClickBehavior;
-	import flight.behaviors.SelectBehavior;
-
+	import stealth.behaviors.ClickBehavior;
+	import stealth.behaviors.SelectBehavior;
 	import stealth.skins.topcoat.CheckBoxSkin;
 
 	public class ThemeCheckBox

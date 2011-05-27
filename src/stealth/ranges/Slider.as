@@ -6,27 +6,17 @@
 
 package stealth.ranges
 {
-	import flash.events.Event;
-
-	import flight.events.InitializeEvent;
-
 	import stealth.theme.ThemeSlider;
 
 	public class Slider extends RangeBase
 	{
 		public function Slider()
 		{
-			addEventListener(InitializeEvent.INITIALIZE, onInit);
 		}
 		
-		protected function init():void
+		override protected function init():void
 		{
 			ThemeSlider.initialize(this);
-		}
-		
-		private function onInit(event:Event):void
-		{
-			init();
 		}
 	}
 }

@@ -6,9 +6,6 @@
 
 package stealth.theme
 {
-	import flight.behaviors.ClickBehavior;
-	import flight.behaviors.SelectBehavior;
-
 	import stealth.skins.topcoat.ButtonSkin;
 
 	public class ThemeButton
@@ -17,12 +14,6 @@ package stealth.theme
 		{
 			if (!component.skin) {
 				component.skin = new ButtonSkin();
-			}
-			if (!component.style.click) {
-				component.style.click = new ClickBehavior();
-			}
-			if (!component.style.select) {
-				component.style.select = new SelectBehavior();
 			}
 		}
 	}

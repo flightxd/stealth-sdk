@@ -6,9 +6,8 @@
 
 package stealth.containers
 {
-	import flight.containers.Group;
-	import flight.layouts.Box;
-	import flight.layouts.DockLayout;
+	import stealth.layouts.Box;
+	import stealth.layouts.DockLayout;
 
 	public class DockGroup extends Group
 	{

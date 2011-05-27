@@ -6,9 +6,9 @@
 
 package stealth.theme
 {
-	import flight.behaviors.SlideBehavior;
 	import flight.data.DataBind;
 
+	import stealth.behaviors.SlideBehavior;
 	import stealth.skins.topcoat.SliderSkin;
 
 	public class ThemeSlider

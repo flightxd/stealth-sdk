@@ -6,10 +6,7 @@
 
 package stealth.buttons
 {
-	import flash.events.Event;
-
 	import flight.data.DataChange;
-	import flight.events.InitializeEvent;
 
 	import stealth.theme.ThemeButton;
 
@@ -17,7 +14,6 @@ package stealth.buttons
 	{
 		public function Button()
 		{
-			addEventListener(InitializeEvent.INITIALIZE, onInit);
 		}
 		
 		[Bindable(event="labelChange")]
@@ -55,14 +51,9 @@ package stealth.buttons
 		}
 		private var _emphasized:Boolean;
 		
-		protected function init():void
+		override protected function init():void
 		{
 			ThemeButton.initialize(this);
-		}
-		
-		private function onInit(event:Event):void
-		{
-			init();
 		}
 	}
 }

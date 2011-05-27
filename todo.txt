@@ -1,0 +1,89 @@
+add 1) color and 2) matrix to base Element's to make transform's more accessible
+add better support for MultiDensity (snapToPixel,etc) ... or in general, FIX snapToPixel
+
+1) FXG
+2) Gadget demo
+3) Layout demo
+4) Flash Pro preso
+5) Signals
+6) Yellowed Paper - lists, sketches, code & demos
+
+move to rely on FP 10.2 with weak-dictionary method-closures
+revise binding accordingly - add class/prop listeners without a binding object
+test addEventListener memory increase vs creating vector or dictionary listeners array
+add signals to components (weak-dictionary, strong-vector) ... smallest memory footprint possible
+everything both a signal & an event (hasEventListener)
+add clean-up recursive down displaylist for removal
+move common code between Display's to utility
+revisit layout props on style object (can sit behind ANY displayObject)
+revisit every component a container
+explore double component approach, both displayObject-in and high-level object definition
+!revise IList changeEvents to no-change type, just removedItems, addedItems, beginIndex, endIndex
+!extend Array implementing IList - no proxy, still access data, dispatch change on all but list[0] = value
+
+
+finish skin designer - simple FXG designer, layout, resizing skins, really light
+
+
+
+
+
+Cursor class needs to be implemented or removed
+
+extend or don't extend all basic Interfaces with IEventDispatcher
+	(and dispatch or don't dispatch events from them)
+
+Eliminate [Bindable] autogen tags
+
+lifecycle
+groups
+layout
+component base
+skins
+component project
+components
+dataGroup
+
+review BitmapDisplay constructor
+if keeping setSize (measureable) update it with queuebinding
+StyleObject
+style:Style setter implementation
+* consider Behaviors object - proxy, IList or what? add Behaviors:IList updates for when behaviors are added their target is set
+update all properties through project with new DataChange
+
+
+CommunityList:
+Nate Beck:
+easy "creationComplete" event
+disabled state to buttons
+
+Robert Penner:
+position:Range -> range:Range
+position:Scroll -> scroll:Scroll;
+
+
+Document RenderPhase
+Document IInvalidating
+Add generic invalidation as the default (last priority or 0)
+complete component lifecycle
+FXG completion ... add curved corners
+Eliminate requirement of metadata
+Bitmap resizing (Jac's approach)
+Bitmapmode - cacheAsSpriteSheet
+
+
+Range:
+IRange - min/max
+ITrack - min/max,stepSize,pageSize,
+IPosition - value,percent,track
+
+list.selection
+selection.list
+--------
+position.track
+track.position(s[])
+(or just change IScroll to ITrack)
+
+
+
+create a Flex3/4 migration guide

@@ -6,10 +6,10 @@
 
 package stealth.theme
 {
-	import flight.behaviors.SlideBehavior;
-	import flight.behaviors.StepBehavior;
 	import flight.data.DataBind;
 
+	import stealth.behaviors.SlideBehavior;
+	import stealth.behaviors.StepBehavior;
 	import stealth.skins.topcoat.ScrollBarSkin;
 
 	public class ThemeScrollBar

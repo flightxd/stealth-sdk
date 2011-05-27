@@ -9,12 +9,12 @@ package topcoat
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	
-	import flight.containers.Group;
+	import stealth.containers.Group;
 	import flight.events.LayoutEvent;
 	import flight.display.MovieClipDisplay;
-	import flight.layouts.Align;
-	import flight.layouts.HorizontalLayout;
-	import flight.skins.MovieClipSkin;
+	import stealth.layouts.Align;
+	import stealth.layouts.HorizontalLayout;
+	import MovieClipSkin;
 	
 	dynamic public class ButtonSkin extends MovieClipSkin
 	{

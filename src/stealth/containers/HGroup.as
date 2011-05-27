@@ -6,9 +6,8 @@
 
 package stealth.containers
 {
-	import flight.containers.Group;
-	import flight.layouts.Box;
-	import flight.layouts.HorizontalLayout;
+	import stealth.layouts.Box;
+	import stealth.layouts.HorizontalLayout;
 
 	public class HGroup extends Group
 	{

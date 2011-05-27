@@ -6,9 +6,8 @@
 
 package stealth.containers
 {
-	import flight.containers.Group;
-	import flight.layouts.Box;
-	import flight.layouts.VerticalLayout;
+	import stealth.layouts.Box;
+	import stealth.layouts.VerticalLayout;
 
 	public class VGroup extends Group
 	{

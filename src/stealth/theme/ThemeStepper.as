@@ -6,9 +6,9 @@
 
 package stealth.theme
 {
-	import flight.behaviors.StepBehavior;
 	import flight.data.DataBind;
 
+	import stealth.behaviors.StepBehavior;
 	import stealth.skins.topcoat.StepperSkin;
 
 	public class ThemeStepper
