@@ -14,56 +14,68 @@ package stealth.graphics
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-
+	
 	import flight.collections.ArrayList;
 	import flight.data.DataChange;
-	import flight.events.DrawEvent;
-	import flight.events.InitializeEvent;
+	import flight.display.ILifecycle;
+	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
+	import flight.events.LifecycleEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.IBounds;
-	import flight.utils.Invalidation;
-
+	
 	import mx.core.IMXMLObject;
-
+	
 	import stealth.graphics.paint.IFill;
 	import stealth.graphics.paint.IStroke;
 	import stealth.layouts.Box;
 	import stealth.layouts.LayoutElement;
 
-	[Event(name="ready", type="flight.events.InitializeEvent")]
-	[Event(name="create", type="flight.events.InitializeEvent")]
-	[Event(name="destroy", type="flight.events.InitializeEvent")]
+	[Event(name="ready", type="flight.events.LifecycleEvent")]
+	[Event(name="create", type="flight.events.LifecycleEvent")]
+	[Event(name="destroy", type="flight.events.LifecycleEvent")]
 	
 	/**
 	 * A generic shape element providing position, size and transformation.
-	 * GraphicShape inherits basic drawing Shape.
+	 * GraphicShape inherits basic drawing from Shape.
 	 */
-	public class GraphicShape extends Shape implements IGraphicShape, IGraphicElement, IMXMLObject
+	public class GraphicShape extends Shape implements IGraphicShape, IGraphicElement, ILifecycle, IMXMLObject
 	{
 		public function GraphicShape()
 		{
 			_filters.addEventListener(ListEvent.LIST_CHANGE, refreshFilters);
 			_filters.addEventListener(ListEvent.ITEM_CHANGE, refreshFilters);
 			
-			defaultRect = getRect(this);
 			layoutElement = new LayoutElement(this);
+			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
+			invalidate(LayoutEvent.RESIZE);
 			measure();
 			
 			addEventListener(Event.ADDED, onFirstAdded, false, 10);
-			addEventListener(InitializeEvent.CREATE, onCreate, false, 10);
-			addEventListener(InitializeEvent.DESTROY, onDestroy, false, 10);
-			invalidate(InitializeEvent.CREATE);
-			invalidate(InitializeEvent.READY);
+			addEventListener(LifecycleEvent.CREATE, onCreate, false, 10);
+			addEventListener(LifecycleEvent.DESTROY, onDestroy, false, 10);
+			invalidate(LifecycleEvent.CREATE);
+			invalidate(LifecycleEvent.READY);
 			init();
 		}
+		
+		/**
+		 * A convenience property for storing data associated with this element.
+		 */
+		[Bindable(event="tagChange", style="noEvent")]
+		public function get tag():String { return _tag; }
+		public function set tag(value:String):void
+		{
+			DataChange.change(this, "tag", _tag, _tag = value);
+		}
+		private var _tag:String = "";
 		
 		
 		// ====== IGraphicShape implementation ====== //
 		
-		
+		// TODO: make the following getter/setters that cause invalidation
 		public var canvas:Graphics;
 		public var canvasTransform:Matrix;
 		
@@ -84,6 +96,22 @@ package stealth.graphics
 		}
 		private var _fill:IFill;
 		
+		public function draw(graphics:Graphics):void
+		{
+			graphics.drawGraphicsData(graphicsData);
+		}
+		
+		protected function update():void
+		{
+			graphicsData.splice(0, graphicsData.length);
+			if (stroke) {
+				graphicsData.push(stroke.graphicsStroke);
+			}
+			if (fill) {
+				graphicsData.push(fill.graphicsFill);
+			}
+			graphicsData.push(graphicsPath);
+		}
 		
 		// ====== IGraphicElement implementation ====== //
 		
@@ -320,6 +348,15 @@ package stealth.graphics
 			}
 		}
 		
+		/**
+		 * @inheritDoc
+		 */
+		public function get matrix():Matrix { return transform.matrix; }
+		public function set matrix(value:Matrix):void
+		{
+			transform.matrix = value;
+		}
+		
 		private function updateTransform(oldMatrix:Matrix):void
 		{
 			// TODO: research simpler algorithm (concat matrices)
@@ -339,20 +376,12 @@ package stealth.graphics
 		
 		protected var layoutElement:LayoutElement;
 		
-		[Bindable(event="snapToPixelChange", style="noEvent")]
-		public function get snapToPixel():Boolean { return layoutElement.snapToPixel; }
-		public function set snapToPixel(value:Boolean):void { layoutElement.snapToPixel = value; }
-		
 		/**
 		 * @inheritDoc
 		 */
 		[Bindable(event="freeformChange", style="noEvent")]
 		public function get freeform():Boolean { return layoutElement.freeform; }
 		public function set freeform(value:Boolean):void { layoutElement.freeform = value; }
-		
-		[Bindable(event="nativeSizingChange", style="noEvent")]
-		public function get nativeSizing():Boolean { return layoutElement.nativeSizing; }
-		public function set nativeSizing(value:Boolean):void { layoutElement.nativeSizing = value; }
 		
 		/**
 		 * @inheritDoc
@@ -399,37 +428,39 @@ package stealth.graphics
 		public function set maxHeight(value:Number):void { layoutElement.maxHeight = value; }
 		
 		/**
-		 * The space surrounding the layout, relative to the local coordinates
-		 * of the parent. The space is defined as a box with left, top, right
-		 * and bottom coordinates.
+		 * @inheritDoc
 		 */
 		[Bindable(event="marginChange", style="noEvent")]
 		public function get margin():Box { return layoutElement.margin; }
 		public function set margin(value:*):void { layoutElement.margin = value; }
 		
 		/**
-		 * The width of the bounds as a percentage of the parent's total size,
-		 * relative to the local coordinates of the parent. The percentWidth
-		 * is a value from 0 to 1, where 1 equals 100% of the parent's
-		 * total size.
-		 * 
-		 * @default		NaN
+		 * @inheritDoc
 		 */
 		[Bindable(event="percentWidthChange", style="noEvent")]
 		public function get percentWidth():Number { return layoutElement.percentWidth; }
 		public function set percentWidth(value:Number):void { layoutElement.percentWidth = value; }
 		
 		/**
-		 * The height of the bounds as a percentage of the parent's total size,
-		 * relative to the local coordinates of the parent. The percentHeight
-		 * is a value from 0 to 1, where 1 equals 100% of the parent's
-		 * total size.
-		 * 
-		 * @default		NaN
+		 * @inheritDoc
 		 */
 		[Bindable(event="percentHeightChange", style="noEvent")]
 		public function get percentHeight():Number { return layoutElement.percentHeight; }
 		public function set percentHeight(value:Number):void { layoutElement.percentHeight = value; }
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get preferredWidth():Number { return layoutElement.preferredWidth; }
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get preferredHeight():Number { return layoutElement.preferredHeight; }
+		
+		[Bindable(event="snapToPixelChange", style="noEvent")]
+		public function get snapToPixel():Boolean { return layoutElement.snapToPixel; }
+		public function set snapToPixel(value:Boolean):void { layoutElement.snapToPixel = value; }
 		
 		[Bindable(event="leftChange", style="noEvent")]
 		public function get left():Number { return layoutElement.left; }
@@ -467,35 +498,14 @@ package stealth.graphics
 		public function get dock():String { return layoutElement.dock; }
 		public function set dock(value:String):void { layoutElement.dock = value; }
 		
-		[Bindable(event="alignChange", style="noEvent")]
-		public function get align():String { return layoutElement.align; }
-		public function set align(value:String):void { layoutElement.align = value; }
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function get explicit():IBounds { return layoutElement.explicit; }
+		[Bindable(event="tileChange", style="noEvent")]
+		public function get tile():String { return layoutElement.tile; }
+		public function set tile(value:String):void { layoutElement.tile = value; }
 		
 		/**
 		 * @inheritDoc
 		 */
 		public function get measured():IBounds { return layoutElement.measured; }
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function constrainWidth(width:Number):Number
-		{
-			return layoutElement.constrainWidth(width);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function constrainHeight(height:Number):Number
-		{
-			return layoutElement.constrainHeight(height);
-		}
 		
 		/**
 		 * @inheritDoc
@@ -513,12 +523,21 @@ package stealth.graphics
 			layoutElement.setLayoutRect(rect);
 		}
 		
+		protected function render():void
+		{
+			update();
+			graphics.clear();
+			draw(canvas || graphics);
+		}
+		
 		protected function measure():void
 		{
-			measured.minWidth = defaultRect.width;
-			measured.minHeight = defaultRect.height;
 		}
-		protected var defaultRect:Rectangle;
+		
+		private function onResize(event:LayoutEvent):void
+		{
+			render();
+		}
 		
 		private function onMeasure(event:LayoutEvent):void
 		{
@@ -562,14 +581,22 @@ package stealth.graphics
 		}
 		
 		
-		// ====== Lifecycle methods ====== //
+		// ====== ILifecycle implementation ====== //
 		
 		public function kill():void
 		{
 			if (created) {
 				created = false;
 				destroy();
+				if (parent) {
+					parent.removeChild(this);
+				}
 			}
+			removeEventListener(LayoutEvent.RESIZE, onResize);
+			removeEventListener(LayoutEvent.MEASURE, onMeasure);
+			removeEventListener(Event.ADDED, onFirstAdded);
+			removeEventListener(LifecycleEvent.CREATE, onCreate);
+			removeEventListener(LifecycleEvent.DESTROY, onDestroy);
 		}
 		protected var created:Boolean;
 		
@@ -581,56 +608,34 @@ package stealth.graphics
 		{
 			graphicsData = new Vector.<IGraphicsData>;
 			graphicsPath = new GraphicsPath();
-			graphicsPath.commands = new Vector.<int>();
 			graphicsPath.data = new Vector.<Number>();
-			addEventListener(DrawEvent.DRAW, onDraw);
-			invalidate(DrawEvent.DRAW);
+			graphicsPath.commands = new Vector.<int>();
 		}
 		
 		protected function destroy():void
 		{
+			graphicsPath.commands = null;
+			graphicsPath.data = null;
+			graphicsPath = null;
+			graphicsData = null;
 		}
 		
 		private function onFirstAdded(event:Event):void
 		{
 			removeEventListener(Event.ADDED, onFirstAdded);
-			validateNow(InitializeEvent.CREATE);
+			validateNow(LifecycleEvent.CREATE);
 		}
 		
-		private function onCreate(event:InitializeEvent):void
+		private function onCreate(event:LifecycleEvent):void
 		{
 			create();
 			created = true;
+			validateNow(LayoutEvent.RESIZE);
 		}
 		
-		private function onDestroy(event:InitializeEvent):void
+		private function onDestroy(event:LifecycleEvent):void
 		{
 			kill();
-		}
-		
-		
-		public function draw(graphics:Graphics):void
-		{
-			graphics.drawGraphicsData(graphicsData);
-		}
-		
-		protected function update():void
-		{
-			graphicsData.splice(0, graphicsData.length);
-			if (stroke) {
-				graphicsData.push(stroke.graphicsStroke);
-			}
-			if (fill) {
-				graphicsData.push(fill.graphicsFill);
-			}
-			graphicsData.push(graphicsPath);
-		}
-		
-		private function onDraw(event:Event):void
-		{
-			update();
-			graphics.clear();
-			draw(canvas || graphics);
 		}
 	}
 }

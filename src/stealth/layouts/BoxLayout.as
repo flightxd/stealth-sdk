@@ -141,7 +141,7 @@ package stealth.layouts
 						continue;
 					}
 					
-					if (child is ILayoutBounds) {
+					if (child is ILayoutElement) {
 //						ILayoutElement(child).setLayoutSize(childRect.width, childRect.height);
 //						ILayoutElement(child).setLayoutPosition(childRect.x, childRect.y);
 					} else {
@@ -164,8 +164,8 @@ package stealth.layouts
 			childBounds.maxWidth = childBounds.maxHeight = 0xFFFFFF;
 			childBounds.width = childBounds.height =childBounds.minWidth = childBounds.minHeight = 0;
 			
-			if (child is ILayoutBounds) {
-				var layoutChild:ILayoutBounds = ILayoutBounds(child);
+			if (child is ILayoutElement) {
+				var layoutChild:ILayoutElement = ILayoutElement(child);
 				if (layoutChild.freeform) {
 					return false;
 				}

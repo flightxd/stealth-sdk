@@ -10,9 +10,9 @@ package stealth.graphics
 
 	import flight.display.ITransform;
 
-	import stealth.layouts.ILayoutBounds;
+	import stealth.layouts.ILayoutElement;
 
-	public interface IGraphicElement extends ITransform, ILayoutBounds
+	public interface IGraphicElement extends ITransform, ILayoutElement
 	{
 		function get id():String;
 		function set id(value:String):void;
@@ -34,7 +34,5 @@ package stealth.graphics
 		
 		function get filters():Array;
 		function set filters(value:Array):void;
-		
-		function kill():void;
 	}
 }

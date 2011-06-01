@@ -15,7 +15,7 @@ package stealth.layouts
 	 * A simple box-model layout element containing size and bounds logic,
 	 * including measured and explicit sizing.
 	 */
-	public interface ILayoutBounds extends IBounds, IMeasureable
+	public interface ILayoutElement extends IBounds, IMeasureable
 	{
 		/**
 		 * Specifies whether this instance will participate in layout or will
@@ -28,22 +28,11 @@ package stealth.layouts
 		function set freeform(value:Boolean):void;
 		
 		/**
-		 * The actual x position of the bounds relative to the local coordinates
-		 * of the parent. Explicitly set values may be overridden by layout.
-		 * 
-		 * @default		0
+		 * The space surrounding the layout, relative to the local coordinates
+		 * of the parent. The space is defined as a box with left, top, right
+		 * and bottom coordinates.
 		 */
-		function get x():Number;
-		function set x(value:Number):void;
-		
-		/**
-		 * The actual y position of the bounds relative to the local coordinates
-		 * of the parent. Explicitly set values may be overridden by layout.
-		 * 
-		 * @default		0
-		 */
-		function get y():Number;
-		function set y(value:Number):void;
+		function get margin():Box;
 		
 		/**
 		 * The width of the bounds as a percentage of the parent's total size,
@@ -68,17 +57,48 @@ package stealth.layouts
 		function set percentHeight(value:Number):void;
 		
 		/**
-		 * The explicitly set bounds of this bounds instance. Actual values
-		 * may differ from those explicitly set based on layout adjustments.
+		 * The preferred width of the bounds relative to the local coordinates
+		 * of this bounds instance. The preferredWidth represents the measured
+		 * width or an explicitly set width.
 		 */
-		function get explicit():IBounds;
+		function get preferredWidth():Number;
 		
 		/**
-		 * The space surrounding the layout, relative to the local coordinates
-		 * of the parent. The space is defined as a box with left, top, right
-		 * and bottom coordinates.
+		 * The preferred height of the bounds relative to the local coordinates
+		 * of this bounds instance. The preferredHeight represents the measured
+		 * height or an explicitly set height.
 		 */
-		function get margin():Box;
+		function get preferredHeight():Number;
+		
+//		function get left():Number;
+//		function set left(value:Number):void;
+//		
+//		function get top():Number;
+//		function set top(value:Number):void;
+//		
+//		function get right():Number;
+//		function set right(value:Number):void;
+//		
+//		function get bottom():Number;
+//		function set bottom(value:Number):void;
+//		
+//		function get hPercent():Number;
+//		function set hPercent(value:Number):void;
+//		
+//		function get vPercent():Number;
+//		function set vPercent(value:Number):void;
+//		
+//		function get hOffset():Number;
+//		function set hOffset(value:Number):void;
+//		
+//		function get vOffset():Number;
+//		function set vOffset(value:Number):void;
+//		
+//		function get dock():String;
+//		function set dock(value:String):void;
+//		
+//		function get tile():String;
+//		function set tile(value:String):void;
 		
 		/**
 		 * Calculates a bounding rectangle surrounding the bounds based on the

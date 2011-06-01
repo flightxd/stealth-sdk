@@ -10,21 +10,19 @@ package stealth.layouts
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-	import flash.utils.getQualifiedClassName;
 
 	import flight.data.DataChange;
+	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
-	import flight.utils.Invalidation;
 
 	import mx.events.PropertyChangeEvent;
 
-	// TODO? refactor to extend an Extension (or Trait, MixIn, Behavior, etc) class
-	public class LayoutElement implements ILayoutBounds
+	public class LayoutElement implements ILayoutElement
 	{
-		public var target:DisplayObject
+		private var target:DisplayObject;
 		
 		public function LayoutElement(target:DisplayObject)
 		{
@@ -33,41 +31,7 @@ package stealth.layouts
 		}
 		
 		
-		// ====== IInvalidating implementation ====== //
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function invalidate(phase:String = null):void
-		{
-			Invalidation.invalidate(target, phase || InvalidationEvent.VALIDATE);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function validateNow(phase:String = null):void
-		{
-			Invalidation.validate(target, phase);
-		}
-		
-		// TODO: implement multi-density behavior...
-		[Bindable(event="snapToPixelChange", style="noEvent")]
-		public function get snapToPixel():Boolean { return _snapToPixel; }
-		public function set snapToPixel(value:Boolean):void
-		{
-			DataChange.change(target, "snapToPixel", _snapToPixel, _snapToPixel = value);
-			if (_snapToPixel) {
-				x = Math.round(super.x);
-				y = Math.round(super.y);
-				updateWidth();
-				updateHeight();
-			}
-		}
-		private var _snapToPixel:Boolean;
-		
-		
-		// ====== ILayoutElement implementation ====== //
+		// ====== ILayoutBounds implementation ====== //
 		
 		/**
 		 * @inheritDoc
@@ -77,68 +41,14 @@ package stealth.layouts
 		public function set freeform(value:Boolean):void
 		{
 			if (value) {
-				if (!isNaN(_layoutWidth)) {
-					_layoutWidth = NaN;
-					updateWidth();
-				}
-				if (!isNaN(_layoutWidth)) {
-					_layoutHeight = NaN;
-					updateHeight();
-				}
-			}
-			DataChange.change(target, "freeform", _freeform, _freeform = value);
-		}
-		private var _freeform:Boolean = false;
-		
-		[Bindable(event="nativeSizingChange", style="noEvent")]
-		public function get nativeSizing():Boolean { return _nativeSizing; }
-		public function set nativeSizing(value:Boolean):void
-		{
-			DataChange.queue(target, "nativeSizing", _nativeSizing, _nativeSizing = value);
-			if (value) {
-				unscaledRect = target.getRect(target);
+				_layoutWidth = _layoutHeight = NaN;
 				updateWidth();
 				updateHeight();
 			}
-			DataChange.change();
+			DataChange.change(target, "freeform", _freeform, _freeform = value);
+			invalidateLayout();
 		}
-		private var _nativeSizing:Boolean;
-		private var unscaledRect:Rectangle;
-		
-		[Bindable(event="containedChange", style="noEvent")]
-		public function get contained():Boolean { return _contained; }
-		public function set contained(value:Boolean):void
-		{
-			if (_contained != value) {
-				DataChange.queue(target, "contained", _contained, _contained = value);
-				minWidth = _explicit.minWidth;
-				minHeight = _explicit.minHeight;
-				maxWidth = _explicit.maxWidth;
-				maxHeight = _explicit.maxHeight;
-				DataChange.change();
-			}
-		}
-		private var _contained:Boolean = true;
-
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="xChange", style="noEvent")]
-		public function get x():Number { return target.x; }
-		public function set x(value:Number):void
-		{
-			DataChange.change(target, "x", target.x, target.x = value);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="yChange", style="noEvent")]
-		public function get y():Number { return target.y; }
-		public function set y(value:Number):void
-		{
-			DataChange.change(target, "y", target.y, target.y = value);
-		}
+		private var _freeform:Boolean = false;
 		
 		/**
 		 * @inheritDoc
@@ -180,6 +90,7 @@ package stealth.layouts
 			if (_minWidth != value) {
 				DataChange.queue(target, "minWidth", _minWidth, _minWidth = value);
 				updateWidth();
+				invalidateLayout(true);
 			}
 		}
 		private var _minWidth:Number = 0;
@@ -198,6 +109,7 @@ package stealth.layouts
 			if (_minHeight != value) {
 				DataChange.queue(target, "minHeight", _minHeight, _minHeight = value);
 				updateHeight();
+				invalidateLayout(true);
 			}
 		}
 		private var _minHeight:Number = 0;
@@ -216,9 +128,10 @@ package stealth.layouts
 			if (_maxWidth != value) {
 				DataChange.queue(target, "maxWidth", _maxWidth, _maxWidth = value);
 				updateWidth();
+				invalidateLayout(true);
 			}
 		}
-		private var _maxWidth:Number = 0;
+		private var _maxWidth:Number = Number.MAX_VALUE;
 		
 		/**
 		 * @inheritDoc
@@ -234,14 +147,13 @@ package stealth.layouts
 			if (_maxHeight != value) {
 				DataChange.queue(target, "maxHeight", _maxHeight, _maxHeight = value);
 				updateHeight();
+				invalidateLayout(true);
 			}
 		}
-		private var _maxHeight:Number = 0;
+		private var _maxHeight:Number = Number.MAX_VALUE;
 		
 		/**
-		 * The space surrounding the layout, relative to the local coordinates
-		 * of the parent. The space is defined as a box with left, top, right
-		 * and bottom coordinates.
+		 * @inheritDoc
 		 */
 		[Bindable(event="marginChange", style="noEvent")]
 		public function get margin():Box { return _margin || (margin = new Box()); }
@@ -256,27 +168,23 @@ package stealth.layouts
 			}
 			
 			if (_margin) {
-				_margin.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMarginChange);
+				_margin.removeEventListener(Event.CHANGE, onMarginChange);
 			}
 			DataChange.change(target, "margin", _margin, _margin = value);
+			invalidateLayout();
 			if (_margin) {
-				_margin.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMarginChange);
+				_margin.addEventListener(Event.CHANGE, onMarginChange);
 			}
 		}
 		private var _margin:Box;
 		
-		private function onMarginChange(event:PropertyChangeEvent):void
+		private function onMarginChange(event:Event):void
 		{
-			DataChange.change(target, "margin", _margin, _margin, true);
+			invalidateLayout();
 		}
 		
 		/**
-		 * The width of the bounds as a percentage of the parent's total size,
-		 * relative to the local coordinates of the parent. The percentWidth
-		 * is a value from 0 to 1, where 1 equals 100% of the parent's
-		 * total size.
-		 * 
-		 * @default		NaN
+		 * @inheritDoc
 		 */
 		[Bindable(event="percentWidthChange", style="noEvent")]
 		public function get percentWidth():Number { return _percentWidth; }
@@ -286,16 +194,12 @@ package stealth.layouts
 				value /= 100;
 			}
 			DataChange.change(target, "percentWidth", _percentWidth, _percentWidth = value);
+			invalidateLayout();
 		}
 		private var _percentWidth:Number;
 		
 		/**
-		 * The height of the bounds as a percentage of the parent's total size,
-		 * relative to the local coordinates of the parent. The percentHeight
-		 * is a value from 0 to 1, where 1 equals 100% of the parent's
-		 * total size.
-		 * 
-		 * @default		NaN
+		 * @inheritDoc
 		 */
 		[Bindable(event="percentHeightChange", style="noEvent")]
 		public function get percentHeight():Number { return _percentHeight; }
@@ -305,8 +209,69 @@ package stealth.layouts
 				value /= 100;
 			}
 			DataChange.change(target, "percentHeight", _percentHeight, _percentHeight = value);
+			invalidateLayout();
 		}
 		private var _percentHeight:Number;
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get preferredWidth():Number
+		{
+			return !isNaN(explicit.width) ? explicit.width : measured.width;
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get preferredHeight():Number
+		{
+			return !isNaN(explicit.height) ? explicit.height : measured.height;
+		}
+		
+		[Bindable(event="containedChange", style="noEvent")]
+		public function get contained():Boolean { return _contained; }
+		public function set contained(value:Boolean):void
+		{
+			if (_contained != value) {
+				DataChange.queue(target, "contained", _contained, _contained = value);
+				minWidth = _explicit.minWidth;
+				minHeight = _explicit.minHeight;
+				maxWidth = _explicit.maxWidth;
+				maxHeight = _explicit.maxHeight;
+				DataChange.change();
+			}
+		}
+		private var _contained:Boolean = true;
+		
+		[Bindable(event="nativeSizingChange", style="noEvent")]
+		public function get nativeSizing():Boolean { return _nativeSizing; }
+		public function set nativeSizing(value:Boolean):void
+		{
+			DataChange.queue(target, "nativeSizing", _nativeSizing, _nativeSizing = value);
+			if (value) {
+				unscaledRect = target.getRect(target);
+				updateWidth();
+				updateHeight();
+			}
+			DataChange.change();
+		}
+		private var _nativeSizing:Boolean;
+		private var unscaledRect:Rectangle;
+		
+		[Bindable(event="snapToPixelChange", style="noEvent")]
+		public function get snapToPixel():Boolean { return _snapToPixel; }
+		public function set snapToPixel(value:Boolean):void
+		{
+			DataChange.change(target, "snapToPixel", _snapToPixel, _snapToPixel = value);
+			if (_snapToPixel) {
+				target.x = Math.round(target.x);
+				target.y = Math.round(target.y);
+				updateWidth();
+				updateHeight();
+			}
+		}
+		private var _snapToPixel:Boolean;
 		
 		[Bindable(event="leftChange", style="noEvent")]
 		public function get left():Number { return _left; }
@@ -380,19 +345,13 @@ package stealth.layouts
 		}
 		private var _dock:String;
 		
-		[Bindable(event="alignChange", style="noEvent")]
-		public function get align():String { return _align; }
-		public function set align(value:String):void
+		[Bindable(event="tileChange", style="noEvent")]
+		public function get tile():String { return _tile; }
+		public function set tile(value:String):void
 		{
-			DataChange.change(target, "align", _align, _align = value);
+			DataChange.change(target, "tile", _tile, _tile = value);
 		}
-		private var _align:String;
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function get explicit():IBounds { return _explicit; }
-		private var _explicit:Bounds = new Bounds();
+		private var _tile:String;
 		
 		/**
 		 * @inheritDoc
@@ -401,7 +360,18 @@ package stealth.layouts
 		private var _measured:Bounds = new Bounds(0, 0);
 		
 		/**
-		 * @inheritDoc
+		 * The explicitly set bounds of this bounds instance. Actual values
+		 * may differ from those explicitly set based on layout adjustments.
+		 */
+		public function get explicit():IBounds { return _explicit; }
+		private var _explicit:Bounds = new Bounds();
+		
+		/**
+		 * Constrains a width value between minWidth and maxWidth,
+		 * returning the new value.
+		 * 
+		 * @param		width		The source width value to be constrained.
+		 * @return					The newly constrained width.
 		 */
 		public function constrainWidth(width:Number):Number
 		{
@@ -410,7 +380,11 @@ package stealth.layouts
 		}
 		
 		/**
-		 * @inheritDoc
+		 * Constrains a height value between minHeight and maxHeight,
+		 * returning the new value.
+		 * 
+		 * @param		height		The source height value to be constrained.
+		 * @return					The newly constrained height.
 		 */
 		public function constrainHeight(height:Number):Number
 		{
@@ -424,15 +398,14 @@ package stealth.layouts
 		public function getLayoutRect(width:Number = NaN, height:Number = NaN):Rectangle
 		{
 			if (isNaN(width)) {
-				width = !isNaN(explicit.width) ? explicit.width : measured.width;
+				width = preferredWidth;
 			}
 			if (isNaN(height)) {
-				height = !isNaN(explicit.height) ? explicit.height : measured.height;
+				height = preferredHeight;
 			}
 			
 			var m:Matrix = target.transform.matrix;
-			var complexMatrix:Boolean = m.b != 0 || m.c != 0 || m.a < 0 || m.d < 0;
-			if (complexMatrix) {
+			if (complexMatrix(m, _nativeSizing)) {
 				var x:Number, y:Number;
 				var minX:Number, minY:Number, maxX:Number, maxY:Number;
 				
@@ -480,37 +453,13 @@ package stealth.layouts
 		public function setLayoutRect(rect:Rectangle):void
 		{
 			var m:Matrix = target.transform.matrix;
-			var complexMatrix:Boolean = m.b != 0 || m.c != 0 || m.a < 0 || m.d < 0;
-			if (_nativeSizing) {
-				// reset matrix scale back to 1 but keep rotation
-				if (complexMatrix) {
-					var skewX:Number = Math.atan2(-m.c, m.d);
-					var skewY:Number = Math.atan2(m.b, m.a);
-					m.b = Math.sin(skewY);
-					m.c = -Math.sin(skewX);
-				}
-				m.a = 1;
-				m.d = 1;
-			}
-			
-			if (complexMatrix) {
+			if (complexMatrix(m, _nativeSizing)) {
+				
 				var d:Number;
 				d = m.a * _width + m.c * _height;
 				if (d < 0) rect.x -= d;
 				d = m.d * _height + m.b * _width;
 				if (d < 0) rect.y -= d;
-			}
-			
-			if (_snapToPixel) {
-				rect.x = Math.round(rect.x);
-				rect.y = Math.round(rect.y);
-			}
-			DataChange.queue(target, "x", target.x, target.x = rect.x);
-			DataChange.change(target, "y", target.y, target.y = rect.y);
-			
-			// setLayoutSize....
-			if (complexMatrix) {
-				m.invert();
 				
 				if (rect.width < 0) {
 					rect.width = 0;
@@ -518,27 +467,53 @@ package stealth.layouts
 				if (rect.height < 0) {
 					rect.height = 0;
 				}
+				m.invert();
 				_layoutWidth = Math.abs(m.a * rect.width + m.c * rect.height);
 				_layoutHeight = Math.abs(m.d * rect.height + m.b * rect.width);
 			} else if (_nativeSizing) {
 				_layoutWidth = rect.width;
 				_layoutHeight = rect.height;
 			} else {
-				_layoutWidth = rect.width / target.scaleX;
-				_layoutHeight = rect.height / target.scaleY;
+				_layoutWidth = rect.width / m.a;
+				_layoutHeight = rect.height / m.d;
 			}
 			
-//			if (_layoutWidth == preferredWidth) {
-//				_layoutWidth = NaN;
-//			}
-//			if (_layoutHeight == preferredHeight) {
-//				_layoutHeight = NaN;
-//			}
-			updateWidth();
-			updateHeight();
+			if (_snapToPixel) {
+				rect.x = Math.round(rect.x);
+				rect.y = Math.round(rect.y);
+				_layoutWidth = Math.round(_layoutWidth);
+				_layoutHeight = Math.round(_layoutHeight);
+			}
+			
+			if (_layoutWidth == preferredWidth) {
+				_layoutWidth = NaN;
+			}
+			if (_layoutHeight == preferredHeight) {
+				_layoutHeight = NaN;
+			}
+			
+			DataChange.queue(target, "x", target.x, target.x = rect.x);
+			DataChange.queue(target, "y", target.y, target.y = rect.y);
+			updateWidth(true);
+			updateHeight(true);
+			DataChange.change();
 		}
 		private var _layoutWidth:Number;
 		private var _layoutHeight:Number;
+		
+		private function complexMatrix(m:Matrix, resetScale:Boolean = false):Boolean
+		{
+			var complex:Boolean = m.b != 0 || m.c != 0 || m.a < 0 || m.d < 0;
+			if (complex && resetScale) {
+				var skewY:Number = Math.atan2(m.b, m.a);
+				m.a = Math.cos(skewY);
+				m.b = Math.sin(skewY);
+				var skewX:Number = Math.atan2(-m.c, m.d);
+				m.c = -Math.sin(skewX);
+				m.d = Math.cos(skewX);
+			}
+			return complex;
+		}
 		
 		private function onMeasuredChange(event:PropertyChangeEvent):void
 		{
@@ -564,46 +539,71 @@ package stealth.layouts
 			}
 		}
 		
-		private function updateWidth():void
+		private function updateWidth(layout:Boolean = false):void
 		{
-			var value:Number = _measured.width;
-			if (!isNaN(_layoutWidth)) {
-				value = constrainWidth(_layoutWidth);
-			} else if (!isNaN(_explicit.width)) {
-				value = constrainWidth(_explicit.width);
-			}
+			var value:Number = constrainWidth( !isNaN(_layoutWidth) ? _layoutWidth : preferredWidth );
 			
 			if (_snapToPixel) {
 				value = Math.round(value);
 			}
 			if (_width != value) {
 				if (_nativeSizing) {
-					DataChange.queue(target, "scaleX", super.scaleX, super.scaleX = value / unscaledRect.width);
+					DataChange.queue(target, "scaleX", target.scaleX, target.scaleX = value / unscaledRect.width);
 				}
 				invalidate(LayoutEvent.RESIZE);
 				DataChange.change(target, "width", _width, _width = value);
+				if (!layout) {
+					invalidateLayout();
+				}
 			}
 		}
 		
-		private function updateHeight():void
+		private function updateHeight(layout:Boolean = false):void
 		{
-			var value:Number = _measured.height;
-			if (!isNaN(_layoutHeight)) {
-				value = constrainHeight(_layoutHeight);
-			} else if (!isNaN(_explicit.height)) {
-				value = constrainHeight(_explicit.height);
-			}
+			var value:Number = constrainHeight( !isNaN(_layoutHeight) ? _layoutHeight : preferredHeight );
 			
 			if (_snapToPixel) {
 				value = Math.round(value);
 			}
 			if (_height != value) {
 				if (_nativeSizing) {
-					DataChange.change(target, "scaleY", super.scaleY, super.scaleY = _height / unscaledRect.height);
+					DataChange.change(target, "scaleY", target.scaleY, target.scaleY = _height / unscaledRect.height);
 				}
 				invalidate(LayoutEvent.RESIZE);
 				DataChange.change(target, "height", _height, _height = value);
+				if (!layout) {
+					invalidateLayout();
+				}
 			}
+		}
+		
+		
+		// ====== IInvalidating implementation ====== //
+		
+		public function invalidateLayout(measureOnly:Boolean = false):void
+		{
+			if (!_freeform && target.parent) {
+				Invalidation.invalidate(target.parent, LayoutEvent.MEASURE);
+				if (!measureOnly) {
+					Invalidation.invalidate(target.parent, LayoutEvent.LAYOUT);
+				}
+			}
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function invalidate(phase:String = null):void
+		{
+			Invalidation.invalidate(target, phase || InvalidationEvent.VALIDATE);
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function validateNow(phase:String = null):void
+		{
+			Invalidation.validate(target, phase);
 		}
 		
 		
@@ -614,8 +614,7 @@ package stealth.layouts
 		 */
 		public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
 		{
-			var className:String = getQualifiedClassName(this).split("::").pop();
-			throw new Error("Adding an event listener through " + className + " is now allowed.");
+			target.addEventListener(type, listener,  useCapture, priority, useWeakReference);
 		}
 		
 		/**
@@ -623,8 +622,7 @@ package stealth.layouts
 		 */
 		public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void
 		{
-			var className:String = getQualifiedClassName(this).split("::").pop();
-			throw new Error("Removing an event listener through " + className + " is now allowed.");
+			target.removeEventListener(type, listener,  useCapture);
 		}
 		
 		/**

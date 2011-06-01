@@ -14,11 +14,8 @@ package stealth.graphics
 
 	public class Rect extends GraphicShape
 	{
-		// TODO: implement transform. filters. fill. stroke. mask. maskType.. blendMode.
-		
 		public function Rect()
 		{
-			addEventListener(LayoutEvent.RESIZE, onResize);
 		}
 		
 		[Bindable(event="radiusXChange", style="noEvent")]
@@ -101,9 +98,9 @@ package stealth.graphics
 		}
 		private var _bottomRightRadiusY:Number = NaN;
 		
-		//protected var graphicsPath:GraphicsPath = new GraphicsPath();
 		override protected function update():void
 		{
+			super.update();
 			var cmds:Vector.<int> = graphicsPath.commands;
 			var data:Vector.<Number> = graphicsPath.data;
 			cmds.splice(0, cmds.length);
@@ -119,11 +116,6 @@ package stealth.graphics
 			data.push(0, height);
 			cmds.push(GraphicsPathCommand.LINE_TO);
 			data.push(0, 0);
-		}
-		
-		private function onResize(event:Event):void
-		{
-			update();
 		}
 	}
 }

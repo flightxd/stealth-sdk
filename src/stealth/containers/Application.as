@@ -16,17 +16,13 @@ package stealth.containers
 	[SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]
 	public class Application extends Group
 	{
-		public function Application()
-		{
-			if (stage != null) {
-				// if this is the root application class
-				initStage();
-			}
-		}
-		
 		override protected function init():void
 		{
 			layout = new DockLayout();
+			// if this is the root application class
+			if (stage != null) {
+				initStage();
+			}
 		}
 		
 		protected function initStage():void

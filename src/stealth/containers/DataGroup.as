@@ -11,7 +11,7 @@ package stealth.containers
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.data.DataChange;
-	import flight.events.InitializeEvent;
+	import flight.events.LifecycleEvent;
 
 	public class DataGroup extends Group
 	{
@@ -24,7 +24,7 @@ package stealth.containers
 		public function get dataProvider():IList { return _dataProvider ||= new ArrayList(); }
 		public function set dataProvider(value:*):void
 		{
-			invalidate(InitializeEvent.CREATE);
+			invalidate(LifecycleEvent.CREATE);
 			if (!(value is IList) && value !== null) {
 				if (!_dataProvider) {
 					_dataProvider = new ArrayList();
@@ -45,7 +45,7 @@ package stealth.containers
 		public function get template():Object { return _template }
 		public function set template(value:Object):void
 		{
-			invalidate(InitializeEvent.CREATE);
+			invalidate(LifecycleEvent.CREATE);
 			DataChange.change(this, "template", _template, _template = value as Class);
 		}
 		private var _template:Class;
