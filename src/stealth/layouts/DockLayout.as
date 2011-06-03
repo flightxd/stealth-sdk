@@ -59,13 +59,13 @@ package stealth.layouts
 		
 		override protected function measureChild(child:DisplayObject, last:Boolean = false):void
 		{
-//			if (!(child is IStyleable)) {
-//				return;
-//			}
+			if (!(child is ILayoutElement)) {
+				return super.measureChild(child, last);
+			}
+			var element:ILayoutElement = child as ILayoutElement;
 			
-			var style:Object = {};//IStyleable(child).style;
-			var dock:String = style.dock;
-			var tile:String = style.tile;
+			var dock:String = element.dock;
+			var tile:String = element.tile;
 			if (tile) {
 				if (tile == Align.LEFT || tile == Align.RIGHT) {
 					if (dock != Align.BOTTOM) {
@@ -95,11 +95,11 @@ package stealth.layouts
 						measuredHeight += tileHeight;
 						dockMeasured.minWidth -= padding.horizontal;
 					}
-					childMargin.merge(dockMargin.clone(contentMargin));
+					childMargin.merge(dockMargin.copy(contentMargin));
 					tiling = false;
 				}
 			} else if (!tiling || dock != lastDock) {
-				contentMargin.clone(dockMargin);
+				contentMargin.copy(dockMargin);
 				tileWidth = tileHeight = 0;
 				tiling = true;
 			}
@@ -193,15 +193,15 @@ package stealth.layouts
 			}
 		}
 		
-		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
+		override protected function layoutChild(child:DisplayObject, last:Boolean = false):void
 		{
-//			if (!(child is IStyleable)) {
-//				return;
-//			}
+			if (!(child is ILayoutElement)) {
+				return super.measureChild(child, last);
+			}
+			var element:ILayoutElement = child as ILayoutElement;
 			
-			var style:Object = {};//IStyleable(child).style;
-			var dock:String = style.dock;
-			var tile:String = style.tile;
+			var dock:String = element.dock;
+			var tile:String = element.tile;
 			if (tile) {
 				if (tile == Align.LEFT || tile == Align.RIGHT) {
 					if (dock != Align.BOTTOM) {
@@ -216,13 +216,13 @@ package stealth.layouts
 				}
 			}
 			if (!dock || validDockValues.indexOf(dock) == -1) {
-				super.updateChild(child, last);
+				super.layoutChild(child, last);
 				return;
 			}
 			
 			if (!tile) {
 				if (tiling) {
-					childMargin.merge(dockMargin.clone(contentMargin));
+					childMargin.merge(dockMargin.copy(contentMargin));
 					tiling = false;
 				}
 				dockChild(dock, contentRect, childMargin);
@@ -230,7 +230,7 @@ package stealth.layouts
 			} else {
 				if (!tiling || dock != lastDock) {
 					tiling = true;
-					contentMargin.clone(dockMargin);
+					contentMargin.copy(dockMargin);
 					tileRect.x = contentRect.x;
 					tileRect.y = contentRect.y;
 					tileRect.width = contentRect.width;

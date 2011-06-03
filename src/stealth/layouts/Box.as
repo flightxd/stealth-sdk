@@ -71,35 +71,32 @@ package stealth.layouts
 		public function merge(box:Box):Box
 		{
 			if (box) {
-				DataChange.queue(this, "left", _left, _left = _left >= box._left ? _left : box._left);
-				DataChange.queue(this, "top", _top, _top = _top >= box._top ? _top : box._top);
-				DataChange.queue(this, "right", _right, _right = _right >= box._right ? _right : box._right);
-				DataChange.change(this, "bottom", _bottom, _bottom = _bottom >= box._bottom ? _bottom : box._bottom);
+				left = _left >= box._left ? _left : box._left;
+				top = _top >= box._top ? _top : box._top;
+				right = _right >= box._right ? _right : box._right;
+				bottom = _bottom >= box._bottom ? _bottom : box._bottom;
 			}
-			return box;
+			return this;
 		}
 		
 		public function equals(box:Box):Boolean
 		{
-			if (box) {
-				return (_left == box._left && _right == box._right &&
-						_top == box._top && _bottom == box._bottom &&
-						_horizontal == box._horizontal && _vertical == box._vertical);
-			}
-			return false;
+			return (_left == box._left && _right == box._right &&
+					_top == box._top && _bottom == box._bottom &&
+					_horizontal == box._horizontal && _vertical == box._vertical);
 		}
 		
-		public function clone(box:Box = null):Box
+		public function copy(box:Box = null):Box
 		{
 			if (!box) {
 				box = new Box();
 			}
-			box._left = _left;
-			box._top = _top;
-			box._right = _right;
-			box._bottom = _bottom;
-			box._horizontal = _horizontal;
-			box._vertical = _vertical;
+			box.left = _left;
+			box.top = _top;
+			box.right = _right;
+			box.bottom = _bottom;
+			box.horizontal = _horizontal;
+			box.vertical = _vertical;
 			
 			return box;
 		}
@@ -119,22 +116,22 @@ package stealth.layouts
 				var values:Array = value.split(" ");
 				switch (values.length) {
 					case 1 :
-						box._left = box._top = box._right = box._bottom = parseFloat( values[0] );
+						box.left = box.top = box.right = box.bottom = parseFloat( values[0] );
 						break;
 					case 2 :
-						box._left = box._right = parseFloat( values[1] );
-						box._top = box._bottom = parseFloat( values[0] );
+						box.left = box.right = parseFloat( values[1] );
+						box.top = box.bottom = parseFloat( values[0] );
 						break;
 					case 3 :
-						box._left = box._right = parseFloat( values[1] );
-						box._top = parseFloat( values[0] );
-						box._bottom = parseFloat( values[2] );
+						box.left = box.right = parseFloat( values[1] );
+						box.top = parseFloat( values[0] );
+						box.bottom = parseFloat( values[2] );
 						break;
 					case 4 :
-						box._left = parseFloat( values[3] );
-						box._top = parseFloat( values[0] );
-						box._right = parseFloat( values[1] );
-						box._bottom = parseFloat( values[2] );
+						box.left = parseFloat( values[3] );
+						box.top = parseFloat( values[0] );
+						box.right = parseFloat( values[1] );
+						box.bottom = parseFloat( values[2] );
 						break;
 				}
 			}

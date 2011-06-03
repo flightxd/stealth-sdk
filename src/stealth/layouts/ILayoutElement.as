@@ -13,7 +13,7 @@ package stealth.layouts
 
 	/**
 	 * A simple box-model layout element containing size and bounds logic,
-	 * including measured and explicit sizing.
+	 * including measured and preferred sizing.
 	 */
 	public interface ILayoutElement extends IBounds, IMeasureable
 	{
@@ -70,35 +70,35 @@ package stealth.layouts
 		 */
 		function get preferredHeight():Number;
 		
-//		function get left():Number;
-//		function set left(value:Number):void;
-//		
-//		function get top():Number;
-//		function set top(value:Number):void;
-//		
-//		function get right():Number;
-//		function set right(value:Number):void;
-//		
-//		function get bottom():Number;
-//		function set bottom(value:Number):void;
-//		
-//		function get hPercent():Number;
-//		function set hPercent(value:Number):void;
-//		
-//		function get vPercent():Number;
-//		function set vPercent(value:Number):void;
-//		
-//		function get hOffset():Number;
-//		function set hOffset(value:Number):void;
-//		
-//		function get vOffset():Number;
-//		function set vOffset(value:Number):void;
-//		
-//		function get dock():String;
-//		function set dock(value:String):void;
-//		
-//		function get tile():String;
-//		function set tile(value:String):void;
+		function get left():Number;
+		function set left(value:Number):void;
+		
+		function get top():Number;
+		function set top(value:Number):void;
+		
+		function get right():Number;
+		function set right(value:Number):void;
+		
+		function get bottom():Number;
+		function set bottom(value:Number):void;
+		
+		function get hPercent():Number;
+		function set hPercent(value:Number):void;
+		
+		function get vPercent():Number;
+		function set vPercent(value:Number):void;
+		
+		function get hOffset():Number;
+		function set hOffset(value:Number):void;
+		
+		function get vOffset():Number;
+		function set vOffset(value:Number):void;
+		
+		function get dock():String;
+		function set dock(value:String):void;
+		
+		function get tile():String;
+		function set tile(value:String):void;
 		
 		/**
 		 * Calculates a bounding rectangle surrounding the bounds based on the
@@ -113,8 +113,9 @@ package stealth.layouts
 		 * 							a bounding rectangle.
 		 * @return					The bounding rectangle in the parent's
 		 * 							coordinates. Note that the returned
-		 * 							rectangle may be the same instance; cloning
-		 * 							the result will guarantee a unique value.
+		 * 							rectangle may always be the same instance;
+		 * 							cloning the result will guarantee a unique
+		 * 							value.
 		 */
 		function getLayoutRect(width:Number = NaN, height:Number = NaN):Rectangle
 		

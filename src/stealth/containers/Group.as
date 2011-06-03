@@ -79,50 +79,12 @@ package stealth.containers
 		private var _layout:ILayout;
 		
 		[Bindable(event="contentWidthChange", style="noEvent")]
-		public function get contentWidth():Number
-		{
-			if (!contained) {
-				// TODO: consider moving logic to LayoutElement
-//				var preferredWidth:Number = !isNaN(_contentWidth) ? measured.constrainWidth(_contentWidth) : measured.width;
-				var preferredWidth:Number = !isNaN(_contentWidth) ? _contentWidth: measured.width;
-				if (preferredWidth > width) {
-					return preferredWidth;
-				}
-			}
-			return width;
-		}
-		public function set contentWidth(value:Number):void
-		{
-			if (!contained) {
-				DataChange.change(this, "contentWidth", _contentWidth, _contentWidth = value);
-			} else {
-				width = value;
-			}
-		}
-		private var _contentWidth:Number = 0;
+		public function get contentWidth():Number { return layoutElement.contentWidth; }
+		public function set contentWidth(value:Number):void { layoutElement.contentWidth = value; }
 		
 		[Bindable(event="contentHeightChange", style="noEvent")]
-		public function get contentHeight():Number
-		{
-			if (!contained) {
-				// TODO: consider moving logic to LayoutElement
-//				var preferredHeight:Number = !isNaN(_contentHeight) ? measured.constrainHeight(_contentHeight) : measured.height;
-				var preferredHeight:Number = !isNaN(_contentHeight) ? _contentHeight : measured.height;				
-				if (preferredHeight > height) {
-					return preferredHeight;
-				}
-			}
-			return height;
-		}
-		public function set contentHeight(value:Number):void
-		{
-			if (!contained) {
-				DataChange.change(this, "contentHeight", _contentHeight, _contentHeight = value);
-			} else {
-				height = value;
-			}
-		}
-		private var _contentHeight:Number = 0;
+		public function get contentHeight():Number { return layoutElement.contentHeight; }
+		public function set contentHeight(value:Number):void { layoutElement.contentHeight = value; }
 		
 		[Bindable(event="hPositionChange", style="noEvent")]
 		public function get hPosition():ITrack { return _hPosition || (hPosition = new Track()); }
@@ -160,10 +122,10 @@ package stealth.containers
 				if (value) {
 					addEventListener(LayoutEvent.RESIZE, onResize);
 					invalidate(LayoutEvent.RESIZE);
-					contained = false;
+					layoutElement.contained = false;
 				} else {
 					removeEventListener(LayoutEvent.RESIZE, onResize);
-					contained = true;
+					layoutElement.contained = true;
 				}
 				DataChange.change(this, "clipped", _clipped, _clipped = value);
 			}
@@ -175,7 +137,7 @@ package stealth.containers
 			if (!layout) {
 				super.measure();
 			}
-			if (!contained) {
+			if (!layoutElement.contained) {
 				scrollRectSize();
 			}
 		}

@@ -38,7 +38,49 @@ package stealth.layouts
 		public function BoxLayout(target:IContainer = null)
 		{
 			super(target);
+			
+			bindTarget("horizontalAlign");
+			bindTarget("verticalAlign");
+			bindTarget("padding");
+			
+			watchTarget("width");
+			watchTarget("height");
+			watchTarget("contentWidth");
+			watchTarget("contentHeight");
+			
+			watchContent("x");
+			watchContent("y");
+			watchContent("scaleX");
+			watchContent("scaleY");
+			watchContent("rotation");
+			watchContent("freeform");
+			watchContent("width");
+			watchContent("height");
+			watchContent("minWidth", true);
+			watchContent("minHeight", true);
+			watchContent("maxWidth", true);
+			watchContent("maxHeight", true);
+			watchContent("percentWidth");
+			watchContent("percentHeight");
 		}
+		
+		[Bindable(event="horizontalAlignChange", style="noEvent")]
+		public function get horizontalAlign():String { return _horizontalAlign; }
+		public function set horizontalAlign(value:String):void
+		{
+			DataChange.change(this, "horizontalAlign", _horizontalAlign, _horizontalAlign = value);
+			invalidate(LayoutEvent.LAYOUT);
+		}
+		private var _horizontalAlign:String = Align.LEFT;
+		
+		[Bindable(event="verticalAlignChange", style="noEvent")]
+		public function get verticalAlign():String { return _verticalAlign; }
+		public function set verticalAlign(value:String):void
+		{
+			DataChange.change(this, "verticalAlign", _verticalAlign, _verticalAlign = value);
+			invalidate(LayoutEvent.LAYOUT);
+		}
+		private var _verticalAlign:String = Align.TOP;
 		
 		[Bindable(event="paddingChange", style="noEvent")]
 		public function get padding():Box { return _padding || (padding = new Box()); }
@@ -66,29 +108,9 @@ package stealth.layouts
 			invalidate(LayoutEvent.LAYOUT);
 		}
 		
-		[Bindable(event="horizontalAlignChange", style="noEvent")]
-		public function get horizontalAlign():String { return _horizontalAlign; }
-		public function set horizontalAlign(value:String):void
-		{
-			invalidate(LayoutEvent.LAYOUT);
-			DataChange.change(this, "horizontalAlign", _horizontalAlign, _horizontalAlign = value);
-		}
-		private var _horizontalAlign:String = Align.LEFT;
-		
-		[Bindable(event="verticalAlignChange", style="noEvent")]
-		public function get verticalAlign():String { return _verticalAlign; }
-		public function set verticalAlign(value:String):void
-		{
-			invalidate(LayoutEvent.LAYOUT);
-			DataChange.change(this, "verticalAlign", _verticalAlign, _verticalAlign = value);
-		}
-		private var _verticalAlign:String = Align.TOP;
-		
 		
 		override public function measure():void
 		{
-			if (!target) return;
-			
 			var measured:IBounds = target.measured;
 			measured.minWidth = measured.minHeight = 0;
 			measured.maxWidth = measured.maxHeight = 0xFFFFFF;
@@ -96,19 +118,13 @@ package stealth.layouts
 			contentMargin.left = contentMargin.top = contentMargin.right = contentMargin.bottom = 0;
 			totalPercentWidth = totalPercentHeight = 0;
 			
-			var len:int = target.content.length;
-			for (var i:int = 0; i < len; i++) {
-				var child:DisplayObject = DisplayObject(target.content.get(i, 0));
-				if (setChildBounds(child)) {
-					measureChild(child, i == len - 1);
-				}
-			}
+			super.measure();
 			
-			var space:Number = _padding.left + _padding.right;
+			var space:Number = padding.left + padding.right;
 			measured.width += space;
 			measured.minWidth += space;
 			measured.maxWidth += space;
-			space = _padding.top + _padding.bottom;
+			space = padding.top + padding.bottom;
 			measured.height += space;
 			measured.minHeight += space;
 			measured.maxHeight += space;
@@ -116,85 +132,80 @@ package stealth.layouts
 		
 		override public function update():void
 		{
-			if (!target) return;
-			
 			var measured:IBounds = target.measured;
 			contentMargin.left = contentMargin.top = contentMargin.right = contentMargin.bottom = 0;
-			contentRect.x = _padding.left;
-			contentRect.y = _padding.top;
+			contentRect.x = padding.left;
+			contentRect.y = padding.top;
 			contentRect.width = target.contentWidth;
 			contentRect.height = target.contentHeight
 			var measuredWidth:Number = measured.width + totalPercentWidth * contentRect.width;
 			var measuredHeight:Number = measured.height + totalPercentHeight * contentRect.height;
 			horizontalSpace = measuredWidth < contentRect.width ? contentRect.width - measuredWidth : 0;
 			verticalSpace = measuredHeight < contentRect.height ? contentRect.height - measuredHeight : 0;
-			contentRect.width -= _padding.left + _padding.right;
-			contentRect.height -= _padding.top + _padding.bottom;
+			contentRect.width -= padding.left + padding.right;
+			contentRect.height -= padding.top + padding.bottom;
 			
-			var len:int = target.content.length;
-			for (var i:int = 0; i < len; i++) {
-				var child:DisplayObject = DisplayObject(target.content.get(i, 0));
-				if (setChildBounds(child)) {
-					var originalRect:Rectangle = childRect.clone();
-					updateChild(child, i == len - 1);
-					if (originalRect.equals(childRect)) {
-						continue;
-					}
-					
-					if (child is ILayoutElement) {
-//						ILayoutElement(child).setLayoutSize(childRect.width, childRect.height);
-//						ILayoutElement(child).setLayoutPosition(childRect.x, childRect.y);
-					} else {
-						child.x = childRect.x;
-						child.y = childRect.y;
-						child.width = childRect.width;
-						child.height = childRect.height;
-					}
+			super.update();
+		}
+		
+		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
+		{
+			layoutChild(child,  last);
+			if (!childBounds.equalsRect(childRect)) {
+				childBounds.getRect(childRect);
+				if (child is ILayoutElement) {
+					ILayoutElement(child).setLayoutRect(childRect);
+				} else {
+					child.x = childRect.x;
+					child.y = childRect.y;
+					child.width = childRect.width;
+					child.height = childRect.height;
 				}
 			}
 		}
 		
-		private function setChildBounds(child:DisplayObject):Boolean
+		protected function layoutChild(child:DisplayObject, last:Boolean = false):void
+		{
+		}
+		
+		override protected function childReady(child:DisplayObject):Boolean
 		{
 			if (!child.visible) {
 				return false;
 			}
 			
-			childMargin = contentMargin.clone(childMargin);
-			childBounds.maxWidth = childBounds.maxHeight = 0xFFFFFF;
-			childBounds.width = childBounds.height =childBounds.minWidth = childBounds.minHeight = 0;
-			
 			if (child is ILayoutElement) {
-				var layoutChild:ILayoutElement = ILayoutElement(child);
-				if (layoutChild.freeform) {
+				var element:ILayoutElement = ILayoutElement(child);
+				if (element.freeform) {
 					return false;
 				}
 				
 				// update contentMargin to be the greater of this child's margin and the previous child's margin
-				childMargin = childMargin.merge(layoutChild.margin);
+				contentMargin.copy(childMargin);
+				childMargin.merge(element.margin);
 				
-				childRect = layoutChild.getLayoutRect(layoutChild.minWidth, layoutChild.minHeight);
+				childRect = element.getLayoutRect(element.minWidth, element.minHeight);
 				childBounds.minWidth = childRect.width;
 				childBounds.minHeight = childRect.height;
-				childRect = layoutChild.getLayoutRect(layoutChild.maxWidth, layoutChild.maxHeight);
+				childRect = element.getLayoutRect(element.maxWidth, element.maxHeight);
 				childBounds.maxWidth = childRect.width;
 				childBounds.maxHeight = childRect.height;
-				childRect = layoutChild.getLayoutRect();
+				childRect = element.getLayoutRect();
 				
-				if (!isNaN(childPercentWidth = layoutChild.percentWidth)) {
+				if (!isNaN(childPercentWidth = element.percentWidth)) {
 					childRect.width = childBounds.minWidth;
 				}
-				if (!isNaN(childPercentHeight = layoutChild.percentHeight)) {
+				if (!isNaN(childPercentHeight = element.percentHeight)) {
 					childRect.height = childBounds.minHeight;
 				}
 			} else {
+				contentMargin.copy(childMargin);
+				childBounds.maxWidth = childBounds.maxHeight = 0xFFFFFF;
+				childBounds.minWidth = childBounds.minHeight = 0;
 				childRect = child.getRect(child.parent);
 				childPercentWidth = childPercentHeight = NaN;
 			}
-			childBounds.x = childRect.x;
-			childBounds.y = childRect.y;
-			childBounds.width = childRect.width;
-			childBounds.height = childRect.height;
+			childBounds.setRect(childRect);
 			
 			return true;
 		}

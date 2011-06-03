@@ -414,9 +414,6 @@ package stealth.graphics
 		 */
 		public function get preferredHeight():Number { return layoutElement.preferredHeight; }
 		
-		[Bindable(event="containedChange", style="noEvent")]
-		public function get contained():Boolean { return layoutElement.contained; }
-		public function set contained(value:Boolean):void { layoutElement.contained = value; }
 		
 		[Bindable(event="nativeSizingChange", style="noEvent")]
 		public function get nativeSizing():Boolean { return layoutElement.nativeSizing; }
@@ -549,6 +546,11 @@ package stealth.graphics
 		
 		public function kill():void
 		{
+			removeEventListener(LayoutEvent.RESIZE, onResize);
+			removeEventListener(LayoutEvent.MEASURE, onMeasure);
+			removeEventListener(Event.ADDED, onFirstAdded);
+			removeEventListener(LifecycleEvent.CREATE, onCreate);
+			removeEventListener(LifecycleEvent.DESTROY, onDestroy);
 			if (created) {
 				created = false;
 				destroy();
@@ -556,11 +558,6 @@ package stealth.graphics
 					parent.removeChild(this);
 				}
 			}
-			removeEventListener(LayoutEvent.RESIZE, onResize);
-			removeEventListener(LayoutEvent.MEASURE, onMeasure);
-			removeEventListener(Event.ADDED, onFirstAdded);
-			removeEventListener(LifecycleEvent.CREATE, onCreate);
-			removeEventListener(LifecycleEvent.DESTROY, onDestroy);
 		}
 		protected var created:Boolean;
 		
@@ -580,13 +577,14 @@ package stealth.graphics
 		{
 			removeEventListener(Event.ADDED, onFirstAdded);
 			validateNow(LifecycleEvent.CREATE);
+			validateNow(LayoutEvent.RESIZE);
 		}
 		
 		private function onCreate(event:LifecycleEvent):void
 		{
+			removeEventListener(LifecycleEvent.CREATE, onCreate);
 			create();
 			created = true;
-			validateNow(LayoutEvent.RESIZE);
 		}
 		
 		private function onDestroy(event:LifecycleEvent):void

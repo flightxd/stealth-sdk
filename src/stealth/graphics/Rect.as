@@ -7,10 +7,8 @@
 package stealth.graphics
 {
 	import flash.display.GraphicsPathCommand;
-	import flash.events.Event;
 
 	import flight.data.DataChange;
-	import flight.events.LayoutEvent;
 
 	public class Rect extends GraphicShape
 	{

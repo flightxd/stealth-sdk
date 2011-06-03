@@ -14,7 +14,7 @@ package stealth.graphics
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-	
+
 	import flight.collections.ArrayList;
 	import flight.data.DataChange;
 	import flight.display.ILifecycle;
@@ -24,9 +24,9 @@ package stealth.graphics
 	import flight.events.LifecycleEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.IBounds;
-	
+
 	import mx.core.IMXMLObject;
-	
+
 	import stealth.graphics.paint.IFill;
 	import stealth.graphics.paint.IStroke;
 	import stealth.layouts.Box;

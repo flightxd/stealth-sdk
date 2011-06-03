@@ -8,6 +8,7 @@ package stealth.layouts
 {
 	import flash.display.DisplayObject;
 
+	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 
 	public class VerticalLayout extends BoxLayout
@@ -19,13 +20,13 @@ package stealth.layouts
 			// horizontal size
 			var space:Number = childMargin.left + childMargin.right;
 			if (horizontalAlign == Align.JUSTIFY || !isNaN(childPercentWidth)) {
-				measured.minWidth = childBounds.minWidth + space;
-				measured.maxWidth = childBounds.maxWidth + space;
+				measured.minWidth = Bounds.constrainWidth(measured, childBounds.minWidth + space);
+				measured.maxWidth = Bounds.constrainWidth(measured, childBounds.maxWidth + space);
 			} else {
 				space += childBounds.width;
 				if (measured.width < space) {
 					measured.width = space;
-					measured.minWidth = measured.width;
+					measured.minWidth = Bounds.constrainWidth(measured, measured.width);
 				}
 			}
 			
@@ -45,7 +46,7 @@ package stealth.layouts
 			measured.minHeight += childBounds.height + space;
 		}
 		
-		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
+		override protected function layoutChild(child:DisplayObject, last:Boolean = false):void
 		{
 			var size:Number;
 			if (!isNaN(childPercentWidth)) {

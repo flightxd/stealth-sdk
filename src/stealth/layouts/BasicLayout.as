@@ -8,6 +8,7 @@ package stealth.layouts
 {
 	import flash.display.DisplayObject;
 
+	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 
 	public class BasicLayout extends BoxLayout
@@ -26,86 +27,86 @@ package stealth.layouts
 		
 		override protected function measureChild(child:DisplayObject, last:Boolean = false):void
 		{
-//			if (!(child is IStyleable)) {
-//				return;
-//			}
+			if (!(child is ILayoutElement)) {
+				return super.measureChild(child, last);
+			}
+			var element:ILayoutElement = child as ILayoutElement;
 			
-			var style:Object = {};//IStyleable(child).style;
-			var offsetX:Number = !isNaN(style.offsetX) ? style.offsetX : 0;
-			var offsetY:Number = !isNaN(style.offsetY) ? style.offsetY : 0;
+			var hOffset:Number = !isNaN(element.hOffset) ? element.hOffset : 0;
+			var vOffset:Number = !isNaN(element.vOffset) ? element.vOffset : 0;
 			var measured:IBounds = target.measured;
 			var space:Number;
 			
-			if ( !isNaN(style.left) ) {
-				if ( !isNaN(style.right) ) {
-					space = style.left + style.right;
-					measured.minWidth = space + childBounds.minWidth;
-					measured.maxWidth = space + childBounds.maxWidth;
+			if ( !isNaN(element.left) ) {
+				if ( !isNaN(element.right) ) {
+					space = element.left + element.right;
+					measured.minWidth = Bounds.constrainWidth(measured, space + childBounds.minWidth);
+					measured.maxWidth = Bounds.constrainWidth(measured, space + childBounds.maxWidth);
 					space = space + childBounds.minWidth;
-				} else if ( !isNaN(style.horizontal) ) {
-					space = style.left - offsetX;
-					measured.minWidth = (space + childBounds.minWidth)/style.horizontal;
-					measured.maxWidth = (space + childBounds.maxWidth)/style.horizontal;
-					space = (space + childBounds.minWidth)/style.horizontal;
+				} else if ( !isNaN(element.hPercent) ) {
+					space = element.left - hOffset;
+					measured.minWidth = Bounds.constrainWidth(measured, (space + childBounds.minWidth)/element.hPercent);
+					measured.maxWidth = Bounds.constrainWidth(measured, (space + childBounds.maxWidth)/element.hPercent);
+					space = (space + childBounds.minWidth)/element.hPercent;
 				} else {
-					space = style.left;
-					measured.minWidth = space + childBounds.width;
+					space = element.left;
+					measured.minWidth = Bounds.constrainWidth(measured, space + childBounds.width);
 					space = space + childBounds.width;
 				}
-			} else if ( !isNaN(style.right) ) {
-				if ( !isNaN(style.horizontal) ) {
-					space = style.right + offsetX;
-					measured.minWidth = (space + childBounds.minWidth)/style.horizontal;
-					measured.maxWidth = (space + childBounds.maxWidth)/style.horizontal;
-					space = (space + childBounds.minWidth)/style.horizontal;
+			} else if ( !isNaN(element.right) ) {
+				if ( !isNaN(element.hPercent) ) {
+					space = element.right + hOffset;
+					measured.minWidth = Bounds.constrainWidth(measured, (space + childBounds.minWidth)/element.hPercent);
+					measured.maxWidth = Bounds.constrainWidth(measured, (space + childBounds.maxWidth)/element.hPercent);
+					space = (space + childBounds.minWidth)/element.hPercent;
 				} else {
-					space = style.right;
-					measured.minWidth = offsetX + childBounds.width;
-					space = offsetX + childBounds.width;
+					space = element.right;
+					measured.minWidth = Bounds.constrainWidth(measured, hOffset + childBounds.width);
+					space = hOffset + childBounds.width;
 				}
-			} else if ( !isNaN(style.horizontal) ) {
-				measured.minWidth = Math.abs(offsetX) + childBounds.width;
-				space = Math.abs(offsetX) + childBounds.width;
+			} else if ( !isNaN(element.hPercent) ) {
+				measured.minWidth = Bounds.constrainWidth(measured, Math.abs(hOffset) + childBounds.width);
+				space = Math.abs(hOffset) + childBounds.width;
 			} else {
-				measured.minWidth = childBounds.x + childBounds.width;
+				measured.minWidth = Bounds.constrainWidth(measured, childBounds.x + childBounds.width);
 				space = childBounds.x + childBounds.width;
 			}
 			if (measured.width < space) {
 				measured.width = space;
 			}
 			
-			if ( !isNaN(style.top) ) {
-				if ( !isNaN(style.bottom) ) {
-					space = style.top + style.bottom;
-					measured.minHeight = space + childBounds.minHeight;
-					measured.maxHeight = space + childBounds.maxHeight;
+			if ( !isNaN(element.top) ) {
+				if ( !isNaN(element.bottom) ) {
+					space = element.top + element.bottom;
+					measured.minHeight = Bounds.constrainHeight(measured, space + childBounds.minHeight);
+					measured.maxHeight = Bounds.constrainHeight(measured, space + childBounds.maxHeight);
 					space = space + childBounds.minHeight;
-				} else if ( !isNaN(style.vertical) ) {
-					space = style.top - offsetY;
-					measured.minHeight = (space + childBounds.minHeight)/style.vertical;
-					measured.maxHeight = (space + childBounds.maxHeight)/style.vertical;
-					space = (space + childBounds.minHeight)/style.vertical;
+				} else if ( !isNaN(element.vPercent) ) {
+					space = element.top - vOffset;
+					measured.minHeight = Bounds.constrainHeight(measured, (space + childBounds.minHeight)/element.vPercent);
+					measured.maxHeight = Bounds.constrainHeight(measured, (space + childBounds.maxHeight)/element.vPercent);
+					space = (space + childBounds.minHeight)/element.vPercent;
 				} else {
-					space = style.top;
-					measured.minHeight = space + childBounds.height;
+					space = element.top;
+					measured.minHeight = Bounds.constrainHeight(measured, space + childBounds.height);
 					space = space + childBounds.height;
 				}
-			} else if ( !isNaN(style.bottom) ) {
-				if ( !isNaN(style.vertical) ) {
-					space = style.bottom + offsetY;
-					measured.minHeight = (space + childBounds.minHeight)/style.vertical;
-					measured.maxHeight = (space + childBounds.maxHeight)/style.vertical;
-					space = (space + childBounds.minHeight)/style.vertical;
+			} else if ( !isNaN(element.bottom) ) {
+				if ( !isNaN(element.vPercent) ) {
+					space = element.bottom + vOffset;
+					measured.minHeight = Bounds.constrainHeight(measured, (space + childBounds.minHeight)/element.vPercent);
+					measured.maxHeight = Bounds.constrainHeight(measured, (space + childBounds.maxHeight)/element.vPercent);
+					space = (space + childBounds.minHeight)/element.vPercent;
 				} else {
-					space = style.bottom;
-					measured.minHeight = space + childBounds.height;
+					space = element.bottom;
+					measured.minHeight = Bounds.constrainHeight(measured, space + childBounds.height);
 					space = space + childBounds.height;
 				}
-			} else if ( !isNaN(style.vertical) ) {
-				measured.minHeight = Math.abs(offsetY) + childBounds.height;
-				space = Math.abs(offsetY) + childBounds.height;
+			} else if ( !isNaN(element.vPercent) ) {
+				measured.minHeight = Bounds.constrainHeight(measured, Math.abs(vOffset) + childBounds.height);
+				space = Math.abs(vOffset) + childBounds.height;
 			} else {
-				measured.minHeight = childBounds.y + childBounds.height;
+				measured.minHeight = Bounds.constrainHeight(measured, childBounds.y + childBounds.height);
 				space = childBounds.y + childBounds.height;
 			}
 			if (measured.height < space) {
@@ -113,66 +114,66 @@ package stealth.layouts
 			}
 		}
 		
-		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
+		override protected function layoutChild(child:DisplayObject, last:Boolean = false):void
 		{
-//			if (!(child is IStyleable)) {
-//				return;
-//			}
+			if (!(child is ILayoutElement)) {
+				return super.measureChild(child, last);
+			}
+			var element:ILayoutElement = child as ILayoutElement;
 			
-			var style:Object = {};//IStyleable(child).style;
-			var offsetX:Number = !isNaN(style.offsetX) ? style.offsetX : 0;
-			var offsetY:Number = !isNaN(style.offsetY) ? style.offsetY : 0;
-			if ( !isNaN(style.left) ) {
-				if ( !isNaN(style.right) ) {
-					childBounds.width = target.contentWidth - style.left - style.right;
-				} else if ( !isNaN(style.horizontal) ) {
-					childBounds.width = (style.horizontal * target.contentWidth) - style.left + offsetX;
+			var hOffset:Number = !isNaN(element.hOffset) ? element.hOffset : 0;
+			var vOffset:Number = !isNaN(element.vOffset) ? element.vOffset : 0;
+			if ( !isNaN(element.left) ) {
+				if ( !isNaN(element.right) ) {
+					childBounds.width = target.contentWidth - element.left - element.right;
+				} else if ( !isNaN(element.hPercent) ) {
+					childBounds.width = (element.hPercent * target.contentWidth) - element.left + hOffset;
 				} else if (!isNaN(childPercentWidth)) {
-					childBounds.width = childPercentWidth * (target.contentWidth - style.left);
+					childBounds.width = childPercentWidth * (target.contentWidth - element.left);
 				}
 				
-				childBounds.x = style.left;
-			} else if ( !isNaN(style.right) ) {
-				if ( !isNaN(style.horizontal) ) {
-					childBounds.width = (style.horizontal * target.contentWidth) - style.right - offsetX;
+				childBounds.x = element.left;
+			} else if ( !isNaN(element.right) ) {
+				if ( !isNaN(element.hPercent) ) {
+					childBounds.width = (element.hPercent * target.contentWidth) - element.right - hOffset;
 				} else if (!isNaN(childPercentWidth)) {
-					childBounds.width = childPercentWidth * (target.contentWidth - style.right);
+					childBounds.width = childPercentWidth * (target.contentWidth - element.right);
 				}
 				
-				childBounds.x = target.contentWidth - childBounds.width - style.right;
-			} else if ( !isNaN(style.horizontal) ) {
+				childBounds.x = target.contentWidth - childBounds.width - element.right;
+			} else if ( !isNaN(element.hPercent) ) {
 				if (!isNaN(childPercentWidth)) {
 					childBounds.width = childPercentWidth * target.contentWidth;
 				}
 				
-				childBounds.x = style.horizontal * (target.contentWidth - childBounds.width) + offsetX;
+				childBounds.x = element.hPercent * (target.contentWidth - childBounds.width) + hOffset;
 			}
 			
 			
-			if ( !isNaN(style.top) ) {
-				if ( !isNaN(style.bottom) ) {
-					childBounds.height = target.contentHeight - style.top - style.bottom;
-				} else if ( !isNaN(style.vertical) ) {
-					childBounds.height = (style.vertical * target.contentHeight) - style.top + offsetY;
+			if ( !isNaN(element.top) ) {
+				if ( !isNaN(element.bottom) ) {
+					childBounds.height = target.contentHeight - element.top - element.bottom;
+				} else if ( !isNaN(element.vPercent) ) {
+					childBounds.height = (element.vPercent * target.contentHeight) - element.top + vOffset;
 				} else if (!isNaN(childPercentHeight)) {
-					childBounds.height = childPercentHeight * (target.contentHeight - style.top);
+					childBounds.height = childPercentHeight * (target.contentHeight - element.top);
 				}
 				
-				childBounds.y = style.top;
-			} else if ( !isNaN(style.bottom) ) {
-				if ( !isNaN(style.vertical) ) {
-					childBounds.height = (style.vertical * target.contentHeight) - style.bottom - offsetY;
+				childBounds.y = element.top;
+			} else if ( !isNaN(element.bottom) ) {
+				if ( !isNaN(element.vPercent) ) {
+					childBounds.height = (element.vPercent * target.contentHeight) - element.bottom - vOffset;
 				} else if (!isNaN(childPercentHeight)) {
-					childBounds.height = childPercentHeight * (target.contentHeight - style.bottom);
+					childBounds.height = childPercentHeight * (target.contentHeight - element.bottom);
 				}
 				
-				childBounds.y = target.contentHeight - childBounds.height - style.bottom;
-			} else if ( !isNaN(style.vertical) ) {
+				childBounds.y = target.contentHeight - childBounds.height - element.bottom;
+			} else if ( !isNaN(element.vPercent) ) {
 				if (!isNaN(childPercentHeight)) {
 					childBounds.height = childPercentHeight * target.contentHeight;
 				}
 				
-				childBounds.y = style.vertical * (target.contentHeight - childBounds.height) + offsetY;
+				childBounds.y = element.vPercent * (target.contentHeight - childBounds.height) + vOffset;
 			}
 		}
 		
