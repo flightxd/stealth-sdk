@@ -66,7 +66,7 @@ package stealth.graphics
 		{
 			DataChange.change(this, "tag", _tag, _tag = value);
 		}
-		private var _tag:Object = "";
+		private var _tag:Object;
 		
 		
 		// ====== IGraphicElement implementation ====== //
@@ -165,7 +165,7 @@ package stealth.graphics
 		[Bindable(event="xChange", style="noEvent")]
 		override public function set x(value:Number):void
 		{
-			DataChange.change(this, "x", super.x, super.x = value);
+			super.x = layoutElement.x = value;
 		}
 		
 		/**
@@ -174,7 +174,7 @@ package stealth.graphics
 		[Bindable(event="yChange", style="noEvent")]
 		override public function set y(value:Number):void
 		{
-			DataChange.change(this, "y", super.y, super.y = value);
+			super.y = layoutElement.y = value;
 		}
 		
 		/**
@@ -582,9 +582,10 @@ package stealth.graphics
 		
 		private function onCreate(event:LifecycleEvent):void
 		{
-			removeEventListener(LifecycleEvent.CREATE, onCreate);
-			create();
-			created = true;
+			if (!created) {
+				create();
+				created = true;
+			}
 		}
 		
 		private function onDestroy(event:LifecycleEvent):void

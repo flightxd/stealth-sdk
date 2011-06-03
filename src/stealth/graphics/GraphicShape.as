@@ -65,12 +65,12 @@ package stealth.graphics
 		 * A convenience property for storing data associated with this element.
 		 */
 		[Bindable(event="tagChange", style="noEvent")]
-		public function get tag():String { return _tag; }
-		public function set tag(value:String):void
+		public function get tag():Object { return _tag; }
+		public function set tag(value:Object):void
 		{
 			DataChange.change(this, "tag", _tag, _tag = value);
 		}
-		private var _tag:String = "";
+		private var _tag:Object;
 		
 		
 		// ====== IGraphicShape implementation ====== //
@@ -209,7 +209,7 @@ package stealth.graphics
 		[Bindable(event="xChange", style="noEvent")]
 		override public function set x(value:Number):void
 		{
-			DataChange.change(this, "x", super.x, super.x = value);
+			super.x = layoutElement.x = value;
 		}
 		
 		/**
@@ -218,7 +218,7 @@ package stealth.graphics
 		[Bindable(event="yChange", style="noEvent")]
 		override public function set y(value:Number):void
 		{
-			DataChange.change(this, "y", super.y, super.y = value);
+			super.y = layoutElement.y = value;
 		}
 		
 		/**
@@ -585,6 +585,11 @@ package stealth.graphics
 		
 		public function kill():void
 		{
+			removeEventListener(LayoutEvent.RESIZE, onResize);
+			removeEventListener(LayoutEvent.MEASURE, onMeasure);
+			removeEventListener(Event.ADDED, onFirstAdded);
+			removeEventListener(LifecycleEvent.CREATE, onCreate);
+			removeEventListener(LifecycleEvent.DESTROY, onDestroy);
 			if (created) {
 				created = false;
 				destroy();
@@ -592,11 +597,6 @@ package stealth.graphics
 					parent.removeChild(this);
 				}
 			}
-			removeEventListener(LayoutEvent.RESIZE, onResize);
-			removeEventListener(LayoutEvent.MEASURE, onMeasure);
-			removeEventListener(Event.ADDED, onFirstAdded);
-			removeEventListener(LifecycleEvent.CREATE, onCreate);
-			removeEventListener(LifecycleEvent.DESTROY, onDestroy);
 		}
 		protected var created:Boolean;
 		
@@ -624,13 +624,15 @@ package stealth.graphics
 		{
 			removeEventListener(Event.ADDED, onFirstAdded);
 			validateNow(LifecycleEvent.CREATE);
+			validateNow(LayoutEvent.RESIZE);
 		}
 		
 		private function onCreate(event:LifecycleEvent):void
 		{
-			create();
-			created = true;
-			validateNow(LayoutEvent.RESIZE);
+			if (!created) {
+				create();
+				created = true;
+			}
 		}
 		
 		private function onDestroy(event:LifecycleEvent):void

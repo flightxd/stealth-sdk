@@ -30,6 +30,28 @@ package stealth.layouts
 			_measured.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMeasuredChange);
 		}
 		
+		[Bindable(event="xChange", style="noEvent")]
+		public function get x():Number { return _x; }
+		public function set x(value:Number):void
+		{
+			if (!positioning) {
+				_explicit.x = value;
+				updateX();
+			}
+		}
+		private var _x:Number = 0;
+		
+		[Bindable(event="yChange", style="noEvent")]
+		public function get y():Number { return _y; }
+		public function set y(value:Number):void
+		{
+			if (!positioning) {
+				_explicit.y = value;
+				updateY();
+			}
+		}
+		private var _y:Number = 0;
+		
 		
 		// ====== ILayoutBounds implementation ====== //
 		
@@ -41,7 +63,7 @@ package stealth.layouts
 		public function set freeform(value:Boolean):void
 		{
 			if (value) {
-				_layoutWidth = _layoutHeight = NaN;
+				layoutRect.width = layoutRect.height = NaN;
 				updateWidth();
 				updateHeight();
 			}
@@ -84,7 +106,7 @@ package stealth.layouts
 		{
 			_explicit.minWidth = value;
 			if (_contained) {
-				value = _measured.constrainWidth(value);
+				value = Bounds.constrainWidth(_measured, value);
 			}
 			if (_minWidth != value) {
 				DataChange.queue(target, "minWidth", _minWidth, _minWidth = value);
@@ -102,7 +124,7 @@ package stealth.layouts
 		{
 			_explicit.minHeight = value;
 			if (_contained) {
-				value = _measured.constrainHeight(value);
+				value = Bounds.constrainHeight(_measured, value);
 			}
 			if (_minHeight != value) {
 				DataChange.queue(target, "minHeight", _minHeight, _minHeight = value);
@@ -120,7 +142,7 @@ package stealth.layouts
 		{
 			_explicit.maxWidth = value;
 			if (_contained) {
-				value = _measured.constrainWidth(value);
+				value = Bounds.constrainWidth(_measured, value);
 			}
 			if (_maxWidth != value) {
 				DataChange.queue(target, "maxWidth", _maxWidth, _maxWidth = value);
@@ -138,7 +160,7 @@ package stealth.layouts
 		{
 			_explicit.maxHeight = value;
 			if (_contained) {
-				value = _measured.constrainHeight(value);
+				value = Bounds.constrainHeight(_measured, value);
 			}
 			if (_maxHeight != value) {
 				DataChange.queue(target, "maxHeight", _maxHeight, _maxHeight = value);
@@ -210,7 +232,7 @@ package stealth.layouts
 		 */
 		public function get preferredWidth():Number
 		{
-			return !isNaN(explicit.width) ? explicit.width : measured.width;
+			return !isNaN(explicit.width) ? Bounds.constrainWidth(_measured, explicit.width) : measured.width;
 		}
 		
 		/**
@@ -218,14 +240,14 @@ package stealth.layouts
 		 */
 		public function get preferredHeight():Number
 		{
-			return !isNaN(explicit.height) ? explicit.height : measured.height;
+			return !isNaN(explicit.height) ? Bounds.constrainHeight(_measured, explicit.height) : measured.height;
 		}
 		
 		[Bindable(event="contentWidthChange", style="noEvent")]
 		public function get contentWidth():Number
 		{
 			if (!contained) {
-				var preferredWidth:Number = !isNaN(_contentWidth) ? _measured.constrainWidth(_contentWidth) : measured.width;
+				var preferredWidth:Number = !isNaN(_contentWidth) ? Bounds.constrainWidth(_measured, _contentWidth) : measured.width;
 				if (preferredWidth > _width) {
 					return preferredWidth;
 				}
@@ -246,7 +268,7 @@ package stealth.layouts
 		public function get contentHeight():Number
 		{
 			if (!contained) {
-				var preferredHeight:Number = !isNaN(_contentHeight) ? _measured.constrainHeight(_contentHeight) : measured.height;
+				var preferredHeight:Number = !isNaN(_contentHeight) ? Bounds.constrainHeight(_measured, _contentHeight) : measured.height;
 				if (preferredHeight > _height) {
 					return preferredHeight;
 				}
@@ -439,6 +461,8 @@ package stealth.layouts
 			}
 			
 			var m:Matrix = target.transform.matrix;
+			m.tx = _explicit.x;
+			m.ty = _explicit.y;
 			if (complexMatrix(m, _nativeSizing)) {
 				var x:Number, y:Number;
 				var minX:Number, minY:Number, maxX:Number, maxY:Number;
@@ -489,32 +513,20 @@ package stealth.layouts
 			var m:Matrix = target.transform.matrix;
 			var complex:Boolean = complexMatrix(m, _nativeSizing);
 			
-			// first set layout size fully
+			// first fully set layout size
 			if (complex) {
-				if (rect.width < 0) {
-					rect.width = 0;
-				}
-				if (rect.height < 0) {
-					rect.height = 0;
-				}
 				var i:Matrix = new Matrix(m.a, m.b, m.c, m.d, m.tx, m.ty);
 				i.invert();
-				_layoutWidth = Math.abs(i.a * rect.width + i.c * rect.height);
-				_layoutHeight = Math.abs(i.d * rect.height + i.b * rect.width);
+				var w:Number = rect.width < 0 ? 0 : rect.width;
+				var h:Number = rect.height < 0 ? 0 : rect.height;
+				rect.width = Math.abs(i.a * w + i.c * h);
+				rect.height = Math.abs(i.d * h + i.b * w);
 			} else {
-				_layoutWidth = rect.width / m.a;
-				_layoutHeight = rect.height / m.d;
+				rect.width = rect.width / m.a;
+				rect.height = rect.height / m.d;
 			}
-			if (_snapToPixel) {
-				_layoutWidth = Math.round(_layoutWidth);
-				_layoutHeight = Math.round(_layoutHeight);
-			}
-			if (_layoutWidth == preferredWidth) {
-				_layoutWidth = NaN;
-			}
-			if (_layoutHeight == preferredHeight) {
-				_layoutHeight = NaN;
-			}
+			layoutRect.width = rect.width == preferredWidth ? NaN : rect.width;
+			layoutRect.height = rect.height == preferredHeight ? NaN : rect.height;
 			updateWidth();
 			updateHeight();
 			
@@ -522,19 +534,17 @@ package stealth.layouts
 			if (complex) {
 				var d:Number;
 				d = m.a * _width + m.c * _height;
-				if (d < 0) rect.x -= d;
+				if (d < 0) rect.x = rect.x - d;
 				d = m.d * _height + m.b * _width;
-				if (d < 0) rect.y -= d;
+				if (d < 0) rect.y = rect.y - d;
 			}
-			if (_snapToPixel) {
-				rect.x = Math.round(rect.x);
-				rect.y = Math.round(rect.y);
-			}
-			target.x = rect.x;
-			target.y = rect.y;
+			layoutRect.x = rect.x == _explicit.x ? NaN : rect.x;
+			layoutRect.y = rect.y == _explicit.y ? NaN : rect.y;
+			updateX();
+			updateY();
 		}
-		private var _layoutWidth:Number;
-		private var _layoutHeight:Number;
+		private var layoutRect:Rectangle = new Rectangle(NaN, NaN, NaN, NaN);
+		private var positioning:Boolean;
 		
 		private function complexMatrix(m:Matrix, resetScale:Boolean = false):Boolean
 		{
@@ -574,9 +584,35 @@ package stealth.layouts
 			}
 		}
 		
+		private function updateX():void
+		{
+			var value:Number = !isNaN(layoutRect.x) ? layoutRect.x : _explicit.x;
+			if (_snapToPixel) {
+				value = Math.round(value);
+			}
+			if (_x != value) {
+				positioning = true;
+				DataChange.change(target, "x", _x, target.x = _x = value);
+				positioning = false;
+			}
+		}
+		
+		private function updateY():void
+		{
+			var value:Number = !isNaN(layoutRect.y) ? layoutRect.y : _explicit.y;
+			if (_snapToPixel) {
+				value = Math.round(value);
+			}
+			if (_y != value) {
+				positioning = true;
+				DataChange.change(target, "y", _y, target.y = _y = value);
+				positioning = false;
+			}
+		}
+		
 		private function updateWidth():void
 		{
-			var value:Number = constrainWidth( !isNaN(_layoutWidth) ? _layoutWidth : preferredWidth );
+			var value:Number = constrainWidth( !isNaN(layoutRect.width) ? layoutRect.width : preferredWidth );
 			
 			if (_snapToPixel) {
 				value = Math.round(value);
@@ -592,7 +628,7 @@ package stealth.layouts
 		
 		private function updateHeight():void
 		{
-			var value:Number = constrainHeight( !isNaN(_layoutHeight) ? _layoutHeight : preferredHeight );
+			var value:Number = constrainHeight( !isNaN(layoutRect.height) ? layoutRect.height : preferredHeight );
 			
 			if (_snapToPixel) {
 				value = Math.round(value);

@@ -47,7 +47,7 @@ package stealth.layouts
 			measured.minWidth += childBounds.width + space;
 		}
 		
-		override protected function layoutChild(child:DisplayObject, last:Boolean = false):void
+		override protected function updateChildBounds(child:DisplayObject, last:Boolean = false):void
 		{
 			var size:Number;
 			if (!isNaN(childPercentWidth)) {
@@ -64,7 +64,7 @@ package stealth.layouts
 				case Align.TOP:
 					childBounds.y = contentRect.y + childMargin.top;
 					break;
-				case Align.CENTER:
+				case Align.MIDDLE:
 					childBounds.y = contentRect.y + (childMargin.top + contentRect.height - childBounds.height - childMargin.bottom) / 2;
 					break;
 				case Align.BOTTOM:
@@ -86,10 +86,10 @@ package stealth.layouts
 			
 			switch (horizontalAlign) {
 				case Align.CENTER:
-					childBounds.x += horizontalSpace / 2;
+					childBounds.x += totalWidth / 2;
 					break;
 				case Align.RIGHT:
-					childBounds.x += horizontalSpace;
+					childBounds.x += totalWidth;
 					break;
 			}
 		}

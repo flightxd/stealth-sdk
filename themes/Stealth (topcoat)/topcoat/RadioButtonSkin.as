@@ -40,7 +40,8 @@ package topcoat
 			if (contentGroup) {
 				if (!contentGroup.layout) {
 					var contentLayout:HorizontalLayout = new HorizontalLayout();
-					contentLayout.horizontalAlign = contentLayout.verticalAlign = Align.CENTER;
+					contentLayout.horizontalAlign = Align.CENTER;
+					contentLayout.verticalAlign = Align.MIDDLE;
 					contentGroup.layout = contentLayout;
 				}
 				contentGroup.style.left = contentGroup.style.top = contentGroup.style.bottom = 0;

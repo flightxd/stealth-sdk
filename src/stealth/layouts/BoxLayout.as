@@ -8,14 +8,14 @@ package stealth.layouts
 {
 	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
-
+	
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
 	import flight.events.LayoutEvent;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.layouts.Layout;
-
+	
 	import mx.events.PropertyChangeEvent;
 
 	public class BoxLayout extends Layout
@@ -30,8 +30,8 @@ package stealth.layouts
 		
 		protected var totalPercentWidth:Number;
 		protected var totalPercentHeight:Number;
-		protected var horizontalSpace:Number;
-		protected var verticalSpace:Number;
+		protected var totalWidth:Number;
+		protected var totalHeight:Number;
 		
 		private var childRect:Rectangle = new Rectangle();
 		
@@ -112,9 +112,7 @@ package stealth.layouts
 		override public function measure():void
 		{
 			var measured:IBounds = target.measured;
-			measured.minWidth = measured.minHeight = 0;
-			measured.maxWidth = measured.maxHeight = 0xFFFFFF;
-			measured.width = measured.height = 0;
+			Bounds.reset(measured);
 			contentMargin.left = contentMargin.top = contentMargin.right = contentMargin.bottom = 0;
 			totalPercentWidth = totalPercentHeight = 0;
 			
@@ -138,10 +136,10 @@ package stealth.layouts
 			contentRect.y = padding.top;
 			contentRect.width = target.contentWidth;
 			contentRect.height = target.contentHeight
-			var measuredWidth:Number = measured.width + totalPercentWidth * contentRect.width;
-			var measuredHeight:Number = measured.height + totalPercentHeight * contentRect.height;
-			horizontalSpace = measuredWidth < contentRect.width ? contentRect.width - measuredWidth : 0;
-			verticalSpace = measuredHeight < contentRect.height ? contentRect.height - measuredHeight : 0;
+			var measuredWidth:Number = measured.minWidth + totalPercentWidth * contentRect.width;
+			var measuredHeight:Number = measured.minHeight + totalPercentHeight * contentRect.height;
+			totalWidth = measuredWidth < contentRect.width ? contentRect.width - measuredWidth : 0;
+			totalHeight = measuredHeight < contentRect.height ? contentRect.height - measuredHeight : 0;
 			contentRect.width -= padding.left + padding.right;
 			contentRect.height -= padding.top + padding.bottom;
 			
@@ -149,8 +147,8 @@ package stealth.layouts
 		}
 		
 		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
-		{
-			layoutChild(child,  last);
+		{// TODO: asfda sdf sdfas dfasdf stop listening to updates...
+			updateChildBounds(child,  last);
 			if (!childBounds.equalsRect(childRect)) {
 				childBounds.getRect(childRect);
 				if (child is ILayoutElement) {
@@ -164,7 +162,7 @@ package stealth.layouts
 			}
 		}
 		
-		protected function layoutChild(child:DisplayObject, last:Boolean = false):void
+		protected function updateChildBounds(child:DisplayObject, last:Boolean = false):void
 		{
 		}
 		
@@ -175,27 +173,27 @@ package stealth.layouts
 			}
 			
 			if (child is ILayoutElement) {
-				var element:ILayoutElement = ILayoutElement(child);
-				if (element.freeform) {
+				var layoutChild:ILayoutElement = ILayoutElement(child);
+				if (layoutChild.freeform) {
 					return false;
 				}
 				
 				// update contentMargin to be the greater of this child's margin and the previous child's margin
 				contentMargin.copy(childMargin);
-				childMargin.merge(element.margin);
+				childMargin.merge(layoutChild.margin);
 				
-				childRect = element.getLayoutRect(element.minWidth, element.minHeight);
+				childRect = layoutChild.getLayoutRect(layoutChild.minWidth, layoutChild.minHeight);
 				childBounds.minWidth = childRect.width;
 				childBounds.minHeight = childRect.height;
-				childRect = element.getLayoutRect(element.maxWidth, element.maxHeight);
+				childRect = layoutChild.getLayoutRect(layoutChild.maxWidth, layoutChild.maxHeight);
 				childBounds.maxWidth = childRect.width;
 				childBounds.maxHeight = childRect.height;
-				childRect = element.getLayoutRect();
+				childRect = layoutChild.getLayoutRect();
 				
-				if (!isNaN(childPercentWidth = element.percentWidth)) {
+				if (!isNaN(childPercentWidth = layoutChild.percentWidth)) {
 					childRect.width = childBounds.minWidth;
 				}
-				if (!isNaN(childPercentHeight = element.percentHeight)) {
+				if (!isNaN(childPercentHeight = layoutChild.percentHeight)) {
 					childRect.height = childBounds.minHeight;
 				}
 			} else {
@@ -208,6 +206,18 @@ package stealth.layouts
 			childBounds.setRect(childRect);
 			
 			return true;
+		}
+		
+		override protected function detach():void
+		{
+			super.detach();
+			Bounds.reset(target.measured);
+			for each (var child:DisplayObject in target.content) {
+				if (child is ILayoutElement) {
+					var layoutChild:ILayoutElement = ILayoutElement(child);
+					layoutChild.setLayoutRect( layoutChild.getLayoutRect() );
+				}
+			}
 		}
 	}
 }

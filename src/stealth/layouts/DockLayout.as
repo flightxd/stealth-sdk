@@ -43,10 +43,10 @@ package stealth.layouts
 			super.measure();
 			
 			var measured:IBounds = target.measured;
-			measured.minWidth = dockMeasured.constrainWidth(measured.minWidth);
-			measured.minHeight = dockMeasured.constrainHeight(measured.minHeight);
-			measured.maxWidth = dockMeasured.constrainWidth(measured.maxWidth);
-			measured.maxHeight = dockMeasured.constrainHeight(measured.maxHeight);
+			measured.minWidth = Bounds.constrainWidth(dockMeasured, measured.minWidth);
+			measured.minHeight = Bounds.constrainHeight(dockMeasured, measured.minHeight);
+			measured.maxWidth = Bounds.constrainWidth(dockMeasured, measured.maxWidth);
+			measured.maxHeight = Bounds.constrainHeight(dockMeasured, measured.maxHeight);
 			dockMeasured.width = measuredWidth;
 			dockMeasured.height = measuredHeight;
 			if (measured.width < dockMeasured.width) {
@@ -62,10 +62,10 @@ package stealth.layouts
 			if (!(child is ILayoutElement)) {
 				return super.measureChild(child, last);
 			}
-			var element:ILayoutElement = child as ILayoutElement;
+			var layoutChild:ILayoutElement = child as ILayoutElement;
 			
-			var dock:String = element.dock;
-			var tile:String = element.tile;
+			var dock:String = layoutChild.dock;
+			var tile:String = layoutChild.tile;
 			if (tile) {
 				if (tile == Align.LEFT || tile == Align.RIGHT) {
 					if (dock != Align.BOTTOM) {
@@ -120,8 +120,8 @@ package stealth.layouts
 						tileWidth = space;
 						dockMargin[dock] = childMargin[m];
 					}
-					dockMeasured.minWidth = dockMeasured.constrainWidth(measuredWidth + tileWidth);
-					dockMeasured.minHeight = dockMeasured.constrainHeight(measuredHeight + tileHeight);
+					dockMeasured.minWidth = Bounds.constrainWidth(dockMeasured, measuredWidth + tileWidth);
+					dockMeasured.minHeight = Bounds.constrainHeight(dockMeasured, measuredHeight + tileHeight);
 				} else {
 					if (dock == Align.LEFT) {
 						contentMargin.left = childMargin.right;
@@ -132,9 +132,9 @@ package stealth.layouts
 					}
 					measuredWidth += childBounds.width + space + padding.horizontal;
 					space = measuredHeight + childMargin.top + childMargin.bottom;
-					dockMeasured.minWidth = dockMeasured.constrainWidth(measuredWidth);
-					dockMeasured.minHeight = dockMeasured.constrainHeight(space + childBounds.minHeight);
-					dockMeasured.maxHeight = dockMeasured.constrainHeight(space + childBounds.maxHeight);
+					dockMeasured.minWidth = Bounds.constrainWidth(dockMeasured, measuredWidth);
+					dockMeasured.minHeight = Bounds.constrainHeight(dockMeasured, space + childBounds.minHeight);
+					dockMeasured.maxHeight = Bounds.constrainHeight(dockMeasured, space + childBounds.maxHeight);
 				}
 			} else if (dock == Align.TOP || dock == Align.BOTTOM) {
 				m = dock == Align.TOP ? Align.BOTTOM : Align.TOP;
@@ -152,8 +152,8 @@ package stealth.layouts
 						tileHeight = space;
 						dockMargin[dock] = childMargin[m];
 					}
-					dockMeasured.minWidth = dockMeasured.constrainWidth(measuredWidth + tileWidth);
-					dockMeasured.minHeight = dockMeasured.constrainHeight(measuredHeight + tileHeight);
+					dockMeasured.minWidth = Bounds.constrainWidth(dockMeasured, measuredWidth + tileWidth);
+					dockMeasured.minHeight = Bounds.constrainHeight(dockMeasured, measuredHeight + tileHeight);
 				} else {
 					if (dock == Align.TOP) {
 						contentMargin.top = childMargin.bottom;
@@ -164,18 +164,18 @@ package stealth.layouts
 					}
 					measuredHeight += childBounds.height + space + padding.vertical;
 					space = measuredWidth + childMargin.left + childMargin.right;
-					dockMeasured.minHeight = dockMeasured.constrainHeight(measuredHeight);
-					dockMeasured.minWidth = dockMeasured.constrainWidth(space + childBounds.minWidth);
-					dockMeasured.maxWidth = dockMeasured.constrainWidth(space + childBounds.maxWidth);
+					dockMeasured.minHeight = Bounds.constrainHeight(dockMeasured, measuredHeight);
+					dockMeasured.minWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.minWidth);
+					dockMeasured.maxWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.maxWidth);
 				}
 			} else {	// if (dock == JUSTIFY) {
 				space = measuredWidth + childMargin.left + childMargin.right + padding.horizontal;
-				dockMeasured.minWidth = dockMeasured.constrainWidth(space + childBounds.minWidth);
-				dockMeasured.maxWidth = dockMeasured.constrainWidth(space + childBounds.maxWidth);
+				dockMeasured.minWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.minWidth);
+				dockMeasured.maxWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.maxWidth);
 				
 				space = measuredHeight + childMargin.top + childMargin.bottom + padding.vertical;
-				dockMeasured.minHeight = dockMeasured.constrainHeight(space + childBounds.minHeight);
-				dockMeasured.maxHeight = dockMeasured.constrainHeight(space + childBounds.maxHeight);
+				dockMeasured.minHeight = Bounds.constrainHeight(dockMeasured, space + childBounds.minHeight);
+				dockMeasured.maxHeight = Bounds.constrainHeight(dockMeasured, space + childBounds.maxHeight);
 			}
 			
 			if (last) {
@@ -193,15 +193,15 @@ package stealth.layouts
 			}
 		}
 		
-		override protected function layoutChild(child:DisplayObject, last:Boolean = false):void
+		override protected function updateChildBounds(child:DisplayObject, last:Boolean = false):void
 		{
 			if (!(child is ILayoutElement)) {
 				return super.measureChild(child, last);
 			}
-			var element:ILayoutElement = child as ILayoutElement;
+			var layoutChild:ILayoutElement = child as ILayoutElement;
 			
-			var dock:String = element.dock;
-			var tile:String = element.tile;
+			var dock:String = layoutChild.dock;
+			var tile:String = layoutChild.tile;
 			if (tile) {
 				if (tile == Align.LEFT || tile == Align.RIGHT) {
 					if (dock != Align.BOTTOM) {
@@ -216,7 +216,7 @@ package stealth.layouts
 				}
 			}
 			if (!dock || validDockValues.indexOf(dock) == -1) {
-				super.layoutChild(child, last);
+				super.updateChildBounds(child, last);
 				return;
 			}
 			
@@ -353,6 +353,15 @@ package stealth.layouts
 					}
 					break;
 			}
+		}
+		
+		override protected function layoutChildReady(layoutChild:ILayoutElement):Boolean
+		{
+			if (layoutChild.dock ||
+				layoutChild.tile) {
+				return true;
+			}
+			return super.layoutChildReady(layoutChild);
 		}
 	}
 }
