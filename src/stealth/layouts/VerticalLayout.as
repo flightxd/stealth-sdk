@@ -34,7 +34,7 @@ package stealth.layouts
 			if (last) {
 				space = childMargin.top + childMargin.bottom;
 			} else {
-				space = childMargin.top + padding.vertical;
+				space = childMargin.top + gap.vertical;
 				contentMargin.top = childMargin.bottom;
 			}
 			if (!isNaN(childPercentHeight)) {
@@ -79,7 +79,7 @@ package stealth.layouts
 			childBounds.y = contentRect.y + childMargin.top;
 			if (last) {
 			} else {
-				contentRect.top = childBounds.y + childBounds.height + padding.vertical;
+				contentRect.top = childBounds.y + childBounds.height + gap.vertical;
 				contentMargin.top = childMargin.bottom;
 			}
 			

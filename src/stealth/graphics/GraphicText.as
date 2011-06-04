@@ -508,8 +508,10 @@ package stealth.graphics
 		 */
 		public function initialized(document:Object, id:String):void
 		{
-			this.id = super.name = id;
+			++idInc;
+			this.id = id || "Text" + idInc;
 		}
+		private static var idInc:uint;
 		
 		
 		// ====== IInvalidating implementation ====== //
@@ -578,6 +580,11 @@ package stealth.graphics
 		private function onDestroy(event:LifecycleEvent):void
 		{
 			kill();
+		}
+		
+		override public function toString():String
+		{
+			return super.toString().replace("]", "(" + id + ")]");
 		}
 	}
 }

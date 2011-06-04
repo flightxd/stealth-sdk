@@ -12,13 +12,13 @@ package stealth.layouts
 
 	public class Box extends EventDispatcher
 	{
-		[Bindable(event="leftChange", style="noEvent")]
-		public function get left():Number { return _left }
-		public function set left(value:Number):void
+		public function Box(top:Number = 0, right:Number = 0, bottom:Number = 0, left:Number = 0)
 		{
-			DataChange.change(this, "left", _left, _left = value);
+			_top = top;
+			_right = right;
+			_bottom = bottom;
+			_left = left;
 		}
-		private var _left:Number;
 		
 		[Bindable(event="topChange", style="noEvent")]
 		public function get top():Number { return _top }
@@ -44,29 +44,13 @@ package stealth.layouts
 		}
 		private var _bottom:Number;
 		
-		[Bindable(event="horizontalChange", style="noEvent")]
-		public function get horizontal():Number { return _horizontal }
-		public function set horizontal(value:Number):void
+		[Bindable(event="leftChange", style="noEvent")]
+		public function get left():Number { return _left }
+		public function set left(value:Number):void
 		{
-			DataChange.change(this, "horizontal", _horizontal, _horizontal = value);
+			DataChange.change(this, "left", _left, _left = value);
 		}
-		private var _horizontal:Number;
-		
-		[Bindable(event="verticalChange", style="noEvent")]
-		public function get vertical():Number { return _vertical }
-		public function set vertical(value:Number):void
-		{
-			DataChange.change(this, "vertical", _vertical, _vertical = value);
-		}
-		private var _vertical:Number;
-		
-		public function Box(left:Number = 0, top:Number = 0, right:Number = 0, bottom:Number = 0)
-		{
-			_left = left;
-			_top = top;
-			_right = right;
-			_bottom = bottom;
-		}
+		private var _left:Number;
 		
 		public function merge(box:Box):Box
 		{
@@ -81,9 +65,8 @@ package stealth.layouts
 		
 		public function equals(box:Box):Boolean
 		{
-			return (_left == box._left && _right == box._right &&
-					_top == box._top && _bottom == box._bottom &&
-					_horizontal == box._horizontal && _vertical == box._vertical);
+			return (_right == box._right && _top == box._top &&
+					_bottom == box._bottom && _left == box._left);
 		}
 		
 		public function copy(box:Box = null):Box
@@ -91,19 +74,17 @@ package stealth.layouts
 			if (!box) {
 				box = new Box();
 			}
-			box.left = _left;
 			box.top = _top;
 			box.right = _right;
 			box.bottom = _bottom;
-			box.horizontal = _horizontal;
-			box.vertical = _vertical;
+			box.left = _left;
 			
 			return box;
 		}
 		
 		override public function toString():String
 		{
-			return '[Box(left="' + _left + '", top="' + _top + ', right="' + _right + '", bottom="' + _bottom + '")]'; 
+			return '[Box(top="' + _top + ', right="' + _right + '", bottom="' + _bottom + '", left="' + _left + '")]'; 
 		}
 		
 		public static function fromString(value:String, box:Box = null):Box
@@ -116,22 +97,22 @@ package stealth.layouts
 				var values:Array = value.split(" ");
 				switch (values.length) {
 					case 1 :
-						box.left = box.top = box.right = box.bottom = parseFloat( values[0] );
+						box.top = box.right = box.bottom = box.left = parseFloat( values[0] );
 						break;
 					case 2 :
-						box.left = box.right = parseFloat( values[1] );
 						box.top = box.bottom = parseFloat( values[0] );
+						box.right = box.left = parseFloat( values[1] );
 						break;
 					case 3 :
-						box.left = box.right = parseFloat( values[1] );
 						box.top = parseFloat( values[0] );
+						box.right = box.left = parseFloat( values[1] );
 						box.bottom = parseFloat( values[2] );
 						break;
 					case 4 :
-						box.left = parseFloat( values[3] );
 						box.top = parseFloat( values[0] );
 						box.right = parseFloat( values[1] );
 						box.bottom = parseFloat( values[2] );
+						box.left = parseFloat( values[3] );
 						break;
 				}
 			}

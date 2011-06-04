@@ -90,10 +90,10 @@ package stealth.layouts
 				if (tiling) {
 					if (lastDock == Align.LEFT || lastDock == Align.RIGHT) {
 						measuredWidth += tileWidth;
-						dockMeasured.minHeight -= padding.vertical;
+						dockMeasured.minHeight -= gap.vertical;
 					} else {
 						measuredHeight += tileHeight;
-						dockMeasured.minWidth -= padding.horizontal;
+						dockMeasured.minWidth -= gap.horizontal;
 					}
 					childMargin.merge(dockMargin.copy(contentMargin));
 					tiling = false;
@@ -114,8 +114,8 @@ package stealth.layouts
 						contentMargin.bottom = childMargin.top;
 						space = childMargin.bottom;
 					}
-					tileHeight += space + childBounds.height + padding.vertical;
-					space = childBounds.width + childMargin[dock] + padding.horizontal;
+					tileHeight += space + childBounds.height + gap.vertical;
+					space = childBounds.width + childMargin[dock] + gap.horizontal;
 					if (tileWidth + dockMargin[dock] < space + childMargin[m]) {
 						tileWidth = space;
 						dockMargin[dock] = childMargin[m];
@@ -130,7 +130,7 @@ package stealth.layouts
 						contentMargin.right = childMargin.left;
 						space = childMargin.right;
 					}
-					measuredWidth += childBounds.width + space + padding.horizontal;
+					measuredWidth += childBounds.width + space + gap.horizontal;
 					space = measuredHeight + childMargin.top + childMargin.bottom;
 					dockMeasured.minWidth = Bounds.constrainWidth(dockMeasured, measuredWidth);
 					dockMeasured.minHeight = Bounds.constrainHeight(dockMeasured, space + childBounds.minHeight);
@@ -146,8 +146,8 @@ package stealth.layouts
 						contentMargin.right = childMargin.left;
 						space = childMargin.right;
 					}
-					tileWidth += childBounds.width + space + padding.horizontal;
-					space = childBounds.height + childMargin[dock] + padding.vertical;
+					tileWidth += childBounds.width + space + gap.horizontal;
+					space = childBounds.height + childMargin[dock] + gap.vertical;
 					if (tileHeight + dockMargin[dock] < space + childMargin[m]) {
 						tileHeight = space;
 						dockMargin[dock] = childMargin[m];
@@ -162,18 +162,18 @@ package stealth.layouts
 						contentMargin.bottom = childMargin.top;
 						space = childMargin.bottom;
 					}
-					measuredHeight += childBounds.height + space + padding.vertical;
+					measuredHeight += childBounds.height + space + gap.vertical;
 					space = measuredWidth + childMargin.left + childMargin.right;
 					dockMeasured.minHeight = Bounds.constrainHeight(dockMeasured, measuredHeight);
 					dockMeasured.minWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.minWidth);
 					dockMeasured.maxWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.maxWidth);
 				}
 			} else {	// if (dock == JUSTIFY) {
-				space = measuredWidth + childMargin.left + childMargin.right + padding.horizontal;
+				space = measuredWidth + childMargin.left + childMargin.right + gap.horizontal;
 				dockMeasured.minWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.minWidth);
 				dockMeasured.maxWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.maxWidth);
 				
-				space = measuredHeight + childMargin.top + childMargin.bottom + padding.vertical;
+				space = measuredHeight + childMargin.top + childMargin.bottom + gap.vertical;
 				dockMeasured.minHeight = Bounds.constrainHeight(dockMeasured, space + childBounds.minHeight);
 				dockMeasured.maxHeight = Bounds.constrainHeight(dockMeasured, space + childBounds.maxHeight);
 			}
@@ -181,10 +181,10 @@ package stealth.layouts
 			if (last) {
 				// remove the last pad and add the last margin
 				switch (lastDock) {
-					case Align.LEFT: dockMeasured.minWidth += childMargin.right - padding.horizontal; break;
-					case Align.TOP: dockMeasured.minHeight += childMargin.bottom - padding.vertical; break;
-					case Align.RIGHT: dockMeasured.minWidth += childMargin.left - padding.horizontal; break;
-					case Align.BOTTOM: dockMeasured.minHeight += childMargin.top - padding.vertical; break;
+					case Align.LEFT: dockMeasured.minWidth += childMargin.right - gap.horizontal; break;
+					case Align.TOP: dockMeasured.minHeight += childMargin.bottom - gap.vertical; break;
+					case Align.RIGHT: dockMeasured.minWidth += childMargin.left - gap.horizontal; break;
+					case Align.BOTTOM: dockMeasured.minHeight += childMargin.top - gap.vertical; break;
 				}
 				lastDock = null;
 				tiling = false;
@@ -325,28 +325,28 @@ package stealth.layouts
 			var pos:Number;
 			switch (align) {
 				case Align.LEFT:
-					pos = childBounds.x + childBounds.width + padding.horizontal;
+					pos = childBounds.x + childBounds.width + gap.horizontal;
 					if (area.left + margin.left < pos + childMargin.right) {
 						area.left = pos;
 						margin.left = childMargin.right;
 					}
 					break;
 				case Align.TOP:
-					pos = childBounds.y + childBounds.height + padding.vertical;
+					pos = childBounds.y + childBounds.height + gap.vertical;
 					if (area.top + margin.top < pos + childMargin.bottom) {
 						area.top = pos;
 						margin.top = childMargin.bottom;
 					}
 					break;
 				case Align.RIGHT:
-					pos = childBounds.x - padding.horizontal;
+					pos = childBounds.x - gap.horizontal;
 					if (area.right - margin.right > pos - childMargin.left) {
 						area.right = pos;
 						margin.right = childMargin.left;
 					}
 					break;
 				case Align.BOTTOM:
-					pos = childBounds.y - padding.vertical;
+					pos = childBounds.y - gap.vertical;
 					if (area.bottom - margin.bottom > pos - childMargin.top) {
 						area.bottom = pos;
 						margin.bottom = childMargin.top;

@@ -34,7 +34,7 @@ package stealth.layouts
 			if (last) {
 				space = childMargin.left + childMargin.right;
 			} else {
-				space = childMargin.left + padding.horizontal;
+				space = childMargin.left + gap.horizontal;
 				contentMargin.left = childMargin.right;
 			}
 			
@@ -80,7 +80,7 @@ package stealth.layouts
 			childBounds.x = contentRect.x + childMargin.left;
 			if (last) {
 			} else {
-				contentRect.left = childBounds.x + childBounds.width + padding.horizontal;
+				contentRect.left = childBounds.x + childBounds.width + gap.horizontal;
 				contentMargin.left = childMargin.right;
 			}
 			

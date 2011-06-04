@@ -7,6 +7,7 @@
 package stealth.containers
 {
 	import stealth.layouts.Box;
+	import stealth.layouts.Gap;
 	import stealth.layouts.VerticalLayout;
 
 	public class VGroup extends Group
@@ -26,6 +27,16 @@ package stealth.containers
 		public function set padding(value:*):void
 		{
 			verticalLayout.padding = value;
+		}
+		
+		/**
+		 * @copy flight.layout.Layout#gap
+		 */
+		[Inspectable(type="String")]
+		public function get gap():Gap { return verticalLayout.gap; }
+		public function set gap(value:*):void
+		{
+			verticalLayout.gap = value;
 		}
 
 		/**

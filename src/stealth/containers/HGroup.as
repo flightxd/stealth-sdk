@@ -7,6 +7,7 @@
 package stealth.containers
 {
 	import stealth.layouts.Box;
+	import stealth.layouts.Gap;
 	import stealth.layouts.HorizontalLayout;
 
 	public class HGroup extends Group
@@ -26,6 +27,16 @@ package stealth.containers
 		public function set padding(value:*):void
 		{
 			horizontalLayout.padding = value;
+		}
+		
+		/**
+		 * @copy flight.layout.Layout#gap
+		 */
+		[Inspectable(type="String")]
+		public function get gap():Gap { return horizontalLayout.gap; }
+		public function set gap(value:*):void
+		{
+			horizontalLayout.gap = value;
 		}
 
 		/**

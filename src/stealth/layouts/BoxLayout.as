@@ -103,6 +103,27 @@ package stealth.layouts
 		}
 		private var _padding:Box;
 		
+		[Bindable(event="gapChange", style="noEvent")]
+		public function get gap():Gap { return _gap || (gap = new Gap()); }
+		public function set gap(value:*):void
+		{
+			if (value is String) {
+				value = Gap.fromString(value);
+			} else if (value is Number) {
+				value = new Gap(value, value);
+			}
+			
+			if (_gap) {
+				_gap.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
+			}
+			DataChange.change(this, "gap", _gap, _gap = value);
+			if (_gap) {
+				_gap.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
+			}
+			invalidate(LayoutEvent.LAYOUT);
+		}
+		private var _gap:Gap;
+		
 		private function onPaddingChange(event:PropertyChangeEvent):void
 		{
 			invalidate(LayoutEvent.LAYOUT);

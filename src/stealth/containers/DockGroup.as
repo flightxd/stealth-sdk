@@ -8,6 +8,7 @@ package stealth.containers
 {
 	import stealth.layouts.Box;
 	import stealth.layouts.DockLayout;
+	import stealth.layouts.Gap;
 
 	public class DockGroup extends Group
 	{
@@ -24,7 +25,17 @@ package stealth.containers
 		public function get padding():Box { return dockLayout.padding; }
 		public function set padding(value:*):void
 		{
-			dockLayout = value;
+			dockLayout.padding = value;
+		}
+		
+		/**
+		 * @copy flight.layout.Layout#gap
+		 */
+		[Inspectable(type="String")]
+		public function get gap():Gap { return dockLayout.gap; }
+		public function set gap(value:*):void
+		{
+			dockLayout.gap = value;
 		}
 		
 		/**
