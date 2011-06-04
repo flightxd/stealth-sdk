@@ -8,7 +8,6 @@ package stealth.containers
 {
 	import stealth.layouts.Box;
 	import stealth.layouts.DockLayout;
-	import stealth.layouts.Gap;
 
 	public class DockGroup extends Group
 	{
@@ -20,41 +19,17 @@ package stealth.containers
 		}
 		
 		/**
-		 * @copy flight.layout.Layout#padding
+		 * @copy stealth.layout.BoxLayout#padding
 		 */
 		public function get padding():Box { return dockLayout.padding; }
-		public function set padding(value:*):void
-		{
-			dockLayout.padding = value;
-		}
+		public function set padding(value:*):void { dockLayout.padding = value; }
 		
 		/**
-		 * @copy flight.layout.Layout#gap
+		 * @copy stealth.layout.BoxLayout#gap
 		 */
 		[Inspectable(type="String")]
-		public function get gap():Gap { return dockLayout.gap; }
-		public function set gap(value:*):void
-		{
-			dockLayout.gap = value;
-		}
-		
-		/**
-		 * @copy flight.layout.Layout#horizontalAlign
-		 */
-		public function get horizontalAlign():String { return dockLayout.horizontalAlign }
-		public function set horizontalAlign(value:String):void
-		{
-			dockLayout.horizontalAlign = value;
-		}
-		
-		/**
-		 * @copy flight.layout.Layout#verticalAlign
-		 */
-		public function get verticalAlign():String { return dockLayout.verticalAlign }
-		public function set verticalAlign(value:String):void
-		{
-			dockLayout.verticalAlign = value;
-		}
+		public function get gap():Box { return dockLayout.gap; }
+		public function set gap(value:*):void { dockLayout.gap = value; }
 		
 	}
 }

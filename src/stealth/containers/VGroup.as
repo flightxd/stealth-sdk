@@ -7,7 +7,6 @@
 package stealth.containers
 {
 	import stealth.layouts.Box;
-	import stealth.layouts.Gap;
 	import stealth.layouts.VerticalLayout;
 
 	public class VGroup extends Group
@@ -20,44 +19,32 @@ package stealth.containers
 		}
 		
 		/**
-		 * @copy flight.layout.Layout#padding
+		 * @copy stealth.layout.BoxLayout#padding
 		 */
 		[Inspectable(type="String")]
 		public function get padding():Box { return verticalLayout.padding; }
-		public function set padding(value:*):void
-		{
-			verticalLayout.padding = value;
-		}
+		public function set padding(value:*):void { verticalLayout.padding = value; }
 		
 		/**
-		 * @copy flight.layout.Layout#gap
+		 * @copy stealth.layout.BoxLayout#gap
 		 */
 		[Inspectable(type="String")]
-		public function get gap():Gap { return verticalLayout.gap; }
-		public function set gap(value:*):void
-		{
-			verticalLayout.gap = value;
-		}
+		public function get gap():Box { return verticalLayout.gap; }
+		public function set gap(value:*):void { verticalLayout.gap = value; }
 
 		/**
-		 * @copy flight.layout.Layout#horizontalAlign
+		 * @copy stealth.layout.BoxLayout#hAlign
 		 */
-		[Inspectable(enumeration="left,center,right,justify", defaultValue="left", name="horizontalAlign")]
-		public function get horizontalAlign():String { return verticalLayout.horizontalAlign }
-		public function set horizontalAlign(value:String):void
-		{
-			verticalLayout.horizontalAlign = value;
-		}
-
+		[Inspectable(enumeration="left,center,right,justify", defaultValue="left")]
+		public function get hAlign():String { return verticalLayout.hAlign }
+		public function set hAlign(value:String):void { verticalLayout.hAlign = value; }
+		
 		/**
-		 * @copy flight.layout.Layout#verticalAlign
+		 * @copy stealth.layout.BoxLayout#vAlign
 		 */
-		[Inspectable(enumeration="top,center,bottom", defaultValue="top", name="verticalAlign")]
-		public function get verticalAlign():String { return verticalLayout.verticalAlign }
-		public function set verticalAlign(value:String):void
-		{
-			verticalLayout.verticalAlign = value;
-		}
+		[Inspectable(enumeration="top,middle,bottom", defaultValue="top")]
+		public function get vAlign():String { return verticalLayout.vAlign }
+		public function set vAlign(value:String):void { verticalLayout.vAlign = value; }
 		
 	}
 }

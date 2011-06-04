@@ -8,14 +8,14 @@ package stealth.layouts
 {
 	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
-	
+
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
 	import flight.events.LayoutEvent;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.layouts.Layout;
-	
+
 	import mx.events.PropertyChangeEvent;
 
 	public class BoxLayout extends Layout
@@ -39,8 +39,8 @@ package stealth.layouts
 		{
 			super(target);
 			
-			bindTarget("horizontalAlign");
-			bindTarget("verticalAlign");
+			bindTarget("hAlign");
+			bindTarget("vAlign");
 			bindTarget("padding");
 			
 			watchTarget("width");
@@ -64,24 +64,6 @@ package stealth.layouts
 			watchContent("percentHeight");
 		}
 		
-		[Bindable(event="horizontalAlignChange", style="noEvent")]
-		public function get horizontalAlign():String { return _horizontalAlign; }
-		public function set horizontalAlign(value:String):void
-		{
-			DataChange.change(this, "horizontalAlign", _horizontalAlign, _horizontalAlign = value);
-			invalidate(LayoutEvent.LAYOUT);
-		}
-		private var _horizontalAlign:String = Align.LEFT;
-		
-		[Bindable(event="verticalAlignChange", style="noEvent")]
-		public function get verticalAlign():String { return _verticalAlign; }
-		public function set verticalAlign(value:String):void
-		{
-			DataChange.change(this, "verticalAlign", _verticalAlign, _verticalAlign = value);
-			invalidate(LayoutEvent.LAYOUT);
-		}
-		private var _verticalAlign:String = Align.TOP;
-		
 		[Bindable(event="paddingChange", style="noEvent")]
 		public function get padding():Box { return _padding || (padding = new Box()); }
 		public function set padding(value:*):void
@@ -103,31 +85,53 @@ package stealth.layouts
 		}
 		private var _padding:Box;
 		
-		[Bindable(event="gapChange", style="noEvent")]
-		public function get gap():Gap { return _gap || (gap = new Gap()); }
-		public function set gap(value:*):void
-		{
-			if (value is String) {
-				value = Gap.fromString(value);
-			} else if (value is Number) {
-				value = new Gap(value, value);
-			}
-			
-			if (_gap) {
-				_gap.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
-			}
-			DataChange.change(this, "gap", _gap, _gap = value);
-			if (_gap) {
-				_gap.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
-			}
-			invalidate(LayoutEvent.LAYOUT);
-		}
-		private var _gap:Gap;
-		
 		private function onPaddingChange(event:PropertyChangeEvent):void
 		{
 			invalidate(LayoutEvent.LAYOUT);
 		}
+		
+		public function get gap():Box { return _padding || (padding = new Box()); }
+		public function set gap(value:*):void
+		{
+			_padding = padding;
+			if (value is String) {
+				var values:Array = value.split(" ");
+				switch (values.length) {
+					case 1 :
+						_padding.vertical = _padding.horizontal = parseFloat( values[0] );
+						break;
+					case 2 :
+						_padding.vertical = parseFloat( values[0] );
+						_padding.horizontal = parseFloat( values[1] );
+						break;
+				}
+			} else if (value is Number) {
+				_padding.vertical = _padding.horizontal = value;
+			} else if (value is Box) {
+				_padding.vertical = value._vertical;
+				_padding.horizontal = value._horizontal
+			}
+		}
+		
+		[Bindable(event="hAlignChange", style="noEvent")]
+		[Inspectable(enumeration="left,center,right,justify", defaultValue="left", name="hAlign")]
+		public function get hAlign():String { return _hAlign; }
+		public function set hAlign(value:String):void
+		{
+			DataChange.change(this, "hAlign", _hAlign, _hAlign = value);
+			invalidate(LayoutEvent.LAYOUT);
+		}
+		private var _hAlign:String = Align.LEFT;
+		
+		[Bindable(event="vAlignChange", style="noEvent")]
+		[Inspectable(enumeration="top,middle,bottom,justify", defaultValue="top", name="vAlign")]
+		public function get vAlign():String { return _vAlign; }
+		public function set vAlign(value:String):void
+		{
+			DataChange.change(this, "vAlign", _vAlign, _vAlign = value);
+			invalidate(LayoutEvent.LAYOUT);
+		}
+		private var _vAlign:String = Align.TOP;
 		
 		
 		override public function measure():void

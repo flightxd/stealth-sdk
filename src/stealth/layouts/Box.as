@@ -52,6 +52,22 @@ package stealth.layouts
 		}
 		private var _left:Number;
 		
+		[Bindable(event="verticalChange", style="noEvent")]
+		public function get vertical():Number { return _vertical }
+		public function set vertical(value:Number):void
+		{
+			DataChange.change(this, "vertical", _vertical, _vertical = value);
+		}
+		private var _vertical:Number = 0;
+		
+		[Bindable(event="horizontalChange", style="noEvent")]
+		public function get horizontal():Number { return _horizontal }
+		public function set horizontal(value:Number):void
+		{
+			DataChange.change(this, "horizontal", _horizontal, _horizontal = value);
+		}
+		private var _horizontal:Number = 0;
+		
 		public function merge(box:Box):Box
 		{
 			if (box) {
@@ -66,7 +82,8 @@ package stealth.layouts
 		public function equals(box:Box):Boolean
 		{
 			return (_right == box._right && _top == box._top &&
-					_bottom == box._bottom && _left == box._left);
+					_bottom == box._bottom && _left == box._left &&
+					_vertical == box._vertical && _horizontal == box._horizontal);
 		}
 		
 		public function copy(box:Box = null):Box
@@ -78,6 +95,8 @@ package stealth.layouts
 			box.right = _right;
 			box.bottom = _bottom;
 			box.left = _left;
+			box.vertical = _vertical;
+			box.horizontal = _horizontal;
 			
 			return box;
 		}

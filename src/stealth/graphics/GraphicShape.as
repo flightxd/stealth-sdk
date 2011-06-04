@@ -495,10 +495,12 @@ package stealth.graphics
 		public function set vOffset(value:Number):void { layoutElement.vOffset = value; }
 		
 		[Bindable(event="dockChange", style="noEvent")]
+		[Inspectable(enumeration="left,top,right,bottom,justify")]
 		public function get dock():String { return layoutElement.dock; }
 		public function set dock(value:String):void { layoutElement.dock = value; }
 		
 		[Bindable(event="tileChange", style="noEvent")]
+		[Inspectable(enumeration="left,top,right,bottom")]
 		public function get tile():String { return layoutElement.tile; }
 		public function set tile(value:String):void { layoutElement.tile = value; }
 		

@@ -19,7 +19,7 @@ package stealth.layouts
 			
 			// vertical size
 			var space:Number = childMargin.top + childMargin.bottom;
-			if (verticalAlign == Align.JUSTIFY || !isNaN(childPercentHeight)) {
+			if (vAlign == Align.JUSTIFY || !isNaN(childPercentHeight)) {
 				measured.minHeight = Bounds.constrainHeight(measured, childBounds.minHeight + space);
 				measured.maxHeight = Bounds.constrainHeight(measured, childBounds.maxHeight + space);
 			} else {
@@ -60,7 +60,7 @@ package stealth.layouts
 			}
 			
 			// vertical layout
-			switch (verticalAlign) {
+			switch (vAlign) {
 				case Align.TOP:
 					childBounds.y = contentRect.y + childMargin.top;
 					break;
@@ -84,7 +84,7 @@ package stealth.layouts
 				contentMargin.left = childMargin.right;
 			}
 			
-			switch (horizontalAlign) {
+			switch (hAlign) {
 				case Align.CENTER:
 					childBounds.x += totalWidth / 2;
 					break;

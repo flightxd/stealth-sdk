@@ -7,7 +7,7 @@
 package stealth.layouts
 {
 	import flash.display.DisplayObject;
-	
+
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 

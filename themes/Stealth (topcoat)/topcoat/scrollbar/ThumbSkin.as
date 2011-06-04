@@ -40,8 +40,8 @@ package topcoat.scrollbar
 			if (contentGroup) {
 				if (!contentGroup.layout) {
 					var contentLayout:HorizontalLayout = new HorizontalLayout();
-					contentLayout.horizontalAlign = Align.CENTER;
-					contentLayout.verticalAlign = Align.MIDDLE;
+					contentLayout.hAlign = Align.CENTER;
+					contentLayout.vAlign = Align.MIDDLE;
 					contentGroup.layout = contentLayout;
 				}
 				contentGroup.style.left = contentGroup.style.top = contentGroup.style.right = contentGroup.style.bottom = 0;
