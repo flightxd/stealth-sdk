@@ -6,12 +6,16 @@
 
 package stealth.graphics
 {
+	import flash.geom.Matrix;
+
 	import stealth.graphics.paint.IFill;
 	import stealth.graphics.paint.IStroke;
 
 	public interface IGraphicShape extends IDrawable
 	{
-		function get stroke():IStroke;
 		function get fill():IFill;
+		function get stroke():IStroke;
+		
+		function update(transform:Matrix = null):void;
 	}
 }

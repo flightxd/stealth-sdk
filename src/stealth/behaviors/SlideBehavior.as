@@ -13,8 +13,8 @@ package stealth.behaviors
 
 	import flight.behaviors.Behavior;
 	import flight.data.DataChange;
-	import flight.data.ITrack;
-	import flight.data.Track;
+	import flight.data.IPosition;
+	import flight.data.Position;
 	import flight.events.ButtonEvent;
 
 	public class SlideBehavior extends Behavior
@@ -30,8 +30,8 @@ package stealth.behaviors
 		}
 		
 		[Bindable(event="positionChange", style="noEvent")]
-		public function get position():ITrack { return _position || (position = new Track()); }
-		public function set position(value:ITrack):void
+		public function get position():IPosition { return _position || (position = new Position()); }
+		public function set position(value:IPosition):void
 		{
 			if (_position != value) {
 				if (_position) {
@@ -44,7 +44,7 @@ package stealth.behaviors
 				}
 			}
 		}
-		private var _position:ITrack;
+		private var _position:IPosition;
 		
 		[Bindable(event="horizontalChange", style="noEvent")]
 		public function get horizontal():Boolean { return _horizontal; }
@@ -188,14 +188,10 @@ package stealth.behaviors
 				return;
 			}
 			
-			var control:ITrack = position as ITrack;
-			
-			if (control) {
-				if (forwardPress) {
-					control.pageForward();
-				} else {
-					control.pageBackward();
-				}
+			if (forwardPress) {
+				position.pageForward();
+			} else {
+				position.pageBackward();
 			}
 			event.updateAfterEvent();
 		}

@@ -6,10 +6,7 @@
 
 package stealth.graphics.paint
 {
-	import flash.display.IGraphicsStroke;
-
-	public interface IStroke
+	public interface IStroke extends IPaint
 	{
-		function get graphicsStroke():IGraphicsStroke;
 	}
 }

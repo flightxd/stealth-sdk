@@ -115,21 +115,18 @@ package stealth.buttons
 		[ArrayElementType("flash.display.DisplayObject")]
 		[Bindable(event="contentChange", style="noEvent")]
 		public function get content():IList { return _content; }
-		public function set content(value:*):void
+		override public function set content(value:*):void
 		{
 			_content.queueChanges = true;
 			_content.removeAt();
-			if (value is IList) {
-				_content.add( IList(value).get() );
+			if (value is DisplayObject) {
+				_content.add(value);
 			} else if (value is Array) {
 				_content.add(value);
-			} else if (value === null) {
-				_content.removeAt();						// TODO: refactor this duplicate removeAt
-			} else {
-				_content.add(value);
+			} else if (value is IList) {
+				_content.add( IList(value).get() );
 			}
-			_content.queueChanges = false;					// TODO: determine if List change AND propertychange should both fire
-			DataChange.change(this, "content", _content, _content, true);
+			_content.queueChanges = false;
 		}
 		private var _content:ArrayList = new ArrayList();
 		

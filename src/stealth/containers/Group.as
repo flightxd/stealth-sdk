@@ -9,17 +9,17 @@ package stealth.containers
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
-
+	
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
-	import flight.data.ITrack;
-	import flight.data.Track;
+	import flight.data.IPosition;
+	import flight.data.Position;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.ILayout;
-
+	
 	import stealth.graphics.GraphicElement;
 
 	[Style(name="background")]	// TODO: implement limited drawing feature
@@ -27,14 +27,21 @@ package stealth.containers
 	[DefaultProperty("content")]
 	public class Group extends GraphicElement implements IContainer
 	{
-		public function Group()
+		public function Group(content:* = null)
 		{
-			for (var i:int = 0; i < numChildren; i ++) {
+			_content = new ArrayList();
+			for (var i:int = 0; i < numChildren; i++) {
 				_content.add(getChildAt(i));
 			}
 			addEventListener(Event.ADDED, onChildAdded, true, 10);
 			addEventListener(Event.REMOVED, onChildRemoved, true, 10);
-			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
+			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange, false, 10);
+			if (content) {
+				this.content = content;
+			}
+			
+			super();
+			layoutElement.snapToPixel = true;
 		}
 		
 		/**
@@ -43,20 +50,20 @@ package stealth.containers
 		[ArrayElementType("flash.display.DisplayObject")]
 		[Bindable(event="contentChange", style="noEvent")]
 		public function get content():IList { return _content; }
-		public function set content(value:*):void
+		override public function set content(value:*):void
 		{
 			_content.queueChanges = true;
 			_content.removeAt();
-			if (value is IList) {
-				_content.add( IList(value).get() );
+			if (value is DisplayObject) {
+				_content.add(value);
 			} else if (value is Array) {
 				_content.add(value);
-			} else if (value !== null) {
-				_content.add(value);
+			} else if (value is IList) {
+				_content.add( IList(value).get() );
 			}
 			_content.queueChanges = false;
 		}
-		private var _content:ArrayList = new ArrayList();
+		private var _content:ArrayList;
 		
 		/**
 		 * @inheritDoc
@@ -87,8 +94,8 @@ package stealth.containers
 		public function set contentHeight(value:Number):void { layoutElement.contentHeight = value; }
 		
 		[Bindable(event="hPositionChange", style="noEvent")]
-		public function get hPosition():ITrack { return _hPosition || (hPosition = new Track()); }
-		public function set hPosition(value:ITrack):void
+		public function get hPosition():IPosition { return _hPosition || (hPosition = new Position()); }
+		public function set hPosition(value:IPosition):void
 		{
 			if (_hPosition) {
 				_hPosition.removeEventListener(Event.CHANGE, onPositionChange);
@@ -98,11 +105,11 @@ package stealth.containers
 				_hPosition.addEventListener(Event.CHANGE, onPositionChange);
 			}
 		}
-		private var _hPosition:ITrack;
+		private var _hPosition:IPosition;
 		
 		[Bindable(event="vPositionChange", style="noEvent")]
-		public function get vPosition():ITrack { return _vPosition || (vPosition = new Track()); }
-		public function set vPosition(value:ITrack):void
+		public function get vPosition():IPosition { return _vPosition || (vPosition = new Position()); }
+		public function set vPosition(value:IPosition):void
 		{
 			if (_vPosition) {
 				_vPosition.removeEventListener(Event.CHANGE, onPositionChange);
@@ -112,7 +119,7 @@ package stealth.containers
 				_vPosition.addEventListener(Event.CHANGE, onPositionChange);
 			}
 		}
-		private var _vPosition:ITrack;
+		private var _vPosition:IPosition;
 		
 		[Bindable(event="clippedChange", style="noEvent")]
 		public function get clipped():Boolean { return _clipped; }

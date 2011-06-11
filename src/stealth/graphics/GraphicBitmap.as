@@ -6,111 +6,34 @@
 
 package stealth.graphics
 {
-	import flash.display.Bitmap;
-	import flash.display.DisplayObject;
-	import flash.events.Event;
+	import flash.display.BitmapData;
+	import flash.display.PixelSnapping;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-
-	import flight.collections.ArrayList;
+	
 	import flight.data.DataChange;
-	import flight.display.ILifecycle;
-	import flight.display.Invalidation;
-	import flight.events.InvalidationEvent;
+	import flight.display.Bitmap;
 	import flight.events.LayoutEvent;
-	import flight.events.LifecycleEvent;
-	import flight.events.ListEvent;
 	import flight.layouts.IBounds;
-
-	import mx.core.IMXMLObject;
-
+	
 	import stealth.layouts.Box;
 	import stealth.layouts.LayoutElement;
 
-	[Event(name="ready", type="flight.events.LifecycleEvent")]
-	[Event(name="create", type="flight.events.LifecycleEvent")]
-	[Event(name="destroy", type="flight.events.LifecycleEvent")]
+	[Event(name="resize", type="flight.events.LayoutEvent")]
 	
 	/**
 	 * A generic bitmap element providing position, size and transformation.
 	 */
-	public class GraphicBitmap extends Bitmap implements IGraphicElement, ILifecycle, IMXMLObject
+	public class GraphicBitmap extends Bitmap implements IGraphicElement
 	{
-		public function GraphicBitmap()
+		public function GraphicBitmap(bitmapData:BitmapData = null, pixelSnapping:String = PixelSnapping.AUTO, smoothing:Boolean = false)
 		{
-			_filters.addEventListener(ListEvent.LIST_CHANGE, refreshFilters);
-			_filters.addEventListener(ListEvent.ITEM_CHANGE, refreshFilters);
-			
 			layoutElement = new LayoutElement(this);
+			layoutElement.nativeSizing = true;
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			measure();
 			
-			addEventListener(Event.ADDED, onFirstAdded, false, 10);
-			addEventListener(LifecycleEvent.CREATE, onCreate, false, 10);
-			addEventListener(LifecycleEvent.DESTROY, onDestroy, false, 10);
-			invalidate(LifecycleEvent.CREATE);
-			invalidate(LifecycleEvent.READY);
-			init();
-		}
-		
-		/**
-		 * A convenience property for storing data associated with this element.
-		 */
-		[Bindable(event="tagChange", style="noEvent")]
-		public function get tag():Object { return _tag; }
-		public function set tag(value:Object):void
-		{
-			DataChange.change(this, "tag", _tag, _tag = value);
-		}
-		private var _tag:Object;
-		
-		
-		// ====== IGraphicElement implementation ====== //
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="idChange", style="noEvent")]
-		public function get id():String { return _id; }
-		public function set id(value:String):void
-		{
-			DataChange.change(this, "id", _id, super.name = _id = value);
-		}
-		private var _id:String;
-		
-		/**
-		 * @inheritDoc
-		 */
-		override public function set name(value:String):void
-		{
-			id = value;
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="visibleChange", style="noEvent")]
-		override public function set visible(value:Boolean):void
-		{
-			DataChange.change(this, "visible", super.visible, super.visible = value);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="alphaChange", style="noEvent")]
-		override public function set alpha(value:Number):void
-		{
-			DataChange.change(this, "alpha", super.alpha, super.alpha = value);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="maskChange", style="noEvent")]
-		override public function set mask(value:DisplayObject):void
-		{
-			DataChange.change(this, "mask", super.mask, super.mask = value);
+			super(bitmapData, pixelSnapping, smoothing);
 		}
 		
 		[Bindable(event="maskTypeChange", style="noEvent")]
@@ -121,35 +44,13 @@ package stealth.graphics
 		}
 		private var _maskType:String = "default";
 		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="blendModeChange", style="noEvent")]
-		override public function set blendMode(value:String):void
-		{
-			DataChange.change(this, "blendMode", super.blendMode, super.blendMode = value);
-		}
 		
-		/**
-		 * @inheritDoc
-		 */
-		[ArrayElementType("flash.filters.BitmapFilter")]
-		[Bindable(event="filtersChange", style="noEvent")]
-		override public function get filters():Array { return _filters as Array; }
-		override public function set filters(value:Array):void
+		[Bindable(event="bitmapDataChange", style="noEvent")]
+		override public function set bitmapData(value:BitmapData):void
 		{
-			_filters.queueChanges = true;
-			_filters.removeAt();
-			if (value) {
-				_filters.add(value);
-			}
-			_filters.queueChanges = false;
-		}
-		private var _filters:ArrayList = new ArrayList();
-		
-		private function refreshFilters(event:ListEvent):void
-		{
-			super.filters = _filters;
+			DataChange.change(this, "bitmapData", super.bitmapData, super.bitmapData = value);
+			layoutElement.nativeSizing = true;
+			measure();
 		}
 		
 		
@@ -158,7 +59,6 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="xChange", style="noEvent")]
 		override public function set x(value:Number):void
 		{
 			super.x = layoutElement.x = value;
@@ -167,7 +67,6 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="yChange", style="noEvent")]
 		override public function set y(value:Number):void
 		{
 			super.y = layoutElement.y = value;
@@ -199,16 +98,15 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="scaleXChange", style="noEvent")]
 		override public function set scaleX(value:Number):void
 		{
 			if (super.scaleX != value) {
 				if (_transformX || _transformY) {
 					var oldMatrix:Matrix = transform.matrix;
-					DataChange.queue(this, "scaleX", super.scaleX, super.scaleX = value);
+					super.scaleX = value;
 					updateTransform(oldMatrix);
 				} else {
-					 DataChange.change(this, "scaleX", super.scaleX, super.scaleX = value);
+					 super.scaleX = value;
 				}
 			}
 		}
@@ -216,16 +114,15 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="scaleYChange", style="noEvent")]
 		override public function set scaleY(value:Number):void
 		{
 			if (super.scaleY != value) {
 				if (_transformX || _transformY) {
 					var oldMatrix:Matrix = transform.matrix;
-					DataChange.queue(this, "scaleY", super.scaleY, super.scaleY = value);
+					super.scaleY = value;
 					updateTransform(oldMatrix);
 				} else {
-					DataChange.change(this, "scaleY", super.scaleY, super.scaleY = value);
+					super.scaleY = value;
 				}
 			}
 		}
@@ -286,16 +183,15 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="rotationChange", style="noEvent")]
 		override public function set rotation(value:Number):void
 		{
 			if (super.rotation != value) {
 				if (_transformX || _transformY) {
 					var oldMatrix:Matrix = transform.matrix;
-					DataChange.queue(this, "rotation", super.rotation, super.rotation = value);
+					super.rotation = value;
 					updateTransform(oldMatrix);
 				} else {
-					DataChange.change(this, "rotation", super.rotation, super.rotation = value);
+					super.rotation = value;
 				}
 			}
 		}
@@ -311,7 +207,6 @@ package stealth.graphics
 		
 		private function updateTransform(oldMatrix:Matrix):void
 		{
-			// TODO: research simpler algorithm (concat matrices)
 			var anchorX:Number = oldMatrix.a * _transformX + oldMatrix.c * _transformY + oldMatrix.tx;
 			var anchorY:Number = oldMatrix.d * _transformY + oldMatrix.b * _transformX + oldMatrix.ty;
 			
@@ -479,106 +374,13 @@ package stealth.graphics
 		
 		protected function measure():void
 		{
-			measured.width = measured.minWidth = bitmapData ? bitmapData.width : 0;
-			measured.height = measured.minHeight = bitmapData ? bitmapData.height : 0;
+			measured.width = bitmapData ? bitmapData.width : 0;
+			measured.height = bitmapData ? bitmapData.height : 0;
 		}
 		
 		private function onMeasure(event:LayoutEvent):void
 		{
 			measure();
-		}
-		
-		// ====== IMXML implementation ====== //
-		
-		/**
-		 * Specialized method for MXML, called after the display has been
-		 * created and all of its properties specified in MXML have been
-		 * initialized.
-		 * 
-		 * @param		document	The MXML document defining this display.
-		 * @param		id			The identifier used by <code>document</code>
-		 * 							to refer to this display, or its instance
-		 * 							name.
-		 */
-		public function initialized(document:Object, id:String):void
-		{
-			++idInc;
-			this.id = id || "Bitmap" + idInc;
-		}
-		private static var idInc:uint;
-		
-		
-		// ====== IInvalidating implementation ====== //
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function invalidate(phase:String = null):void
-		{
-			Invalidation.invalidate(this, phase || InvalidationEvent.VALIDATE);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function validateNow(phase:String = null):void
-		{
-			Invalidation.validate(this, phase);
-		}
-		
-		
-		// ====== ILifecycle implementation ====== //
-		
-		public function kill():void
-		{
-			removeEventListener(LayoutEvent.MEASURE, onMeasure);
-			removeEventListener(Event.ADDED, onFirstAdded);
-			removeEventListener(LifecycleEvent.CREATE, onCreate);
-			removeEventListener(LifecycleEvent.DESTROY, onDestroy);
-			if (created) {
-				created = false;
-				destroy();
-				if (parent) {
-					parent.removeChild(this);
-				}
-			}
-		}
-		protected var created:Boolean;
-		
-		protected function init():void
-		{
-		}
-		
-		protected function create():void
-		{
-		}
-		
-		protected function destroy():void
-		{
-		}
-		
-		private function onFirstAdded(event:Event):void
-		{
-			removeEventListener(Event.ADDED, onFirstAdded);
-			validateNow(LifecycleEvent.CREATE);
-		}
-		
-		private function onCreate(event:LifecycleEvent):void
-		{
-			if (!created) {
-				create();
-				created = true;
-			}
-		}
-		
-		private function onDestroy(event:LifecycleEvent):void
-		{
-			kill();
-		}
-		
-		override public function toString():String
-		{
-			return super.toString().replace("]", "(" + id + ")]");
 		}
 	}
 }

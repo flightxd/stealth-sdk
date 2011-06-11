@@ -10,14 +10,14 @@ package stealth.layouts
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-
+	
 	import flight.data.DataChange;
 	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
-
+	
 	import mx.events.PropertyChangeEvent;
 
 	public class LayoutElement implements ILayoutElement
@@ -306,7 +306,7 @@ package stealth.layouts
 		{
 			DataChange.queue(target, "nativeSizing", _nativeSizing, _nativeSizing = value);
 			if (value) {
-				unscaledRect = target.getRect(target);
+				unscaledRect = target.getRect(target) || new Rectangle();
 				updateWidth();
 				updateHeight();
 			}
@@ -549,13 +549,17 @@ package stealth.layouts
 		private function complexMatrix(m:Matrix, resetScale:Boolean = false):Boolean
 		{
 			var complex:Boolean = m.b != 0 || m.c != 0 || m.a < 0 || m.d < 0;
-			if (complex && resetScale) {
-				var skewY:Number = Math.atan2(m.b, m.a);
-				m.a = Math.cos(skewY);
-				m.b = Math.sin(skewY);
-				var skewX:Number = Math.atan2(-m.c, m.d);
-				m.c = -Math.sin(skewX);
-				m.d = Math.cos(skewX);
+			if (resetScale) {
+				if (complex) {
+					var skewY:Number = Math.atan2(m.b, m.a);
+					m.a = Math.cos(skewY);
+					m.b = Math.sin(skewY);
+					var skewX:Number = Math.atan2(-m.c, m.d);
+					m.c = -Math.sin(skewX);
+					m.d = Math.cos(skewX);
+				} else {
+					m.a = m.d = 1;
+				}
 			}
 			return complex;
 		}
@@ -592,7 +596,7 @@ package stealth.layouts
 			}
 			if (_x != value) {
 				positioning = true;
-				DataChange.change(target, "x", _x, target.x = _x = value);
+				target.x = _x = value;
 				positioning = false;
 			}
 		}
@@ -635,7 +639,7 @@ package stealth.layouts
 			}
 			if (_height != value) {
 				if (_nativeSizing) {
-					target.scaleY = _height / unscaledRect.height;
+					target.scaleY = value / unscaledRect.height;
 				}
 				invalidate(LayoutEvent.RESIZE);
 				DataChange.change(target, "height", _height, _height = value);
@@ -669,7 +673,7 @@ package stealth.layouts
 		 */
 		public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void
 		{
-			target.addEventListener(type, listener,  useCapture, priority, useWeakReference);
+			target.addEventListener(type, listener, useCapture, priority, useWeakReference);
 		}
 		
 		/**
@@ -677,7 +681,7 @@ package stealth.layouts
 		 */
 		public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void
 		{
-			target.removeEventListener(type, listener,  useCapture);
+			target.removeEventListener(type, listener, useCapture);
 		}
 		
 		/**

@@ -6,160 +6,47 @@
 
 package stealth.graphics
 {
-	import flash.display.DisplayObject;
 	import flash.display.Graphics;
+	import flash.display.GraphicsEndFill;
 	import flash.display.GraphicsPath;
 	import flash.display.IGraphicsData;
-	import flash.display.Shape;
-	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 
-	import flight.collections.ArrayList;
 	import flight.data.DataChange;
-	import flight.display.ILifecycle;
-	import flight.display.Invalidation;
+	import flight.display.Shape;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
-	import flight.events.LifecycleEvent;
-	import flight.events.ListEvent;
 	import flight.layouts.IBounds;
 
-	import mx.core.IMXMLObject;
+	import mx.events.PropertyChangeEvent;
 
 	import stealth.graphics.paint.IFill;
 	import stealth.graphics.paint.IStroke;
 	import stealth.layouts.Box;
 	import stealth.layouts.LayoutElement;
 
-	[Event(name="ready", type="flight.events.LifecycleEvent")]
-	[Event(name="create", type="flight.events.LifecycleEvent")]
-	[Event(name="destroy", type="flight.events.LifecycleEvent")]
+	[Event(name="resize", type="flight.events.LayoutEvent")]
+	[Event(name="validate", type="flight.events.InvalidationEvent")]
 	
 	/**
 	 * A generic shape element providing position, size and transformation.
 	 * GraphicShape inherits basic drawing from Shape.
 	 */
-	public class GraphicShape extends Shape implements IGraphicShape, IGraphicElement, ILifecycle, IMXMLObject
+	public class GraphicShape extends Shape implements IGraphicShape, IGraphicElement
 	{
 		public function GraphicShape()
 		{
-			_filters.addEventListener(ListEvent.LIST_CHANGE, refreshFilters);
-			_filters.addEventListener(ListEvent.ITEM_CHANGE, refreshFilters);
-			
 			layoutElement = new LayoutElement(this);
 			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
+			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
 			invalidate(LayoutEvent.RESIZE);
 			measure();
 			
-			addEventListener(Event.ADDED, onFirstAdded, false, 10);
-			addEventListener(LifecycleEvent.CREATE, onCreate, false, 10);
-			addEventListener(LifecycleEvent.DESTROY, onDestroy, false, 10);
-			invalidate(LifecycleEvent.CREATE);
-			invalidate(LifecycleEvent.READY);
-			init();
+			super();
 		}
 		
-		/**
-		 * A convenience property for storing data associated with this element.
-		 */
-		[Bindable(event="tagChange", style="noEvent")]
-		public function get tag():Object { return _tag; }
-		public function set tag(value:Object):void
-		{
-			DataChange.change(this, "tag", _tag, _tag = value);
-		}
-		private var _tag:Object;
-		
-		
-		// ====== IGraphicShape implementation ====== //
-		
-		// TODO: make the following getter/setters that cause invalidation
-		public var canvas:Graphics;
-		public var canvasTransform:Matrix;
-		
-		public var graphicsPath:GraphicsPath;
-		public var graphicsData:Vector.<IGraphicsData>;
-		
-		public function get stroke():IStroke { return _stroke; }
-		public function set stroke(value:IStroke):void
-		{
-			_stroke = value;
-		}
-		private var _stroke:IStroke;
-		
-		public function get fill():IFill { return _fill; }
-		public function set fill(value:IFill):void
-		{
-			_fill = value;
-		}
-		private var _fill:IFill;
-		
-		public function draw(graphics:Graphics):void
-		{
-			graphics.drawGraphicsData(graphicsData);
-		}
-		
-		protected function update():void
-		{
-			graphicsData.splice(0, graphicsData.length);
-			if (stroke) {
-				graphicsData.push(stroke.graphicsStroke);
-			}
-			if (fill) {
-				graphicsData.push(fill.graphicsFill);
-			}
-			graphicsData.push(graphicsPath);
-		}
-		
-		// ====== IGraphicElement implementation ====== //
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="idChange", style="noEvent")]
-		public function get id():String { return _id; }
-		public function set id(value:String):void
-		{
-			DataChange.change(this, "id", _id, super.name = _id = value);
-		}
-		private var _id:String;
-		
-		/**
-		 * @inheritDoc
-		 */
-		override public function set name(value:String):void
-		{
-			id = value;
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="visibleChange", style="noEvent")]
-		override public function set visible(value:Boolean):void
-		{
-			DataChange.change(this, "visible", super.visible, super.visible = value);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="alphaChange", style="noEvent")]
-		override public function set alpha(value:Number):void
-		{
-			DataChange.change(this, "alpha", super.alpha, super.alpha = value);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="maskChange", style="noEvent")]
-		override public function set mask(value:DisplayObject):void
-		{
-			DataChange.change(this, "mask", super.mask, super.mask = value);
-		}
 		
 		[Bindable(event="maskTypeChange", style="noEvent")]
 		public function get maskType():String { return _maskType; }
@@ -169,35 +56,117 @@ package stealth.graphics
 		}
 		private var _maskType:String = "default";
 		
-		/**
-		 * @inheritDoc
-		 */
-		[Bindable(event="blendModeChange", style="noEvent")]
-		override public function set blendMode(value:String):void
-		{
-			DataChange.change(this, "blendMode", super.blendMode, super.blendMode = value);
-		}
 		
-		/**
-		 * @inheritDoc
-		 */
-		[ArrayElementType("flash.filters.BitmapFilter")]
-		[Bindable(event="filtersChange", style="noEvent")]
-		override public function get filters():Array { return _filters as Array; }
-		override public function set filters(value:Array):void
+		// ====== IGraphicShape implementation ====== //
+		
+		private var graphicsPath:GraphicsPath;
+		private var graphicsData:Vector.<IGraphicsData>;
+		private var endFill:GraphicsEndFill = new GraphicsEndFill();
+		private var pathBounds:Rectangle = new Rectangle();
+		
+		[Bindable(event="fillChange", style="noEvent")]
+		public function get fill():IFill { return _fill; }
+		public function set fill(value:IFill):void
 		{
-			_filters.queueChanges = true;
-			_filters.removeAt();
-			if (value) {
-				_filters.add(value);
+			if (_fill) {
+				_fill.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
 			}
-			_filters.queueChanges = false;
+			DataChange.change(this, "fill", _fill, _fill = value);
+			invalidate();
+			if (_fill) {
+				_fill.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+			}
 		}
-		private var _filters:ArrayList = new ArrayList();
+		private var _fill:IFill;
 		
-		private function refreshFilters(event:ListEvent):void
+		[Bindable(event="strokeChange", style="noEvent")]
+		public function get stroke():IStroke { return _stroke; }
+		public function set stroke(value:IStroke):void
 		{
-			super.filters = _filters;
+			if (_stroke) {
+				_stroke.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+			}
+			DataChange.change(this, "stroke", _stroke, _stroke = value);
+			invalidate();
+			if (_stroke) {
+				_stroke.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+			}
+		}
+		private var _stroke:IStroke;
+		
+		private function onPaintChange(event:PropertyChangeEvent):void
+		{
+			invalidate();
+		}
+		
+		public function draw(graphics:Graphics):void
+		{
+			graphics.drawGraphicsData(graphicsData);
+		}
+		
+		public function update(transform:Matrix = null):void
+		{
+			// clear and reuse graphicsData & graphicsPath
+			graphicsData.length = 0;
+			graphicsPath.data.length = 0;
+			graphicsPath.commands.length = 0;
+			pathBounds.x = pathBounds.y = 0;
+			pathBounds.width = width;
+			pathBounds.height = height;
+			updatePath(graphicsPath, pathBounds);
+			
+			if (transform) {
+				var data:Vector.<Number> = graphicsPath.data;
+				for (var i:int = 0; i < data.length; i += 2) {
+					var x:Number = data[i];
+					var y:Number = data[i+1];
+					data[i] = transform.a * x + transform.c * y + transform.tx;
+					data[i+1] = transform.d * y + transform.b * x + transform.ty;
+				}
+			}
+			
+			var fillLength:int, strokeLength:int;
+			if (fill) {
+				fill.update(graphicsPath, pathBounds);
+				fill.paint(graphicsData);
+				fillLength = graphicsData.length;
+			}
+			if (stroke) {
+				stroke.update(graphicsPath, pathBounds);
+				stroke.paint(graphicsData);
+				strokeLength = graphicsData.length - fillLength;
+			}
+			
+			// add graphicsPath for simple strokes and fills
+			if (fillLength == 1) {
+				if (strokeLength <= 1) {
+					graphicsData.push(graphicsPath, endFill);
+				} else {
+					graphicsData.splice(fillLength, 0, graphicsPath, endFill);
+				}
+			} else if (strokeLength == 1) {
+				graphicsData.push(graphicsPath, endFill);
+			}
+		}
+		
+		protected function updatePath(graphicsPath:GraphicsPath, pathBounds:Rectangle):void
+		{
+		}
+		
+		override protected function create():void
+		{
+			graphicsData = new Vector.<IGraphicsData>;
+			graphicsPath = new GraphicsPath();
+			graphicsPath.data = new Vector.<Number>();
+			graphicsPath.commands = new Vector.<int>();
+		}
+		
+		override protected function destroy():void
+		{
+			graphicsPath.commands = null;
+			graphicsPath.data = null;
+			graphicsPath = null;
+			graphicsData = null;
 		}
 		
 		
@@ -206,7 +175,6 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="xChange", style="noEvent")]
 		override public function set x(value:Number):void
 		{
 			super.x = layoutElement.x = value;
@@ -215,7 +183,6 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="yChange", style="noEvent")]
 		override public function set y(value:Number):void
 		{
 			super.y = layoutElement.y = value;
@@ -247,16 +214,15 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="scaleXChange", style="noEvent")]
 		override public function set scaleX(value:Number):void
 		{
 			if (super.scaleX != value) {
 				if (_transformX || _transformY) {
 					var oldMatrix:Matrix = transform.matrix;
-					DataChange.queue(this, "scaleX", super.scaleX, super.scaleX = value);
+					super.scaleX = value;
 					updateTransform(oldMatrix);
 				} else {
-					 DataChange.change(this, "scaleX", super.scaleX, super.scaleX = value);
+					 super.scaleX = value;
 				}
 			}
 		}
@@ -264,16 +230,15 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="scaleYChange", style="noEvent")]
 		override public function set scaleY(value:Number):void
 		{
 			if (super.scaleY != value) {
 				if (_transformX || _transformY) {
 					var oldMatrix:Matrix = transform.matrix;
-					DataChange.queue(this, "scaleY", super.scaleY, super.scaleY = value);
+					super.scaleY = value;
 					updateTransform(oldMatrix);
 				} else {
-					DataChange.change(this, "scaleY", super.scaleY, super.scaleY = value);
+					super.scaleY = value;
 				}
 			}
 		}
@@ -334,16 +299,15 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="rotationChange", style="noEvent")]
 		override public function set rotation(value:Number):void
 		{
 			if (super.rotation != value) {
 				if (_transformX || _transformY) {
 					var oldMatrix:Matrix = transform.matrix;
-					DataChange.queue(this, "rotation", super.rotation, super.rotation = value);
+					super.rotation = value;
 					updateTransform(oldMatrix);
 				} else {
-					DataChange.change(this, "rotation", super.rotation, super.rotation = value);
+					super.rotation = value;
 				}
 			}
 		}
@@ -359,7 +323,6 @@ package stealth.graphics
 		
 		private function updateTransform(oldMatrix:Matrix):void
 		{
-			// TODO: research simpler algorithm (concat matrices)
 			var anchorX:Number = oldMatrix.a * _transformX + oldMatrix.c * _transformY + oldMatrix.tx;
 			var anchorY:Number = oldMatrix.d * _transformY + oldMatrix.b * _transformX + oldMatrix.ty;
 			
@@ -529,124 +492,26 @@ package stealth.graphics
 		{
 			update();
 			graphics.clear();
-			draw(canvas || graphics);
+			draw(graphics);
 		}
 		
 		protected function measure():void
 		{
 		}
 		
-		private function onResize(event:LayoutEvent):void
+		private function onRender(event:InvalidationEvent):void
 		{
 			render();
+		}
+		
+		private function onResize(event:LayoutEvent):void
+		{
+			invalidate();
 		}
 		
 		private function onMeasure(event:LayoutEvent):void
 		{
 			measure();
-		}
-		
-		// ====== IMXML implementation ====== //
-		
-		/**
-		 * Specialized method for MXML, called after the display has been
-		 * created and all of its properties specified in MXML have been
-		 * initialized.
-		 * 
-		 * @param		document	The MXML document defining this display.
-		 * @param		id			The identifier used by <code>document</code>
-		 * 							to refer to this display, or its instance
-		 * 							name.
-		 */
-		public function initialized(document:Object, id:String):void
-		{
-			++idInc;
-			this.id = id || "Shape" + idInc;
-		}
-		private static var idInc:uint;
-		
-		
-		// ====== IInvalidating implementation ====== //
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function invalidate(phase:String = null):void
-		{
-			Invalidation.invalidate(this, phase || InvalidationEvent.VALIDATE);
-		}
-		
-		/**
-		 * @inheritDoc
-		 */
-		public function validateNow(phase:String = null):void
-		{
-			Invalidation.validate(this, phase);
-		}
-		
-		
-		// ====== ILifecycle implementation ====== //
-		
-		public function kill():void
-		{
-			removeEventListener(LayoutEvent.RESIZE, onResize);
-			removeEventListener(LayoutEvent.MEASURE, onMeasure);
-			removeEventListener(Event.ADDED, onFirstAdded);
-			removeEventListener(LifecycleEvent.CREATE, onCreate);
-			removeEventListener(LifecycleEvent.DESTROY, onDestroy);
-			if (created) {
-				created = false;
-				destroy();
-				if (parent) {
-					parent.removeChild(this);
-				}
-			}
-		}
-		protected var created:Boolean;
-		
-		protected function init():void
-		{
-		}
-		
-		protected function create():void
-		{
-			graphicsData = new Vector.<IGraphicsData>;
-			graphicsPath = new GraphicsPath();
-			graphicsPath.data = new Vector.<Number>();
-			graphicsPath.commands = new Vector.<int>();
-		}
-		
-		protected function destroy():void
-		{
-			graphicsPath.commands = null;
-			graphicsPath.data = null;
-			graphicsPath = null;
-			graphicsData = null;
-		}
-		
-		private function onFirstAdded(event:Event):void
-		{
-			removeEventListener(Event.ADDED, onFirstAdded);
-			validateNow(LifecycleEvent.CREATE);
-			validateNow(LayoutEvent.RESIZE);
-		}
-		
-		private function onCreate(event:LifecycleEvent):void
-		{
-			if (!created) {
-				create();
-				created = true;
-			}
-		}
-		
-		private function onDestroy(event:LifecycleEvent):void
-		{
-			kill();
-		}
-		
-		override public function toString():String
-		{
-			return super.toString().replace("]", "(" + id + ")]");
 		}
 	}
 }

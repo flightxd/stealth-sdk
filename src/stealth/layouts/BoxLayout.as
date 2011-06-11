@@ -173,7 +173,7 @@ package stealth.layouts
 		
 		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
 		{// TODO: asfda sdf sdfas dfasdf stop listening to updates...
-			updateChildBounds(child,  last);
+			updateChildBounds(child, last);
 			if (!childBounds.equalsRect(childRect)) {
 				childBounds.getRect(childRect);
 				if (child is ILayoutElement) {
@@ -223,7 +223,7 @@ package stealth.layouts
 				}
 			} else {
 				contentMargin.copy(childMargin);
-				childBounds.maxWidth = childBounds.maxHeight = 0xFFFFFF;
+				childBounds.maxWidth = childBounds.maxHeight = int.MAX_VALUE;
 				childBounds.minWidth = childBounds.minHeight = 0;
 				childRect = child.getRect(child.parent);
 				childPercentWidth = childPercentHeight = NaN;

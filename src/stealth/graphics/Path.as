@@ -6,8 +6,10 @@
 
 package stealth.graphics
 {
-	public class Path
+	public class Path extends GraphicShape
 	{
+		public var data:*;
+		
 		public function Path()
 		{
 		}

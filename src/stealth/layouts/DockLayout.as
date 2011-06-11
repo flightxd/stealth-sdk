@@ -37,7 +37,7 @@ package stealth.layouts
 		{
 			dockMeasured.width = dockMeasured.minWidth = padding.left + padding.right;
 			dockMeasured.height = dockMeasured.minHeight = padding.top + padding.bottom;
-			dockMeasured.maxWidth = dockMeasured.maxHeight = 0xFFFFFF;
+			dockMeasured.maxWidth = dockMeasured.maxHeight = int.MAX_VALUE;
 			measuredWidth = measuredHeight = 0;
 			
 			super.measure();

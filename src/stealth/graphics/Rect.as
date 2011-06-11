@@ -6,7 +6,9 @@
 
 package stealth.graphics
 {
+	import flash.display.GraphicsPath;
 	import flash.display.GraphicsPathCommand;
+	import flash.geom.Rectangle;
 
 	import flight.data.DataChange;
 
@@ -96,22 +98,19 @@ package stealth.graphics
 		}
 		private var _bottomRightRadiusY:Number = NaN;
 		
-		override protected function update():void
+		override protected function updatePath(graphicsPath:GraphicsPath, pathBounds:Rectangle):void
 		{
-			super.update();
 			var cmds:Vector.<int> = graphicsPath.commands;
 			var data:Vector.<Number> = graphicsPath.data;
-			cmds.splice(0, cmds.length);
-			data.splice(0, data.length);
 			
 			cmds.push(GraphicsPathCommand.MOVE_TO);
 			data.push(0, 0);
 			cmds.push(GraphicsPathCommand.LINE_TO);
-			data.push(width, 0);
+			data.push(pathBounds.width, 0);
 			cmds.push(GraphicsPathCommand.LINE_TO);
-			data.push(width, height);
+			data.push(pathBounds.width, pathBounds.height);
 			cmds.push(GraphicsPathCommand.LINE_TO);
-			data.push(0, height);
+			data.push(0, pathBounds.height);
 			cmds.push(GraphicsPathCommand.LINE_TO);
 			data.push(0, 0);
 		}

@@ -10,8 +10,8 @@ package stealth.behaviors
 
 	import flight.behaviors.Behavior;
 	import flight.data.DataChange;
-	import flight.data.ITrack;
-	import flight.data.Track;
+	import flight.data.IPosition;
+	import flight.data.Position;
 	import flight.events.ButtonEvent;
 
 	public class StepBehavior extends Behavior
@@ -22,12 +22,12 @@ package stealth.behaviors
 		}
 		
 		[Bindable(event="positionChange", style="noEvent")]
-		public function get position():ITrack { return _position ||= new Track(); }
-		public function set position(value:ITrack):void
+		public function get position():IPosition { return _position ||= new Position(); }
+		public function set position(value:IPosition):void
 		{
 			DataChange.change(this, "position", _position, _position = value);
 		}
-		private var _position:ITrack;
+		private var _position:IPosition;
 		
 		[SkinPart]
 		[Bindable(event="forwardButtonChange", style="noEvent")]

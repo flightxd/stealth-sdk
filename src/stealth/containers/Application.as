@@ -9,18 +9,19 @@ package stealth.containers
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-
+	
+	import mx.containers.Box;
+	
 	import stealth.layouts.DockLayout;
 
 	//[Frame(factoryClass="flight.containers.FrameLoader")]
 	[SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]
-	public class Application extends Group
+	public class Application extends DockGroup
 	{
-		override protected function init():void
+		override protected function create():void
 		{
-			layout = new DockLayout();
 			// if this is the root application class
-			if (stage != null) {
+			if (this == root) {
 				initStage();
 			}
 		}
@@ -29,9 +30,9 @@ package stealth.containers
 		{
 			//contextMenu = new ContextMenu();
 			//contextMenu.hideBuiltInItems();
+			stage.addEventListener(Event.RESIZE, onStageResize, false, 20, true);
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
-			stage.addEventListener(Event.RESIZE, onStageResize, false, 0, true);
 			onStageResize(null);
 		}
 		

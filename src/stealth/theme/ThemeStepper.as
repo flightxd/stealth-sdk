@@ -20,7 +20,7 @@ package stealth.theme
 			}
 			if (!component.style.step) {
 				component.style.step = new StepBehavior();
-				DataBind.bind(component.style.step,  "position", component, "position");
+				DataBind.bind(component.style.step, "position", component, "position");
 			}
 		}
 	}

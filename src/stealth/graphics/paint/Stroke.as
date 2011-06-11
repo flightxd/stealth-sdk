@@ -7,23 +7,22 @@
 package stealth.graphics.paint
 {
 	import flash.display.GraphicsStroke;
-	import flash.display.IGraphicsStroke;
 
 	import flight.data.DataChange;
 
-	public class StrokeBase implements IStroke
+	public class Stroke extends Paint implements IStroke
 	{
 		protected var stroke:GraphicsStroke;
 		
-		public function StrokeBase(thickness:Number, pixelHinting:Boolean = false, scaleMode:String = "normal", caps:String = null, joints:String = null, miterLimit:Number = 3)
+		public function Stroke(thickness:Number, pixelHinting:Boolean = false, scaleMode:String = "normal", caps:String = null, joints:String = null, miterLimit:Number = 3)
 		{
+			paintData = stroke = new GraphicsStroke(thickness, pixelHinting, scaleMode, caps, joints, miterLimit);
 			_weight = thickness;
-			_pixelHinting = pixelHinting
+			_pixelHinting = pixelHinting;
 			_scaleMode = scaleMode;
 			_caps = caps;
 			_joints = joints;
 			_miterLimit = miterLimit;
-			stroke = new GraphicsStroke(thickness, pixelHinting, scaleMode, caps, joints, miterLimit);
 		}
 		
 		[Bindable(event="weightChange", style="noEvent")]
@@ -80,9 +79,5 @@ package stealth.graphics.paint
 		}
 		private var _miterLimit:Number;
 		
-		public function get graphicsStroke():IGraphicsStroke
-		{
-			return stroke;
-		}
 	}
 }

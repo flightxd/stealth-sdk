@@ -189,7 +189,9 @@ package stealth.layouts
 				!isNaN(layoutChild.right) ||
 				!isNaN(layoutChild.bottom) ||
 				!isNaN(layoutChild.hPercent) ||
-				!isNaN(layoutChild.vPercent) ) {
+				!isNaN(layoutChild.vPercent) ||
+				!isNaN(layoutChild.percentWidth) ||
+				!isNaN(layoutChild.percentHeight)) {
 				return true;
 			}
 			return false;

@@ -1,25 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (c) 2010 the original author or authors.
-  ~ Permission is hereby granted to use, modify, and distribute this file
-  ~ in accordance with the terms of the license agreement accompanying it.
-  -->
-
 <componentPackage>
 	
+	<!-- graphics -->
+	<component id="GraphicElement"			class="stealth.graphics.GraphicElement"/>
+	<component id="GraphicShape"			class="stealth.graphics.GraphicShape"/>
+	<component id="GraphicBitmap"			class="stealth.graphics.GraphicBitmap"/>
+	<component id="GraphicText"				class="stealth.graphics.GraphicText"/>
+	<component id="Path"					class="stealth.graphics.Path"/>
+	<component id="Rect"					class="stealth.graphics.Rect"/>
+	<component id="Ellipse"					class="stealth.graphics.Ellipse"/>
+	
+	<!-- paint -->
+	<component id="SolidColor"				class="stealth.graphics.paint.SolidColor"/>
+	<component id="GradientFill"			class="stealth.graphics.paint.GradientFill"/>
+	<component id="LinearGradient"			class="stealth.graphics.paint.LinearGradient"/>
+	<component id="RadialGradient"			class="stealth.graphics.paint.RadialGradient"/>
+	<component id="BitmapFill"				class="stealth.graphics.paint.BitmapFill"/>
+	<component id="SolidColorStroke"		class="stealth.graphics.paint.SolidColorStroke"/>
+	<component id="GradientStroke"			class="stealth.graphics.paint.GradientStroke"/>
+	<component id="LinearGradientStroke"	class="stealth.graphics.paint.LinearGradientStroke"/>
+	<component id="RadialGradientStroke"	class="stealth.graphics.paint.RadialGradientStroke"/>
+	<component id="BitmapStroke"			class="stealth.graphics.paint.BitmapStroke"/>
+	<component id="GradientEntry"			class="stealth.graphics.paint.GradientEntry"/>
+	
+	<!-- layouts -->
+	<component id="DockLayout"				class="stealth.layouts.DockLayout"/>
+	<component id="BasicLayout"				class="stealth.layouts.BasicLayout"/>
+	<component id="HorizontalLayout"		class="stealth.layouts.HorizontalLayout"/>
+	<component id="VerticalLayout"			class="stealth.layouts.VerticalLayout"/>
+	<component id="Box"						class="stealth.layouts.Box"/>
+	
 	<!-- containers -->
-	<component id="HGroup" class="stealth.containers.HGroup"/>
-	<component id="VGroup" class="stealth.containers.VGroup"/>
-	<component id="DockGroup" class="stealth.containers.DockGroup"/>
-	
-	<!-- buttons -->
-	<component id="Button" class="stealth.buttons.Button"/>
-	<component id="CheckBox" class="stealth.buttons.CheckBox"/>
-	<component id="RadioButton" class="stealth.buttons.RadioButton"/>
-	
-	<!-- ranges -->
-	<component id="Stepper" class="stealth.ranges.Stepper"/>
-	<component id="Slider" class="stealth.ranges.Slider"/>
-	<component id="ScrollBar" class="stealth.ranges.ScrollBar"/>
+	<component id="Graphic"					class="stealth.graphics.Graphic"/>
+	<component id="Group"					class="stealth.containers.Group"/>
+	<component id="HGroup"					class="stealth.containers.HGroup"/>
+	<component id="VGroup"					class="stealth.containers.VGroup"/>
+	<component id="DockGroup"				class="stealth.containers.DockGroup"/>
+	<component id="DataGroup"				class="stealth.containers.DataGroup"/>
+	<component id="Application"				class="stealth.containers.Application"/>
 	
 </componentPackage>

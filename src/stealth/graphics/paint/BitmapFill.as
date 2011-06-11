@@ -8,12 +8,11 @@ package stealth.graphics.paint
 {
 	import flash.display.BitmapData;
 	import flash.display.GraphicsBitmapFill;
-	import flash.display.IGraphicsFill;
 	import flash.geom.Matrix;
 
 	import flight.data.DataChange;
 
-	public class BitmapFill implements IFill
+	public class BitmapFill extends Paint implements IFill
 	{
 		protected var bitmapFill:GraphicsBitmapFill;
 		
@@ -84,7 +83,5 @@ package stealth.graphics.paint
 			DataChange.change(this, "fillMode", _fillMode, _fillMode = value);
 		}
 		private var _fillMode:String;
-		
-		public function get graphicsFill():IGraphicsFill { return bitmapFill; }
 	}
 }

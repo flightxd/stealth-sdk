@@ -16,7 +16,6 @@ package stealth.components
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.events.SkinEvent;
-	import flight.events.StyleEvent;
 	import flight.skins.ISkin;
 	import flight.skins.ISkinnable;
 
@@ -126,7 +125,7 @@ package stealth.components
 				var skinPart:InteractiveObject = getSkinPart(partName);
 				if (skinPart && partName in this) {
 					this[partName] = skinPart;
-					partAdded(partName,  skinPart);
+					partAdded(partName, skinPart);
 					dispatchEvent(new SkinEvent(SkinEvent.SKIN_PART_CHANGE, false, false, partName, null, skinPart));
 				}
 			}
@@ -178,27 +177,27 @@ package stealth.components
 			}
 		}
 		
-		private function onStyleChange(event:StyleEvent):void
-		{
-			var behavior:IBehavior;			
-			if (event.oldValue is IBehavior) {
-				behavior = IBehavior(event.oldValue);
-				behaviorsChanging = true;
-				_behaviors.remove(behavior);
-				behaviorsChanging = false;
-				behavior.target = null;
-			}
-			if (event.newValue is IBehavior) {
-				behavior = IBehavior(event.newValue);
-				if (behavior.type != event.property) {
-					behavior.type = event.property;
-				}
-				behaviorsChanging = true;
-				_behaviors.add(behavior);
-				behaviorsChanging = false;
-				behavior.target = this;
-			}
-		}
+//		private function onStyleChange(event:StyleEvent):void
+//		{
+//			var behavior:IBehavior;			
+//			if (event.oldValue is IBehavior) {
+//				behavior = IBehavior(event.oldValue);
+//				behaviorsChanging = true;
+//				_behaviors.remove(behavior);
+//				behaviorsChanging = false;
+//				behavior.target = null;
+//			}
+//			if (event.newValue is IBehavior) {
+//				behavior = IBehavior(event.newValue);
+//				if (behavior.type != event.property) {
+//					behavior.type = event.property;
+//				}
+//				behaviorsChanging = true;
+//				_behaviors.add(behavior);
+//				behaviorsChanging = false;
+//				behavior.target = this;
+//			}
+//		}
 		
 		private function onBehaviorsChange(event:ListEvent):void
 		{

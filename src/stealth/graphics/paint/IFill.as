@@ -6,10 +6,7 @@
 
 package stealth.graphics.paint
 {
-	import flash.display.IGraphicsFill;
-
-	public interface IFill
+	public interface IFill extends IPaint
 	{
-		function get graphicsFill():IGraphicsFill;
 	}
 }

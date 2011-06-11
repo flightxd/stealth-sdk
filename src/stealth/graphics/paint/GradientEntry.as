@@ -6,9 +6,11 @@
 
 package stealth.graphics.paint
 {
+	import flash.events.EventDispatcher;
+
 	import flight.data.DataChange;
 
-	public class GradientEntry
+	public class GradientEntry extends EventDispatcher 
 	{
 		public function GradientEntry(color:Number = 0x000000, alpha:Number = 1, ratio:Number = NaN)
 		{
@@ -29,6 +31,9 @@ package stealth.graphics.paint
 		public function get alpha():Number { return _alpha; }
 		public function set alpha(value:Number):void
 		{
+			if (isNaN(value)) {
+				value = 1;
+			}
 			DataChange.change(this, "alpha", _alpha, _alpha = value);
 		}
 		private var _alpha:Number;

@@ -21,7 +21,7 @@ package stealth.theme
 			if (!component.style.slide) {
 				component.style.slide = new SlideBehavior();
 				SlideBehavior(component.style.slide).snapThumb = true;
-				DataBind.bind(component.style.slide,  "position", component, "position");
+				DataBind.bind(component.style.slide, "position", component, "position");
 			}
 		}
 	}

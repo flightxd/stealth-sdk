@@ -33,7 +33,7 @@ package stealth.graphics
 		
 		[Bindable(event="sourceChange")]
 		public function get source():Object { return _source; }
-		public function set source(value:Object):void
+		override public function set source(value:*):void
 		{
 			DataChange.change(this, "source", _source, _source = value);
 		}

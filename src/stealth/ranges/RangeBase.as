@@ -7,20 +7,20 @@
 package stealth.ranges
 {
 	import flight.data.DataChange;
-	import flight.data.ITrack;
-	import flight.data.Track;
+	import flight.data.IPosition;
+	import flight.data.Position;
 
 	import stealth.components.Component;
 
 	public class RangeBase extends Component
 	{
 		[Bindable(event="positionChange")]
-		public function get position():ITrack { return _position ||= new Track(); }
-		public function set position(value:ITrack):void
+		public function get position():IPosition { return _position ||= new Position(); }
+		public function set position(value:IPosition):void
 		{
 			DataChange.change(this, "position", _position, _position = value);
 		}
-		private var _position:ITrack;
+		private var _position:IPosition;
 		
 		public function RangeBase()
 		{

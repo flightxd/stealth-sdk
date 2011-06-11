@@ -10,7 +10,7 @@ package stealth.graphics.paint
 
 	import flight.data.DataChange;
 
-	public class SolidColorStroke extends StrokeBase
+	public class SolidColorStroke extends Stroke
 	{
 		protected var solidFill:GraphicsSolidFill;
 		
