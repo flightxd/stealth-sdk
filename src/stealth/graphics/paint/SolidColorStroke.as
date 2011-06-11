@@ -6,41 +6,17 @@
 
 package stealth.graphics.paint
 {
-	import flash.display.GraphicsSolidFill;
+	import flash.display.CapsStyle;
+	import flash.display.JointStyle;
+	import flash.display.LineScaleMode;
 
-	import flight.data.DataChange;
-
-	public class SolidColorStroke extends Stroke
+	public class SolidColorStroke extends SolidStroke implements IStroke
 	{
-		protected var solidFill:GraphicsSolidFill;
-		
-		public function SolidColorStroke(thickness:Number, color:uint = 0x000000, alpha:Number = 1, pixelHinting:Boolean = false,
-										 scaleMode:String = "normal", caps:String = null, joints:String = null, miterLimit:Number = 3)
+		public function SolidColorStroke(weight:Number = 1, color:uint = 0x000000, alpha:Number = 1,
+										 pixelHinting:Boolean = false, scaleMode:String = LineScaleMode.NORMAL, caps:String = CapsStyle.ROUND,
+										 joints:String = JointStyle.ROUND, miterLimit:Number = 3)
 		{
-			super(thickness, pixelHinting, scaleMode, caps, joints, miterLimit);
-			_color = color;
-			_alpha = alpha;
-			solidFill = new GraphicsSolidFill(color, alpha);
-			stroke.fill = solidFill;
+			super(weight, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit);
 		}
-		
-		[Bindable(event="colorChange", style="noEvent")]
-		public function get color():uint { return _color; }
-		public function set color(value:uint):void
-		{
-			solidFill.color = value;
-			DataChange.change(this, "color", _color, _color = value);
-		}
-		private var _color:uint;
-		
-		[Bindable(event="alphaChange", style="noEvent")]
-		public function get alpha():Number { return _alpha; }
-		public function set alpha(value:Number):void
-		{
-			solidFill.alpha = value;
-			DataChange.change(this, "alpha", _alpha, _alpha = value);
-		}
-		private var _alpha:Number;
-		
 	}
 }

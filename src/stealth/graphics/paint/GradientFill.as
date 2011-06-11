@@ -21,7 +21,7 @@ package stealth.graphics.paint
 	import flight.geom.MatrixData;
 
 	[DefaultProperty("entries")]
-	public class GradientFill extends Paint implements IFill
+	public class GradientFill extends Paint
 	{
 		protected static const GRADIENT_DIMENSION:Number = 1638.4;
 		

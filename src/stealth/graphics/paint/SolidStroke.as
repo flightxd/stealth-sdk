@@ -1,23 +1,23 @@
-/*
- * Copyright (c) 2010 the original author or authors.
- * Permission is hereby granted to use, modify, and distribute this file
- * in accordance with the terms of the license agreement accompanying it.
- */
-
 package stealth.graphics.paint
 {
+	import flash.display.CapsStyle;
 	import flash.display.GraphicsStroke;
+	import flash.display.JointStyle;
+	import flash.display.LineScaleMode;
 
 	import flight.data.DataChange;
 
-	public class Stroke extends Paint implements IStroke
+	public class SolidStroke extends SolidFill
 	{
 		protected var stroke:GraphicsStroke;
 		
-		public function Stroke(thickness:Number, pixelHinting:Boolean = false, scaleMode:String = "normal", caps:String = null, joints:String = null, miterLimit:Number = 3)
+		public function SolidStroke(weight:Number = 1, color:uint = 0x000000, alpha:Number = 1,
+									pixelHinting:Boolean = false, scaleMode:String = LineScaleMode.NORMAL, caps:String = CapsStyle.ROUND,
+									joints:String = JointStyle.ROUND, miterLimit:Number = 3)
 		{
-			paintData = stroke = new GraphicsStroke(thickness, pixelHinting, scaleMode, caps, joints, miterLimit);
-			_weight = thickness;
+			super(color, alpha);
+			paintData = stroke = new GraphicsStroke(weight, pixelHinting, scaleMode, caps, joints, miterLimit, solidFill);
+			_weight = weight;
 			_pixelHinting = pixelHinting;
 			_scaleMode = scaleMode;
 			_caps = caps;
@@ -78,6 +78,5 @@ package stealth.graphics.paint
 			DataChange.change(this, "miterLimit", _miterLimit, _miterLimit = value);
 		}
 		private var _miterLimit:Number;
-		
 	}
 }

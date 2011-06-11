@@ -6,37 +6,11 @@
 
 package stealth.graphics.paint
 {
-	import flash.display.GraphicsSolidFill;
-
-	import flight.data.DataChange;
-
-	public class SolidColor extends Paint implements IFill
+	public class SolidColor extends SolidFill implements IFill
 	{
-		protected var solidFill:GraphicsSolidFill;
-		
 		public function SolidColor(color:uint = 0x000000, alpha:Number = 1)
 		{
-			paintData = solidFill = new GraphicsSolidFill(color, alpha);
-			_color = color;
-			_alpha = alpha;
+			super(color, alpha);
 		}
-		
-		[Bindable(event="colorChange", style="noEvent")]
-		public function get color():uint { return _color; }
-		public function set color(value:uint):void
-		{
-			solidFill.color = value;
-			DataChange.change(this, "color", _color, _color = value);
-		}
-		private var _color:uint;
-		
-		[Bindable(event="alphaChange", style="noEvent")]
-		public function get alpha():Number { return _alpha; }
-		public function set alpha(value:Number):void
-		{
-			solidFill.alpha = value;
-			DataChange.change(this, "alpha", _alpha, _alpha = value);
-		}
-		private var _alpha:Number;
 	}
 }
