@@ -68,10 +68,8 @@ package stealth.layouts
 		public function get padding():Box { return _padding || (padding = new Box()); }
 		public function set padding(value:*):void
 		{
-			if (value is String) {
-				value = Box.fromString(value);
-			} else if (value is Number) {
-				value = new Box(value, value, value, value);
+			if (!(value is Box)) {
+				value = Box.fromObject(value);
 			}
 			
 			if (_padding) {
@@ -94,19 +92,19 @@ package stealth.layouts
 		public function set gap(value:*):void
 		{
 			_padding = padding;
-			if (value is String) {
+			if (value is Number) {
+				_padding.vertical = _padding.horizontal = value;
+			} else if (value is String) {
 				var values:Array = value.split(" ");
 				switch (values.length) {
-					case 1 :
+					case 1:
 						_padding.vertical = _padding.horizontal = parseFloat( values[0] );
 						break;
-					case 2 :
+					case 2:
 						_padding.vertical = parseFloat( values[0] );
 						_padding.horizontal = parseFloat( values[1] );
 						break;
 				}
-			} else if (value is Number) {
-				_padding.vertical = _padding.horizontal = value;
 			} else if (value is Box) {
 				_padding.vertical = value._vertical;
 				_padding.horizontal = value._horizontal

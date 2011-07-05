@@ -12,17 +12,19 @@ package stealth.graphics
 	import flash.display.IGraphicsData;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-
+	
 	import flight.data.DataChange;
 	import flight.display.Shape;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.layouts.IBounds;
-
+	
 	import mx.events.PropertyChangeEvent;
-
+	
 	import stealth.graphics.paint.IFill;
 	import stealth.graphics.paint.IStroke;
+	import stealth.graphics.paint.SolidColor;
+	import stealth.graphics.paint.SolidColorStroke;
 	import stealth.layouts.Box;
 	import stealth.layouts.LayoutElement;
 
@@ -66,8 +68,17 @@ package stealth.graphics
 		
 		[Bindable(event="fillChange", style="noEvent")]
 		public function get fill():IFill { return _fill; }
-		public function set fill(value:IFill):void
+		public function set fill(value:*):void
 		{
+			if (value is String) {
+				value = parseFloat(value);
+			}
+			if (value is Number && !isNaN(value)) {
+				value = new SolidColor(value);
+			} else {
+				value = value as IStroke;
+			}
+			
 			if (_fill) {
 				_fill.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
 			}
@@ -81,8 +92,17 @@ package stealth.graphics
 		
 		[Bindable(event="strokeChange", style="noEvent")]
 		public function get stroke():IStroke { return _stroke; }
-		public function set stroke(value:IStroke):void
+		public function set stroke(value:*):void
 		{
+			if (value is String) {
+				value = parseFloat(value);
+			}
+			if (value is Number && !isNaN(value)) {
+				value = new SolidColorStroke(value);
+			} else {
+				value = value as IStroke;
+			}
+			
 			if (_stroke) {
 				_stroke.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
 			}

@@ -12,11 +12,24 @@ package stealth.graphics
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.net.URLRequest;
-
+	
 	import flight.data.DataChange;
+	import flight.display.BitmapSource;
 
-	public class BitmapImage extends GraphicBitmap
+	public class BitmapImage extends GraphicBitmap//GraphicShape
 	{
+		/*
+		progress (load)
+		
+		preliminaryWidth/Height - size before loaded, but not explicit (should be initial measured size?)
+		
+		smooth & smoothingQuality (quality - downSample
+		fillMode - BitmapFillMode.clip/repeat/scale
+		scaleMode - stretch/letterbox
+		hAlign/vAlign - (letterbox only)
+		*/
+		
+		
 		static public const BEST_FIT:String = "bestFit";
 		static public const BEST_FILL:String = "bestFill";
 		static public const HORIZONTAL_FIT:String = "horizontalFit";
@@ -26,17 +39,17 @@ package stealth.graphics
 		private var loader:Loader;
 		private var original:BitmapData;
 		
-		private var _source:Object;
 		private var _scaling:String = BEST_FILL;
 		private var _backgroundColor:uint = 0xFFFFFF;
 		private var _backgroundAlpha:Number = 0;
 		
-		[Bindable(event="sourceChange")]
-		public function get source():Object { return _source; }
+		[Bindable(event="sourceChange", style="noEvent")]
+		public function get source():BitmapData { return _source; }
 		override public function set source(value:*):void
 		{
-			DataChange.change(this, "source", _source, _source = value);
+			DataChange.change(this, "source", _source, _source = BitmapSource.fromObject(value));
 		}
+		private var _source:BitmapData;
 		
 		[Bindable(event="scalingChanged")]
 		public function get scaling():String { return _scaling; }

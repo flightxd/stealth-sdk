@@ -176,12 +176,8 @@ package stealth.layouts
 		public function get margin():Box { return _margin || (margin = new Box()); }
 		public function set margin(value:*):void
 		{
-			if (value is String) {
-				value = Box.fromString(value);
-			} else if (value is Number) {
-				value = new Box(value, value, value, value);
-			} else {
-				value = value as Box;
+			if (!(value is Box)) {
+				value = Box.fromObject(value);
 			}
 			
 			if (_margin) {
@@ -662,7 +658,7 @@ package stealth.layouts
 		 */
 		public function validateNow(phase:String = null):void
 		{
-			Invalidation.validate(target, phase);
+			Invalidation.validateNow(target, phase);
 		}
 		
 		

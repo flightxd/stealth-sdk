@@ -4,18 +4,18 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package stealth.buttons
+package stealth.components.buttons
 {
 	import flight.data.DataChange;
 
-	import stealth.theme.ThemeCheckBox;
+	import stealth.theme.ThemeRadioButton;
 
-	public class CheckBox extends ButtonBase
+	public class RadioButton extends ButtonBase
 	{
-		public function CheckBox()
+		public function RadioButton()
 		{
 		}
-		
+
 		[Bindable(event="labelChange")]
 		public function get label():String { return _label; }
 		public function set label(value:String):void
@@ -34,7 +34,7 @@ package stealth.buttons
 				
 		override protected function init():void
 		{
-			ThemeCheckBox.initialize(this);
+			ThemeRadioButton.initialize(this);
 		}
 	}
 }

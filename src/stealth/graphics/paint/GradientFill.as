@@ -18,6 +18,7 @@ package stealth.graphics.paint
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.data.DataChange;
+	import flight.events.ListEvent;
 	import flight.geom.MatrixData;
 
 	[DefaultProperty("entries")]
@@ -32,6 +33,9 @@ package stealth.graphics.paint
 		{
 			// set default fill colors
 			paintData = gradientFill = new GraphicsGradientFill(type, [0x000000, 0xFFFFFF], [1, 1], [0, 255], paintMatrix, spreadMethod, interpolationMethod, focalPointRatio);
+			_entries = new ArrayList();
+			_entries.addEventListener(ListEvent.LIST_CHANGE, updateEntries);
+			_entries.addEventListener(ListEvent.ITEM_CHANGE, updateEntries);
 			
 			if (colors) {
 				var entries:Array = [];
@@ -49,6 +53,7 @@ package stealth.graphics.paint
 		}
 		
 		[Bindable(event="typeChange", style="noEvent")]
+		[Inspectable(enumeration="linear,radial")]
 		public function get type():String { return _type; }
 		public function set type(value:String):void
 		{
@@ -62,21 +67,12 @@ package stealth.graphics.paint
 		public function get entries():IList { return _entries; }
 		public function set entries(value:*):void
 		{
-			_entries.queueChanges = true;
-			_entries.removeAt();
-			if (value is GradientEntry) {
-				_entries.add(value);
-			} else if (value is Array) {
-				_entries.add(value);
-			} else if (value is IList) {
-				_entries.add( IList(value).get() );
-			}
-			_entries.queueChanges = false;
-			updateEntries();
+			ArrayList.fromObject(value, _entries);
 		}
-		private var _entries:ArrayList = new ArrayList();
+		private var _entries:ArrayList;
 		
 		[Bindable(event="spreadMethodChange", style="noEvent")]
+		[Inspectable(enumeration="pad,reflect,repeat")]
 		public function get spreadMethod():String { return _spreadMethod; }
 		public function set spreadMethod(value:String):void
 		{
@@ -86,6 +82,7 @@ package stealth.graphics.paint
 		private var _spreadMethod:String;
 		
 		[Bindable(event="interpolationMethodChange", style="noEvent")]
+		[Inspectable(enumeration="rgb,linear")]
 		public function get interpolationMethod():String { return _interpolationMethod; }
 		public function set interpolationMethod(value:String):void
 		{
@@ -116,7 +113,7 @@ package stealth.graphics.paint
 		public function get y():Number { return _y; }
 		public function set y(value:Number):void
 		{
-			_matrix.y =isNaN(value) ? 0 : value;
+			_matrix.y = isNaN(value) ? 0 : value;
 			DataChange.change(this, "y", _y, _y = value);
 		}
 		private var _y:Number;
@@ -178,7 +175,7 @@ package stealth.graphics.paint
 		}
 		private var _matrix:MatrixData = new MatrixData();
 		
-		private function updateEntries():void
+		private function updateEntries(event:ListEvent):void
 		{
 			gradientFill.colors.length = 0;
 			gradientFill.alphas.length = 0;
@@ -205,10 +202,6 @@ package stealth.graphics.paint
 				++ratios.nan;
 			} else {
 				if (ratios.nan > 0) {
-					if (ratios.base == 0) {
-						ratios.push(0);
-						--ratios.nan;
-					}
 					var space:Number = (ratio - ratios.base) / (ratios.nan + 1);
 					for (var i:int = 0; i < ratios.nan; i++) {
 						ratios.push(Math.round(space * i));

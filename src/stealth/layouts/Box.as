@@ -106,13 +106,15 @@ package stealth.layouts
 			return '[Box(top="' + _top + ', right="' + _right + '", bottom="' + _bottom + '", left="' + _left + '")]'; 
 		}
 		
-		public static function fromString(value:String, box:Box = null):Box
+		public static function fromObject(value:Object, box:Box = null):Box
 		{
 			if (!box) {
 				box = new Box();
 			}
 			
-			if (value) {
+			if (value is Number) {
+				box.top = box.right = box.bottom = box.left = Number(value);
+			} else if (value is String) {
 				var values:Array = value.split(" ");
 				switch (values.length) {
 					case 1 :

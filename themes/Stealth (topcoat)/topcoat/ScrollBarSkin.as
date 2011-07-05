@@ -10,12 +10,12 @@ package topcoat
 	import stealth.layouts.Align;
 	import MovieClipSkin;
 	
-	import stealth.buttons.ButtonBase;
-	import stealth.ranges.RangeBase;
+	import stealth.components.buttons.ButtonBase;
+	import stealth.components.ranges.RangeBase;
 	
 	dynamic public class ScrollBarSkin extends MovieClipSkin
 	{
-		[HostComponent("stealth.ranges.RangeBase")]
+		[HostComponent("stealth.components.ranges.RangeBase")]
 		public var hostComponent:RangeBase;
 		
 		// skinparts

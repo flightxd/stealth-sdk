@@ -7,7 +7,7 @@
 package stealth.components
 {
 	import flash.display.InteractiveObject;
-
+	
 	import flight.behaviors.IBehavior;
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
@@ -18,7 +18,7 @@ package stealth.components
 	import flight.events.SkinEvent;
 	import flight.skins.ISkin;
 	import flight.skins.ISkinnable;
-
+	
 	import stealth.graphics.GraphicElement;
 
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
@@ -31,7 +31,6 @@ package stealth.components
 		{
 			_behaviors = new ArrayList();
 			_behaviors.addEventListener(ListEvent.LIST_CHANGE, onBehaviorsChange);
-//			style.addEventListener(StyleEvent.STYLE_CHANGE, onStyleChange);
 		}
 		
 		[Bindable(event="disabledChange", style="noEvent")]
@@ -48,22 +47,14 @@ package stealth.components
 		public function get behaviors():IList { return _behaviors; }
 		public function set behaviors(value:*):void
 		{
-			if (value is IBehavior) {
-//				style[IBehavior(value).type] = value;
-			} else if (value is Array || value is IList) {
-				for each (var behavior:IBehavior in value) {
-//					style[behavior.type] = behavior;
-				}
-			} else if (value === null) {
-				_behaviors.removeAt();
-			}
+			ArrayList.fromObject(value, _behaviors);
 		}
-		private var _behaviors:IList;
+		private var _behaviors:ArrayList;
 		
 		// ====== IDataRenderer implementation ====== //
 		
 		[Bindable(event="dataChange", style="noEvent")]
-		public function get data():Object { return _data ||= {}; }
+		public function get data():Object { return _data; }
 		public function set data(value:Object):void
 		{
 			DataChange.change(this, "data", _data, _data = value);
@@ -177,42 +168,24 @@ package stealth.components
 			}
 		}
 		
-//		private function onStyleChange(event:StyleEvent):void
-//		{
-//			var behavior:IBehavior;			
-//			if (event.oldValue is IBehavior) {
-//				behavior = IBehavior(event.oldValue);
-//				behaviorsChanging = true;
-//				_behaviors.remove(behavior);
-//				behaviorsChanging = false;
-//				behavior.target = null;
-//			}
-//			if (event.newValue is IBehavior) {
-//				behavior = IBehavior(event.newValue);
-//				if (behavior.type != event.property) {
-//					behavior.type = event.property;
-//				}
-//				behaviorsChanging = true;
-//				_behaviors.add(behavior);
-//				behaviorsChanging = false;
-//				behavior.target = this;
-//			}
-//		}
-		
 		private function onBehaviorsChange(event:ListEvent):void
 		{
-			if (behaviorsChanging) {
-				return;
-			}
-
 			var behavior:IBehavior;
 			for each (behavior in event.removed) {
-//				delete style[behavior.type];
+				delete behaviorsIndex[behavior.type];
+				behavior.target = null;
 			}
+			
+			_behaviors.queueChanges = true;
 			for each (behavior in event.items) {
-//				style[behavior.type] = behavior;
+				if (behaviorsIndex[behavior.type]) {
+					_behaviors.remove(behaviorsIndex[behavior.type]);
+				}
+				behaviorsIndex[behavior.type] = behavior;
+				behavior.target = this;
 			}
+			_behaviors.queueChanges = false;
 		}
-		private var behaviorsChanging:Boolean;
+		private var behaviorsIndex:Object;
 	}
 }

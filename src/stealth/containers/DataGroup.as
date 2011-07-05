@@ -21,9 +21,10 @@ package stealth.containers
 		
 		[ArrayElementType("Object")]
 		[Bindable(event="dataProviderChange", style="noEvent")]
-		public function get dataProvider():IList { return _dataProvider ||= new ArrayList(); }
+		public function get dataProvider():IList { return _dataProvider; }
 		public function set dataProvider(value:*):void
 		{
+			// TODO: determine if ArrayList.fromObject should be used
 			invalidate(LifecycleEvent.CREATE);
 			if (!(value is IList) && value !== null) {
 				if (!_dataProvider) {

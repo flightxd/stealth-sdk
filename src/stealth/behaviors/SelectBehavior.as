@@ -27,16 +27,16 @@ package stealth.behaviors
 		}
 		private var _selected:Boolean;
 		
-		override protected function attachSkin():void
+		override protected function attach():void
 		{
-			super.attachSkin();
+			super.attach();
 			ButtonEvent.initialize(target);
 			target.addEventListener(MouseEvent.CLICK, onClick, false, 10, true);
 		}
 		
-		override protected function detachSkin():void
+		override protected function detach():void
 		{
-			super.detachSkin();
+			super.detach();
 			target.removeEventListener(MouseEvent.CLICK, onClick);
 		}
 		

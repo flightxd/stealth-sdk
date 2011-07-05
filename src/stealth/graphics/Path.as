@@ -49,6 +49,7 @@ package stealth.graphics
 		}
 		public function set data(value:*):void
 		{
+			// TODO: determine if use of ArrayList.fromObject is appropriate
 			if (_data == value)
 				return;
 			

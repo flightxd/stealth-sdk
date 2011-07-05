@@ -14,8 +14,12 @@ package stealth.graphics
 
 	public class Rect extends GraphicShape
 	{
-		public function Rect()
+		public function Rect(width:Number = 0, height:Number = 0, fill:Number = NaN, stroke:Number = NaN)
 		{
+			this.width = width;
+			this.height = height;
+			this.fill = fill;
+			this.stroke = stroke;
 		}
 		
 		[Bindable(event="radiusXChange", style="noEvent")]

@@ -9,10 +9,6 @@ package stealth.containers
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-	
-	import mx.containers.Box;
-	
-	import stealth.layouts.DockLayout;
 
 	//[Frame(factoryClass="flight.containers.FrameLoader")]
 	[SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]

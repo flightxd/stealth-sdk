@@ -4,7 +4,7 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package stealth.buttons
+package stealth.components.buttons
 {
 	import flight.data.DataChange;
 

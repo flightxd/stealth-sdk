@@ -7,7 +7,7 @@
 package stealth.graphics.paint
 {
 	import flash.events.EventDispatcher;
-
+	
 	import flight.data.DataChange;
 
 	public class GradientEntry extends EventDispatcher 

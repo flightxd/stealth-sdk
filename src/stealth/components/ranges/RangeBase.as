@@ -4,7 +4,7 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package stealth.ranges
+package stealth.components.ranges
 {
 	import flight.data.DataChange;
 	import flight.data.IPosition;

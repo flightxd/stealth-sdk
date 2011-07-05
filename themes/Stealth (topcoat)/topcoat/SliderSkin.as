@@ -9,12 +9,12 @@ package topcoat
 	import flight.display.MovieClipDisplay;
 	import MovieClipSkin;
 	
-	import stealth.buttons.ButtonBase;
-	import stealth.ranges.RangeBase;
+	import stealth.components.buttons.ButtonBase;
+	import stealth.components.ranges.RangeBase;
 	
 	dynamic public class SliderSkin extends MovieClipSkin
 	{
-		[HostComponent("stealth.ranges.RangeBase")]
+		[HostComponent("stealth.components.ranges.RangeBase")]
 		public var hostComponent:RangeBase;
 		
 		// skinparts

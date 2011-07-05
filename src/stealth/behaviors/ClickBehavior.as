@@ -66,9 +66,9 @@ package stealth.behaviors
 		private var _states:Array;
 		
 		
-		override protected function attachSkin():void
+		override protected function attach():void
 		{
-			super.attachSkin();
+			super.attach();
 			ButtonEvent.initialize(target);
 			if (target is Sprite) {
 				//Sprite(target).mouseChildren = false;
@@ -82,9 +82,9 @@ package stealth.behaviors
 			target.addEventListener(ButtonEvent.DRAG_OVER, onStateDown, false, 0, true);
 		}
 		
-		override protected function detachSkin():void
+		override protected function detach():void
 		{
-			super.detachSkin();
+			super.detach();
 			target.removeEventListener(MouseEvent.ROLL_OUT, onStateUp);
 			target.removeEventListener(ButtonEvent.RELEASE_OUTSIDE, onStateUp);
 			target.removeEventListener(MouseEvent.ROLL_OVER, onStateOver);

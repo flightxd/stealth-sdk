@@ -44,6 +44,7 @@ package stealth.graphics.paint
 		private var _pixelHinting:Boolean;
 		
 		[Bindable(event="scaleModeChange", style="noEvent")]
+		[Inspectable(enumeration="normal,horizontal,vertical,none")]
 		public function get scaleMode():String { return _scaleMode; }
 		public function set scaleMode(value:String):void
 		{
@@ -53,6 +54,7 @@ package stealth.graphics.paint
 		private var _scaleMode:String;
 		
 		[Bindable(event="capesChange", style="noEvent")]
+		[Inspectable(enumeration="round,square,none")]
 		public function get caps():String { return _caps; }
 		public function set caps(value:String):void
 		{
@@ -62,6 +64,7 @@ package stealth.graphics.paint
 		private var _caps:String;
 		
 		[Bindable(event="jointsChange", style="noEvent")]
+		[Inspectable(enumeration="round,bevel,miter")]
 		public function get joints():String { return _joints; }
 		public function set joints(value:String):void
 		{

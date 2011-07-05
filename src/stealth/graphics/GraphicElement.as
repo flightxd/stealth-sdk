@@ -30,16 +30,13 @@ package stealth.graphics
 		public function GraphicElement()
 		{
 			layoutElement = new LayoutElement(this);
-			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
-			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
 			invalidate(LayoutEvent.RESIZE);
 			defaultRect = getRect(this);
 			measure();
 			
 			super();
 		}
-		
 		
 		[Bindable(event="maskTypeChange", style="noEvent")]
 		public function get maskType():String { return _maskType; }
@@ -372,6 +369,23 @@ package stealth.graphics
 		{
 			layoutElement.setLayoutRect(rect);
 		}
+		
+		protected function get renderEnabled():Boolean { return _renderEnabled; }
+		protected function set renderEnabled(value:Boolean):void
+		{
+			if (_renderEnabled != value) {
+				_renderEnabled = value;
+				if (_renderEnabled) {
+					addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
+					addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
+				} else {
+					removeEventListener(LayoutEvent.RESIZE, onResize);
+					removeEventListener(InvalidationEvent.VALIDATE, onRender);
+				}
+				invalidate();
+			}
+		}
+		private var _renderEnabled:Boolean;
 		
 		protected function render():void
 		{

@@ -22,19 +22,20 @@ package stealth.containers
 	
 	import stealth.graphics.GraphicElement;
 
-	[Style(name="background")]	// TODO: implement limited drawing feature
-	
 	[DefaultProperty("content")]
 	public class Group extends GraphicElement implements IContainer
 	{
+		public static var debug:Boolean;
+		
 		public function Group(content:* = null)
 		{
+			addEventListener(Event.ADDED, onChildAdded, true, 10);
+			addEventListener(Event.REMOVED, onChildRemoved, true, 10);
+			
 			_content = new ArrayList();
 			for (var i:int = 0; i < numChildren; i++) {
 				_content.add(getChildAt(i));
 			}
-			addEventListener(Event.ADDED, onChildAdded, true, 10);
-			addEventListener(Event.REMOVED, onChildRemoved, true, 10);
 			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange, false, 10);
 			if (content) {
 				this.content = content;
@@ -45,6 +46,30 @@ package stealth.containers
 		}
 		
 		/**
+		 * 1-number == 1 color
+		 * 2-number == 1 linear gradient
+		 * else give to bitmap and draw
+		 */
+		[Bindable(event="backgroundChange", style="noEvent")]
+		public function get background():Number { return _background; }
+		public function set background(value:Number):void
+		{
+			renderEnabled = !isNaN(value);
+			DataChange.change(this, "background", _background, _background = value);
+		}
+		private var _background:Number;
+		
+		override protected function render():void
+		{
+			graphics.clear();
+			if (!isNaN(_background)) {
+				graphics.beginFill(background);
+				graphics.drawRect(0, 0, width, height);
+				graphics.endFill();
+			}
+		}
+		
+		/**
 		 * @inheritDoc
 		 */
 		[ArrayElementType("flash.display.DisplayObject")]
@@ -52,16 +77,7 @@ package stealth.containers
 		public function get content():IList { return _content; }
 		override public function set content(value:*):void
 		{
-			_content.queueChanges = true;
-			_content.removeAt();
-			if (value is DisplayObject) {
-				_content.add(value);
-			} else if (value is Array) {
-				_content.add(value);
-			} else if (value is IList) {
-				_content.add( IList(value).get() );
-			}
-			_content.queueChanges = false;
+			ArrayList.fromObject(value, _content);
 		}
 		private var _content:ArrayList;
 		
@@ -154,10 +170,10 @@ package stealth.containers
 			if (width < contentWidth || height < contentHeight) {
 				var rect:Rectangle = scrollRect || new Rectangle();
 				if (_hPosition) {
-					rect.x = hPosition.value;
+					rect.x = _hPosition.value;
 				}
 				if (_vPosition) {
-					rect.y = vPosition.value;
+					rect.y = _vPosition.value;
 				}
 				scrollRect = rect;
 			}

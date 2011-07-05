@@ -31,12 +31,14 @@
 	<component id="Box"						class="stealth.layouts.Box"/>
 	
 	<!-- containers -->
-	<component id="Graphic"					class="stealth.graphics.Graphic"/>
 	<component id="Group"					class="stealth.containers.Group"/>
 	<component id="HGroup"					class="stealth.containers.HGroup"/>
 	<component id="VGroup"					class="stealth.containers.VGroup"/>
 	<component id="DockGroup"				class="stealth.containers.DockGroup"/>
 	<component id="DataGroup"				class="stealth.containers.DataGroup"/>
+	<component id="Graphic"					class="stealth.containers.Graphic"/>
 	<component id="Application"				class="stealth.containers.Application"/>
+	
+	<!-- buttons -->
 	
 </componentPackage>
