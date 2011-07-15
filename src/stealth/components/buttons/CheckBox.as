@@ -6,35 +6,19 @@
 
 package stealth.components.buttons
 {
-	import flight.data.DataChange;
+	import theme.buttons.ThemeCheckBox;
+	
 
-	import stealth.theme.ThemeCheckBox;
-
-	public class CheckBox extends ButtonBase
+	public class CheckBox extends Button
 	{
 		public function CheckBox()
 		{
+			toggle = true;
 		}
 		
-		[Bindable(event="labelChange")]
-		public function get label():String { return _label; }
-		public function set label(value:String):void
+		override protected function getTheme():Object
 		{
-			DataChange.change(this, "label", _label, _label = value);
-		}
-		private var _label:String;
-
-		[Bindable(event="emphasizedChange", style="noEvent")]
-		public function get emphasized():Boolean { return _emphasized; }
-		public function set emphasized(value:Boolean):void
-		{
-			DataChange.change(this, "emphasized", _emphasized, _emphasized = value);
-		}
-		private var _emphasized:Boolean;
-				
-		override protected function init():void
-		{
-			ThemeCheckBox.initialize(this);
+			return ThemeCheckBox;
 		}
 	}
 }

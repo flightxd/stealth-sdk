@@ -6,7 +6,7 @@
 
 package stealth.components.ranges
 {
-	import stealth.theme.ThemeScrollBar;
+	import theme.ranges.ThemeScrollBar;
 
 	public class ScrollBar extends RangeBase
 	{
@@ -14,9 +14,9 @@ package stealth.components.ranges
 		{
 		}
 		
-		override protected function init():void
+		override protected function getTheme():Object
 		{
-			ThemeScrollBar.initialize(this);
+			return ThemeScrollBar;
 		}
 	}
 }

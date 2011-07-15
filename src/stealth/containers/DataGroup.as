@@ -11,12 +11,20 @@ package stealth.containers
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.data.DataChange;
-	import flight.events.LifecycleEvent;
+	import flight.events.InvalidationEvent;
+	import flight.events.ListEvent;
+	import flight.utils.Factory;
+	import flight.utils.IFactory;
+
+	import stealth.graphics.Group;
+
+	import stealth.utils.TemplateFactory;
 
 	public class DataGroup extends Group
 	{
 		public function DataGroup()
 		{
+			addEventListener(InvalidationEvent.COMMIT, onCommit);
 		}
 		
 		[ArrayElementType("Object")]
@@ -24,47 +32,52 @@ package stealth.containers
 		public function get dataProvider():IList { return _dataProvider; }
 		public function set dataProvider(value:*):void
 		{
-			// TODO: determine if ArrayList.fromObject should be used
-			invalidate(LifecycleEvent.CREATE);
 			if (!(value is IList) && value !== null) {
-				if (!_dataProvider) {
-					_dataProvider = new ArrayList();
-				}
-				if (value is Array) {
+				if (_dataProvider) {
 					_dataProvider.add(value);
+					return;
 				} else {
-					_dataProvider.add(value);
+					value = new ArrayList(value);
 				}
-				DataChange.change(this, "dataProvider", _dataProvider, _dataProvider, true);
-			} else {
-				DataChange.change(this, "dataProvider", _dataProvider, _dataProvider = value, true);
+			}
+			
+			if (_dataProvider) {
+				_dataProvider.removeEventListener(ListEvent.LIST_CHANGE, onProviderChange);
+			}
+			DataChange.change(this, "dataProvider", _dataProvider, _dataProvider = value);
+			invalidate(InvalidationEvent.COMMIT);
+			if (_dataProvider) {
+				_dataProvider.addEventListener(ListEvent.LIST_CHANGE, onProviderChange);
 			}
 		}
 		private var _dataProvider:IList;
 		
 		[Bindable(event="templateChange", style="noEvent")]
-		public function get template():Object { return _template }
-		public function set template(value:Object):void
+		public function get template():IFactory { return _template }
+		public function set template(value:*):void
 		{
-			invalidate(LifecycleEvent.CREATE);
-			DataChange.change(this, "template", _template, _template = value as Class);
+			if (!(value is IFactory) && value !== null) {
+				value = new TemplateFactory(value);
+			}
+			DataChange.change(this, "template", _template, _template = value);
+			invalidate(InvalidationEvent.COMMIT);
 		}
-		private var _template:Class;
+		private var _template:IFactory;
 		
-		override protected function create():void
+		protected function commit():void
 		{
 			if (_dataProvider && _template) {
 				
-				var child:DisplayObject;
 				for (var i:int = 0; i < _dataProvider.length; i++) {
 					
-					child = i < numChildren ? getChildAt(i) : null;
-					if (!(child is _template)) {
-						child = new _template();
+					var data:Object = _dataProvider.get(i, 0);
+					var child:DisplayObject = i < numChildren ? getChildAt(i) : null;
+					if (!child) {
+						child = _template.getInstance(data);
 						addChildAt(child, i);
 					}
 					if ("data" in child) {
-						child["data"] = _dataProvider.get(i, 0);
+						child["data"] = data;
 					}
 				}
 				
@@ -72,6 +85,16 @@ package stealth.containers
 					removeChildAt(i);
 				}
 			}
+		}
+		
+		private function onCommit(event:InvalidationEvent):void
+		{
+			commit();
+		}
+		
+		private function onProviderChange(event:ListEvent):void
+		{
+			invalidate(InvalidationEvent.COMMIT);
 		}
 	}
 }

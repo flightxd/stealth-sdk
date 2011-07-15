@@ -8,6 +8,8 @@ package stealth.graphics
 {
 	import flash.geom.Matrix;
 
+	import flight.display.IDrawable;
+
 	import stealth.graphics.paint.IFill;
 	import stealth.graphics.paint.IStroke;
 

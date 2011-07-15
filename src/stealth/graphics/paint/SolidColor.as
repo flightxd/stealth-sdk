@@ -6,7 +6,7 @@
 
 package stealth.graphics.paint
 {
-	public class SolidColor extends SolidFill implements IFill
+	public class SolidColor extends SolidFill
 	{
 		public function SolidColor(color:uint = 0x000000, alpha:Number = 1)
 		{

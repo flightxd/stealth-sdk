@@ -6,9 +6,9 @@
 	<component id="GraphicShape"			class="stealth.graphics.GraphicShape"/>
 	<component id="GraphicBitmap"			class="stealth.graphics.GraphicBitmap"/>
 	<component id="GraphicText"				class="stealth.graphics.GraphicText"/>
-	<component id="Path"					class="stealth.graphics.Path"/>
-	<component id="Rect"					class="stealth.graphics.Rect"/>
-	<component id="Ellipse"					class="stealth.graphics.Ellipse"/>
+	<component id="Path"					class="stealth.graphics.shapes.Path"/>
+	<component id="Rect"					class="stealth.graphics.shapes.Rect"/>
+	<component id="Ellipse"					class="stealth.graphics.shapes.Ellipse"/>
 	
 	<!-- paint -->
 	<component id="SolidColor"				class="stealth.graphics.paint.SolidColor"/>
@@ -31,13 +31,13 @@
 	<component id="Box"						class="stealth.layouts.Box"/>
 	
 	<!-- containers -->
-	<component id="Group"					class="stealth.containers.Group"/>
+	<component id="Group"					class="stealth.graphics.Group"/>
 	<component id="HGroup"					class="stealth.containers.HGroup"/>
 	<component id="VGroup"					class="stealth.containers.VGroup"/>
 	<component id="DockGroup"				class="stealth.containers.DockGroup"/>
 	<component id="DataGroup"				class="stealth.containers.DataGroup"/>
-	<component id="Graphic"					class="stealth.containers.Graphic"/>
-	<component id="Application"				class="stealth.containers.Application"/>
+	<component id="Graphic"					class="stealth.graphics.Graphic"/>
+	<component id="Application"				class="stealth.components.containers.Application"/>
 	
 	<!-- buttons -->
 	

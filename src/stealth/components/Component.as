@@ -7,19 +7,23 @@
 package stealth.components
 {
 	import flash.display.InteractiveObject;
+	import flash.events.Event;
 	
-	import flight.behaviors.IBehavior;
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.data.DataBind;
 	import flight.data.DataChange;
 	import flight.events.LayoutEvent;
+	import flight.events.LifecycleEvent;
 	import flight.events.ListEvent;
 	import flight.events.SkinEvent;
-	import flight.skins.ISkin;
-	import flight.skins.ISkinnable;
+	import flight.utils.Factory;
 	
+	import stealth.behaviors.IBehavior;
 	import stealth.graphics.GraphicElement;
+	import stealth.skins.ISkin;
+	import stealth.skins.ISkinnable;
+	import stealth.skins.Theme;
 
 	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
@@ -31,6 +35,7 @@ package stealth.components
 		{
 			_behaviors = new ArrayList();
 			_behaviors.addEventListener(ListEvent.LIST_CHANGE, onBehaviorsChange);
+			addEventListener(LifecycleEvent.CREATE, onCreate, false, 20);
 		}
 		
 		[Bindable(event="disabledChange", style="noEvent")]
@@ -42,12 +47,12 @@ package stealth.components
 		}
 		private var _disabled:Boolean = true;
 		
-		[ArrayElementType("flight.behaviors.IBehavior")]
+		[ArrayElementType("stealth.behaviors.IBehavior")]
 		[Bindable(event="behaviorsChange", style="noEvent")]
 		public function get behaviors():IList { return _behaviors; }
 		public function set behaviors(value:*):void
 		{
-			ArrayList.fromObject(value, _behaviors);
+			ArrayList.getInstance(value, _behaviors);
 		}
 		private var _behaviors:ArrayList;
 		
@@ -81,7 +86,7 @@ package stealth.components
 				}
 				invalidate(LayoutEvent.MEASURE);
 				DataChange.queue(this, "skin", _skin, _skin = value);
-				if (_skin) {
+				if (_skin && created) {
 					attachSkin();
 				}
 				DataChange.change();
@@ -151,6 +156,24 @@ package stealth.components
 			if (!_skin) {
 				super.measure();
 			}
+		}
+		
+		private function onCreate(event:LifecycleEvent):void
+		{
+			if (_skin) {
+				if (Theme.getSkinName(_skin)) {
+					Theme.register(this);
+				}
+				attachSkin();
+			} else {
+				Theme.register(this);
+				skin = Factory.getInstance(getTheme());
+			}
+		}
+		
+		protected function getTheme():Object
+		{
+			return null;
 		}
 		
 		private function onSkinPartChange(event:SkinEvent):void

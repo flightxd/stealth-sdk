@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<design version="2">
+   <namespaces>
+     <namespace prefix="stealth" uri="http://stealth.flightxd.com/2011"/>
+   </namespaces>
+</design>

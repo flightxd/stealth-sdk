@@ -177,7 +177,7 @@ package stealth.layouts
 		public function set margin(value:*):void
 		{
 			if (!(value is Box)) {
-				value = Box.fromObject(value);
+				value = Box.getInstance(value);
 			}
 			
 			if (_margin) {

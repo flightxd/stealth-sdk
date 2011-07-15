@@ -32,8 +32,6 @@ package stealth.graphics
 			layoutElement.nativeSizing = true;
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			measure();
-			
-			super();
 		}
 		
 		

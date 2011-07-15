@@ -17,7 +17,7 @@ package stealth.graphics.paint
 
 	import flight.data.DataChange;
 
-	public class GradientStroke extends GradientFill
+	public class GradientStroke extends GradientFill implements IStroke
 	{
 		protected var stroke:GraphicsStroke;
 		

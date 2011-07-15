@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2010 the original author or authors.
+ * Permission is hereby granted to use, modify, and distribute this file
+ * in accordance with the terms of the license agreement accompanying it.
+ */
+
 package stealth.graphics.paint
 {
 	import flash.display.CapsStyle;
@@ -7,7 +13,7 @@ package stealth.graphics.paint
 
 	import flight.data.DataChange;
 
-	public class SolidStroke extends SolidFill
+	public class SolidStroke extends SolidFill implements IStroke
 	{
 		protected var stroke:GraphicsStroke;
 		

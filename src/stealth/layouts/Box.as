@@ -106,7 +106,7 @@ package stealth.layouts
 			return '[Box(top="' + _top + ', right="' + _right + '", bottom="' + _bottom + '", left="' + _left + '")]'; 
 		}
 		
-		public static function fromObject(value:Object, box:Box = null):Box
+		public static function getInstance(value:*, box:Box = null):Box
 		{
 			if (!box) {
 				box = new Box();
@@ -115,25 +115,26 @@ package stealth.layouts
 			if (value is Number) {
 				box.top = box.right = box.bottom = box.left = Number(value);
 			} else if (value is String) {
+				value = value.replace(/[,\s]+/g, " ");
 				var values:Array = value.split(" ");
 				switch (values.length) {
 					case 1 :
-						box.top = box.right = box.bottom = box.left = parseFloat( values[0] );
+						box.top = box.right = box.bottom = box.left = Number(values[0]);
 						break;
 					case 2 :
-						box.top = box.bottom = parseFloat( values[0] );
-						box.right = box.left = parseFloat( values[1] );
+						box.top = box.bottom = Number(values[0]);
+						box.right = box.left = Number(values[1]);
 						break;
 					case 3 :
-						box.top = parseFloat( values[0] );
-						box.right = box.left = parseFloat( values[1] );
-						box.bottom = parseFloat( values[2] );
+						box.top = Number(values[0]);
+						box.right = box.left = Number(values[1]);
+						box.bottom = Number(values[2]);
 						break;
 					case 4 :
-						box.top = parseFloat( values[0] );
-						box.right = parseFloat( values[1] );
-						box.bottom = parseFloat( values[2] );
-						box.left = parseFloat( values[3] );
+						box.top = Number(values[0]);
+						box.right = Number(values[1]);
+						box.bottom = Number(values[2]);
+						box.left = Number(values[3]);
 						break;
 				}
 			}

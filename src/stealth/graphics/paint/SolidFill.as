@@ -10,7 +10,7 @@ package stealth.graphics.paint
 
 	import flight.data.DataChange;
 
-	public class SolidFill extends Paint
+	public class SolidFill extends Paint implements IFill
 	{
 		protected var solidFill:GraphicsSolidFill;
 		

@@ -47,7 +47,7 @@ package stealth.graphics
 		public function get source():BitmapData { return _source; }
 		override public function set source(value:*):void
 		{
-			DataChange.change(this, "source", _source, _source = BitmapSource.fromObject(value));
+			DataChange.change(this, "source", _source, _source = BitmapSource.getInstance(value));
 		}
 		private var _source:BitmapData;
 		
@@ -74,7 +74,6 @@ package stealth.graphics
 		
 		public function BitmapImage()
 		{
-			super();
 		}
 		
 		/**

@@ -6,6 +6,7 @@
 
 package stealth.containers
 {
+	import stealth.graphics.Group;
 	import stealth.layouts.Box;
 	import stealth.layouts.HorizontalLayout;
 

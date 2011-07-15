@@ -22,20 +22,22 @@ package stealth.graphics.paint
 	{
 		protected var bitmapFill:GraphicsBitmapFill;
 		
-		public function BitmapFill(source:* = null, matrix:Matrix = null, fillMode:String = "pad", smooth:Boolean = false)
+		public function BitmapFill(source:* = null, matrix:Matrix = null, repeat:Boolean = true, smooth:Boolean = false)
 		{
 			this.source = source;
-			paintData = bitmapFill = new GraphicsBitmapFill(_source, matrix, fillMode == "repeat", smooth);
+			paintData = bitmapFill = new GraphicsBitmapFill(_source, matrix, repeat, smooth);
 			_matrix = matrix;
-			_fillMode = fillMode;
+			_fillMode = repeat ? "repeat" : "scale";	// TODO: implement BitmapFillMode
 			_smooth = smooth;
 		}
+		
+		// TODO: implement matrix transformation of Bitmap
 		
 		[Bindable(event="sourceChange", style="noEvent")]
 		public function get source():BitmapData { return _source; }
 		public function set source(value:*):void
 		{
-			DataChange.change(this, "source", _source, _source = BitmapSource.fromObject(value));
+			DataChange.change(this, "source", _source, _source = BitmapSource.getInstance(value));
 		}
 		private var _source:BitmapData;
 		

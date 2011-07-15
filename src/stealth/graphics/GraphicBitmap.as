@@ -28,12 +28,12 @@ package stealth.graphics
 	{
 		public function GraphicBitmap(bitmapData:BitmapData = null, pixelSnapping:String = PixelSnapping.AUTO, smoothing:Boolean = false)
 		{
+			super(bitmapData, pixelSnapping, smoothing);
+			
 			layoutElement = new LayoutElement(this);
 			layoutElement.nativeSizing = true;
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			measure();
-			
-			super(bitmapData, pixelSnapping, smoothing);
 		}
 		
 		[Bindable(event="maskTypeChange", style="noEvent")]

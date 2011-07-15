@@ -10,6 +10,7 @@ package stealth.graphics
 	import flash.display.GraphicsEndFill;
 	import flash.display.GraphicsPath;
 	import flash.display.IGraphicsData;
+	import flash.events.IEventDispatcher;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
@@ -23,6 +24,7 @@ package stealth.graphics
 	
 	import stealth.graphics.paint.IFill;
 	import stealth.graphics.paint.IStroke;
+	import stealth.graphics.paint.Paint;
 	import stealth.graphics.paint.SolidColor;
 	import stealth.graphics.paint.SolidColorStroke;
 	import stealth.layouts.Box;
@@ -45,8 +47,6 @@ package stealth.graphics
 			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
 			invalidate(LayoutEvent.RESIZE);
 			measure();
-			
-			super();
 		}
 		
 		
@@ -63,29 +63,24 @@ package stealth.graphics
 		
 		private var graphicsPath:GraphicsPath;
 		private var graphicsData:Vector.<IGraphicsData>;
-		private var endFill:GraphicsEndFill = new GraphicsEndFill();
-		private var pathBounds:Rectangle = new Rectangle();
+		private static var pathBounds:Rectangle = new Rectangle();
+		private static var endFill:GraphicsEndFill = new GraphicsEndFill();
 		
 		[Bindable(event="fillChange", style="noEvent")]
 		public function get fill():IFill { return _fill; }
 		public function set fill(value:*):void
 		{
-			if (value is String) {
-				value = parseFloat(value);
-			}
-			if (value is Number && !isNaN(value)) {
-				value = new SolidColor(value);
-			} else {
-				value = value as IStroke;
-			}
+			value = Paint.getInstance(value);
 			
-			if (_fill) {
-				_fill.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
-			}
-			DataChange.change(this, "fill", _fill, _fill = value);
-			invalidate();
-			if (_fill) {
-				_fill.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+			if (_fill != value) {
+				if (_fill && _fill is IEventDispatcher) {
+					IEventDispatcher(_fill).removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+				}
+				DataChange.change(this, "fill", _fill, _fill = value);
+				invalidate();
+				if (_fill && IEventDispatcher) {
+					IEventDispatcher(_fill).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+				}
 			}
 		}
 		private var _fill:IFill;
@@ -94,22 +89,17 @@ package stealth.graphics
 		public function get stroke():IStroke { return _stroke; }
 		public function set stroke(value:*):void
 		{
-			if (value is String) {
-				value = parseFloat(value);
-			}
-			if (value is Number && !isNaN(value)) {
-				value = new SolidColorStroke(value);
-			} else {
-				value = value as IStroke;
-			}
+			value = Paint.getInstance(value, true);
 			
-			if (_stroke) {
-				_stroke.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
-			}
-			DataChange.change(this, "stroke", _stroke, _stroke = value);
-			invalidate();
-			if (_stroke) {
-				_stroke.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+			if (_stroke != value) {
+				if (_stroke && _stroke is IEventDispatcher) {
+					IEventDispatcher(_stroke).removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+				}
+				DataChange.change(this, "stroke", _stroke, _stroke = value);
+				invalidate();
+				if (_stroke && _stroke is IEventDispatcher) {
+					IEventDispatcher(_stroke).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+				}
 			}
 		}
 		private var _stroke:IStroke;
@@ -146,14 +136,14 @@ package stealth.graphics
 			}
 			
 			var fillLength:int, strokeLength:int;
-			if (fill) {
-				fill.update(graphicsPath, pathBounds);
-				fill.paint(graphicsData);
+			if (_fill) {
+				_fill.update(graphicsPath, pathBounds);
+				_fill.paint(graphicsData);
 				fillLength = graphicsData.length;
 			}
-			if (stroke) {
-				stroke.update(graphicsPath, pathBounds);
-				stroke.paint(graphicsData);
+			if (_stroke) {
+				_stroke.update(graphicsPath, pathBounds);
+				_stroke.paint(graphicsData);
 				strokeLength = graphicsData.length - fillLength;
 			}
 			

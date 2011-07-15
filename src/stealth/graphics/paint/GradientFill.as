@@ -22,7 +22,7 @@ package stealth.graphics.paint
 	import flight.geom.MatrixData;
 
 	[DefaultProperty("entries")]
-	public class GradientFill extends Paint
+	public class GradientFill extends Paint implements IFill
 	{
 		protected static const GRADIENT_DIMENSION:Number = 1638.4;
 		
@@ -40,7 +40,7 @@ package stealth.graphics.paint
 			if (colors) {
 				var entries:Array = [];
 				for (var i:int = 0; i < colors.length; i++) {
-					var entry:GradientEntry = new GradientEntry(colors[i], alphas[i], ratios[i]);
+					var entry:GradientEntry = new GradientEntry(colors[i], alphas ? alphas[i] : 1, ratios ? ratios[i] : NaN);
 					entries.push(entry);
 				}
 				this.entries = entries;
@@ -67,7 +67,7 @@ package stealth.graphics.paint
 		public function get entries():IList { return _entries; }
 		public function set entries(value:*):void
 		{
-			ArrayList.fromObject(value, _entries);
+			ArrayList.getInstance(value, _entries);
 		}
 		private var _entries:ArrayList;
 		

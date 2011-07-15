@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2010 the original author or authors.
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
@@ -6,20 +6,21 @@
 
 package stealth.graphics
 {
+	import flash.display.DisplayObject;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-
+	
 	import flight.data.DataChange;
 	import flight.display.MovieClip;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.layouts.IBounds;
-
+	import flight.utils.Type;
+	
 	import stealth.layouts.Box;
 	import stealth.layouts.LayoutElement;
 
 	[Event(name="resize", type="flight.events.LayoutEvent")]
-	[Event(name="validate", type="flight.events.InvalidationEvent")]
 	
 	/**
 	 * A generic graphic element providing position, size and transformation.
@@ -29,13 +30,19 @@ package stealth.graphics
 	{
 		public function GraphicElement()
 		{
+			var bounds:DisplayObject = getChildByName("bounds");
+			if (bounds) {
+				defaultRect = bounds.getRect(this);
+				removeChild(bounds);
+				this["bounds"] = null;
+			} else {
+				defaultRect = getRect(this);
+			}
 			layoutElement = new LayoutElement(this);
+			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
-			invalidate(LayoutEvent.RESIZE);
-			defaultRect = getRect(this);
+			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
 			measure();
-			
-			super();
 		}
 		
 		[Bindable(event="maskTypeChange", style="noEvent")]
@@ -370,31 +377,14 @@ package stealth.graphics
 			layoutElement.setLayoutRect(rect);
 		}
 		
-		protected function get renderEnabled():Boolean { return _renderEnabled; }
-		protected function set renderEnabled(value:Boolean):void
-		{
-			if (_renderEnabled != value) {
-				_renderEnabled = value;
-				if (_renderEnabled) {
-					addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
-					addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
-				} else {
-					removeEventListener(LayoutEvent.RESIZE, onResize);
-					removeEventListener(InvalidationEvent.VALIDATE, onRender);
-				}
-				invalidate();
-			}
-		}
-		private var _renderEnabled:Boolean;
-		
 		protected function render():void
 		{
 		}
 		
 		protected function measure():void
 		{
-			measured.minWidth = defaultRect.width;
-			measured.minHeight = defaultRect.height;
+			measured.minWidth = defaultRect.right;
+			measured.minHeight = defaultRect.bottom;
 		}
 		protected var defaultRect:Rectangle;
 		

@@ -11,7 +11,7 @@ package stealth.graphics.paint
 	import flash.events.IEventDispatcher;
 	import flash.geom.Rectangle;
 
-	public interface IPaint extends IEventDispatcher
+	public interface IPaint
 	{
 		function update(graphicsPath:GraphicsPath, pathBounds:Rectangle):void;
 		

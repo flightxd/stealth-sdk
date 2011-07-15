@@ -6,7 +6,8 @@
 
 package stealth.components.ranges
 {
-	import stealth.theme.ThemeSlider;
+	import theme.ranges.ThemeSlider;
+	
 
 	public class Slider extends RangeBase
 	{
@@ -14,9 +15,9 @@ package stealth.components.ranges
 		{
 		}
 		
-		override protected function init():void
+		override protected function getTheme():Object
 		{
-			ThemeSlider.initialize(this);
+			return ThemeSlider;
 		}
 	}
 }

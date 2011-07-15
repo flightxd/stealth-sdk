@@ -14,7 +14,7 @@ package stealth.graphics.paint
 	import flash.display.SpreadMethod;
 	import flash.geom.Matrix;
 
-	public class RadialGradientStroke extends GradientStroke implements IStroke
+	public class RadialGradientStroke extends GradientStroke
 	{
 		public function RadialGradientStroke(weight:Number = 1, colors:Array = null, alphas:Array = null, ratios:Array = null, matrix:Matrix = null,
 											 spreadMethod:String = SpreadMethod.PAD, interpolationMethod:String = InterpolationMethod.RGB, focalPointRatio:Number = 0,

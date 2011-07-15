@@ -11,7 +11,7 @@ package stealth.graphics.paint
 	import flash.display.SpreadMethod;
 	import flash.geom.Matrix;
 
-	public class RadialGradient extends GradientFill implements IFill
+	public class RadialGradient extends GradientFill
 	{
 		public function RadialGradient(colors:Array = null, alphas:Array = null, ratios:Array = null, matrix:Matrix = null,
 									   spreadMethod:String = SpreadMethod.PAD, interpolationMethod:String = InterpolationMethod.RGB, focalPointRatio:Number = 0)

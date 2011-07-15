@@ -8,7 +8,7 @@ package stealth.behaviors
 {
 	import flash.display.InteractiveObject;
 
-	import flight.behaviors.Behavior;
+	import stealth.behaviors.Behavior;
 	import flight.data.DataChange;
 	import flight.data.IPosition;
 	import flight.data.Position;
@@ -18,7 +18,7 @@ package stealth.behaviors
 	{
 		public function StepBehavior()
 		{
-			skinParts = {forwardButton:InteractiveObject, backwardButton:InteractiveObject};
+			skinParts = { forwardButton:InteractiveObject, backwardButton:InteractiveObject };
 		}
 		
 		[Bindable(event="positionChange", style="noEvent")]

@@ -10,7 +10,7 @@ package stealth.behaviors
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
-	import flight.behaviors.Behavior;
+	import stealth.behaviors.Behavior;
 	import flight.events.ButtonEvent;
 
 	public class DragBehavior extends Behavior

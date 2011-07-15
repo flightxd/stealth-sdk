@@ -69,7 +69,7 @@ package stealth.layouts
 		public function set padding(value:*):void
 		{
 			if (!(value is Box)) {
-				value = Box.fromObject(value);
+				value = Box.getInstance(value);
 			}
 			
 			if (_padding) {
@@ -95,14 +95,15 @@ package stealth.layouts
 			if (value is Number) {
 				_padding.vertical = _padding.horizontal = value;
 			} else if (value is String) {
+				value = value.replace(/[,\s]+/g, " ");
 				var values:Array = value.split(" ");
 				switch (values.length) {
 					case 1:
-						_padding.vertical = _padding.horizontal = parseFloat( values[0] );
+						_padding.vertical = _padding.horizontal = Number(values[0]);
 						break;
 					case 2:
-						_padding.vertical = parseFloat( values[0] );
-						_padding.horizontal = parseFloat( values[1] );
+						_padding.vertical = Number(values[0]);
+						_padding.horizontal = Number(values[1]);
 						break;
 				}
 			} else if (value is Box) {
@@ -170,7 +171,7 @@ package stealth.layouts
 		}
 		
 		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
-		{// TODO: asfda sdf sdfas dfasdf stop listening to updates...
+		{
 			updateChildBounds(child, last);
 			if (!childBounds.equalsRect(childRect)) {
 				childBounds.getRect(childRect);

@@ -8,7 +8,7 @@ package stealth.behaviors
 {
 	import flash.events.MouseEvent;
 
-	import flight.behaviors.Behavior;
+	import stealth.behaviors.Behavior;
 	import flight.data.DataChange;
 	import flight.events.ButtonEvent;
 

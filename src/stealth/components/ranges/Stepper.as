@@ -6,17 +6,17 @@
 
 package stealth.components.ranges
 {
-	import stealth.theme.ThemeStepper;
-
+	import theme.ranges.ThemeStepper;
+	
 	public class Stepper extends RangeBase
 	{
 		public function Stepper()
 		{
 		}
 		
-		override protected function init():void
+		override protected function getTheme():Object
 		{
-			ThemeStepper.initialize(this);
+			return ThemeStepper;
 		}
 	}
 }

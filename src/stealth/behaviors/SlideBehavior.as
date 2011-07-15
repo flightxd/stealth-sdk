@@ -11,7 +11,7 @@ package stealth.behaviors
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
-	import flight.behaviors.Behavior;
+	import stealth.behaviors.Behavior;
 	import flight.data.DataChange;
 	import flight.data.IPosition;
 	import flight.data.Position;
@@ -26,7 +26,7 @@ package stealth.behaviors
 		
 		public function SlideBehavior()
 		{
-			skinParts = {thumb:InteractiveObject, track:InteractiveObject};
+			skinParts = { thumb:InteractiveObject, track:InteractiveObject };
 		}
 		
 		[Bindable(event="positionChange", style="noEvent")]

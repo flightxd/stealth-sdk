@@ -11,7 +11,7 @@ package stealth.graphics.paint
 	import flash.display.SpreadMethod;
 	import flash.geom.Matrix;
 
-	public class LinearGradient extends GradientFill implements IFill
+	public class LinearGradient extends GradientFill
 	{
 		public function LinearGradient(colors:Array = null, alphas:Array = null, ratios:Array = null, matrix:Matrix = null,
 									   spreadMethod:String = SpreadMethod.PAD, interpolationMethod:String = InterpolationMethod.RGB)
