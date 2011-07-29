@@ -13,11 +13,9 @@ package stealth.containers
 	import flight.data.DataChange;
 	import flight.events.InvalidationEvent;
 	import flight.events.ListEvent;
-	import flight.utils.Factory;
 	import flight.utils.IFactory;
 
 	import stealth.graphics.Group;
-
 	import stealth.utils.TemplateFactory;
 
 	public class DataGroup extends Group

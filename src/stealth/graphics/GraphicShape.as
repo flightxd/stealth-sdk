@@ -6,25 +6,18 @@
 
 package stealth.graphics
 {
-	import flash.display.DisplayObject;
 	import flash.display.Graphics;
-	import flash.display.GraphicsEndFill;
 	import flash.display.GraphicsPath;
 	import flash.display.IGraphicsData;
-	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.events.IEventDispatcher;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 
 	import flight.collections.ArrayList;
-	import flight.collections.IList;
 	import flight.data.DataChange;
-	import flight.display.Invalidation;
 	import flight.display.Shape;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
-	import flight.events.LifecycleEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.IBounds;
 	import flight.states.IStateful;
@@ -50,7 +43,6 @@ package stealth.graphics
 		public function GraphicShape()
 		{
 			layoutElement = new LayoutElement(this);
-			addEventListener(InvalidationEvent.VALIDATE, onClear, false, 20);
 			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
 			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
@@ -65,8 +57,8 @@ package stealth.graphics
 		{
 			DataChange.change(this, "maskType", _maskType, _maskType = value);
 		}
-		private var _maskType:String = "default";
-
+		private var _maskType:String = MaskType.CLIP;
+		
 		
 		// ====== IStateful implementation ====== //
 		
@@ -83,8 +75,11 @@ package stealth.graphics
 				}
 				
 				if (state != newState) {
-					state.undo();
+					if (state) {
+						state.undo();
+					}
 					state = newState;
+					state.source = this;
 					state.execute();
 					DataChange.change(this, "currentState", _currentState, _currentState = state.name);
 				}
@@ -109,14 +104,13 @@ package stealth.graphics
 		{
 			currentState = _states[0];
 		}
-				
+		
 		
 		// ====== IGraphicShape implementation ====== //
 		
 		private var graphicsPath:GraphicsPath;
 		private var graphicsData:Vector.<IGraphicsData>;
 		private static var pathBounds:Rectangle = new Rectangle();
-		private static var endFill:GraphicsEndFill = new GraphicsEndFill();
 		
 		[Bindable(event="fillChange", style="noEvent")]
 		public function get fill():IFill { return _fill; }
@@ -126,12 +120,12 @@ package stealth.graphics
 			
 			if (_fill != value) {
 				if (_fill && _fill is IEventDispatcher) {
-					IEventDispatcher(_fill).removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+					IEventDispatcher(_fill).removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onFillChange);
 				}
 				DataChange.change(this, "fill", _fill, _fill = value);
 				invalidate();
 				if (_fill && IEventDispatcher) {
-					IEventDispatcher(_fill).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+					IEventDispatcher(_fill).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onFillChange);
 				}
 			}
 		}
@@ -145,51 +139,27 @@ package stealth.graphics
 			
 			if (_stroke != value) {
 				if (_stroke && _stroke is IEventDispatcher) {
-					IEventDispatcher(_stroke).removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+					IEventDispatcher(_stroke).removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onStrokeChange);
 				}
 				DataChange.change(this, "stroke", _stroke, _stroke = value);
 				invalidate();
 				if (_stroke && _stroke is IEventDispatcher) {
-					IEventDispatcher(_stroke).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
+					IEventDispatcher(_stroke).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onStrokeChange);
 				}
 			}
 		}
 		private var _stroke:IStroke;
 		
-		[Bindable(event="canvasChange", style="noEvent")]
-		public function get canvas():Sprite { return _canvas; }
-		public function set canvas(value:Sprite):void
-		{
-			if (_canvas != value) {
-				var canvas:DisplayObject = _canvas || this;
-				canvas.removeEventListener(InvalidationEvent.VALIDATE, onClear);
-				canvas.removeEventListener(InvalidationEvent.VALIDATE, onRender);
-				canvas.removeEventListener(LayoutEvent.RESIZE, onResize);
-				DataChange.change(this, "canvas", _canvas, _canvas = value);
-				validateNow(LifecycleEvent.CREATE);
-				canvas = _canvas || this;
-				canvas.addEventListener(InvalidationEvent.VALIDATE, onClear, false, 0xFFF);
-				canvas.addEventListener(InvalidationEvent.VALIDATE, onRender, false, 0xFF - _depth);
-				canvas.addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
-				invalidate();
-			}
-		}
-		private var _canvas:Sprite;
-		
-		[Bindable(event="depthChange", style="noEvent")]
-		public function get depth():int { return _depth; }
-		public function set depth(value:int):void
-		{
-			if (_canvas) {
-				_canvas.addEventListener(InvalidationEvent.VALIDATE, onRender, false, 0xFF - _depth);
-			}
-			DataChange.change(this, "depth", _depth, _depth = value);
-		}
-		private var _depth:int = 0;
-		
-		private function onPaintChange(event:PropertyChangeEvent):void
+		private function onFillChange(event:PropertyChangeEvent):void
 		{
 			invalidate();
+			DataChange.change(this, "fill", _fill, _fill, true);
+		}
+		
+		private function onStrokeChange(event:PropertyChangeEvent):void
+		{
+			invalidate();
+			DataChange.change(this, "stroke", _stroke, _stroke, true);
 		}
 		
 		public function draw(graphics:Graphics):void
@@ -208,9 +178,6 @@ package stealth.graphics
 			pathBounds.height = height;
 			updatePath(graphicsPath, pathBounds);
 			
-			if (_canvas) {
-				transform = matrix;
-			}
 			if (transform) {
 				var data:Vector.<Number> = graphicsPath.data;
 				for (var i:int = 0; i < data.length; i += 2) {
@@ -236,13 +203,14 @@ package stealth.graphics
 			// add graphicsPath for simple strokes and fills
 			if (fillLength == 1) {
 				if (strokeLength <= 1) {
-					graphicsData.push(graphicsPath, endFill);
+					graphicsData.push(graphicsPath);
 				} else {
-					graphicsData.splice(fillLength, 0, graphicsPath, endFill);
+					graphicsData.splice(fillLength, 0, graphicsPath, Paint.endFill);
 				}
 			} else if (strokeLength == 1) {
-				graphicsData.push(graphicsPath, endFill);
+				graphicsData.push(graphicsPath);
 			}
+			graphicsData.push(Paint.endFill, Paint.endStroke);
 		}
 		
 		protected function updatePath(graphicsPath:GraphicsPath, pathBounds:Rectangle):void
@@ -263,12 +231,6 @@ package stealth.graphics
 			graphicsPath.data = null;
 			graphicsPath = null;
 			graphicsData = null;
-		}
-		
-		override public function invalidate(phase:String = null):void
-		{
-			var canvas:DisplayObject = _canvas || this;
-			Invalidation.invalidate(canvas, phase || InvalidationEvent.VALIDATE);
 		}
 		
 		// ====== ITransform implementation ====== //
@@ -347,7 +309,6 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		
 		[Bindable(event="rotationChange", style="noEvent")]
 		public function get skewX():Number
 		{
@@ -592,8 +553,8 @@ package stealth.graphics
 		
 		protected function render():void
 		{
-			var graphics:Graphics = _canvas ? _canvas.graphics : this.graphics;
 			update();
+			graphics.clear();
 			draw(graphics);
 		}
 		
@@ -614,11 +575,6 @@ package stealth.graphics
 		private function onRender(event:InvalidationEvent):void
 		{
 			render();
-		}
-		
-		private static function onClear(event:Event):void
-		{
-			event.target.graphics.clear();
 		}
 	}
 }

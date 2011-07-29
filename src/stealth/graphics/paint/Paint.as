@@ -6,12 +6,14 @@
 
 package stealth.graphics.paint
 {
+	import flash.display.GraphicsEndFill;
 	import flash.display.GraphicsPath;
+	import flash.display.GraphicsStroke;
 	import flash.display.IGraphicsData;
 	import flash.events.EventDispatcher;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-	
+
 	import flight.display.BitmapSource;
 
 	public class Paint extends EventDispatcher implements IPaint
@@ -26,6 +28,9 @@ package stealth.graphics.paint
 		{
 			graphicsData.push(paintData);
 		}
+		
+		public static var endFill:GraphicsEndFill = new GraphicsEndFill();
+		public static var endStroke:GraphicsStroke = new GraphicsStroke();
 		
 		public static function getInstance(value:*, stroke:Boolean = false):IPaint
 		{

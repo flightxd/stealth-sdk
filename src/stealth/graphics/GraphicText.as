@@ -12,12 +12,10 @@ package stealth.graphics
 	import flash.text.TextLineMetrics;
 
 	import flight.collections.ArrayList;
-	import flight.collections.IList;
 	import flight.data.DataChange;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.IBounds;
-	import flight.states.Change;
 	import flight.states.IStateful;
 	import flight.states.State;
 	import flight.text.TextField;
@@ -47,8 +45,8 @@ package stealth.graphics
 		{
 			DataChange.change(this, "maskType", _maskType, _maskType = value);
 		}
-		private var _maskType:String = "default";
-
+		private var _maskType:String = MaskType.CLIP;
+		
 		
 		// ====== IStateful implementation ====== //
 		
@@ -65,8 +63,11 @@ package stealth.graphics
 				}
 				
 				if (state != newState) {
-					state.undo();
+					if (state) {
+						state.undo();
+					}
 					state = newState;
+					state.source = this;
 					state.execute();
 					DataChange.change(this, "currentState", _currentState, _currentState = state.name);
 				}
@@ -91,7 +92,7 @@ package stealth.graphics
 		{
 			currentState = _states[0];
 		}
-				
+		
 		
 		// ====== ITransform implementation ====== //
 		
@@ -169,7 +170,6 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		
 		[Bindable(event="rotationChange", style="noEvent")]
 		public function get skewX():Number
 		{

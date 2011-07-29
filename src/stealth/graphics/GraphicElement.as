@@ -11,18 +11,14 @@ package stealth.graphics
 	import flash.geom.Rectangle;
 
 	import flight.collections.ArrayList;
-	import flight.collections.IList;
 	import flight.data.DataChange;
 	import flight.display.MovieClip;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.IBounds;
-	import flight.states.Change;
 	import flight.states.IStateful;
 	import flight.states.State;
-
-	import spark.effects.Resize;
 
 	import stealth.layouts.Box;
 	import stealth.layouts.LayoutElement;
@@ -193,7 +189,6 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		
 		[Bindable(event="rotationChange", style="noEvent")]
 		public function get skewX():Number
 		{
@@ -451,8 +446,14 @@ package stealth.graphics
 		
 		protected function measure():void
 		{
-			measured.minWidth = defaultRect.right;
-			measured.minHeight = defaultRect.bottom;
+			if (nativeSizing) {
+				measured.minWidth = measured.minHeight = 0;
+				measured.width = defaultRect.right;
+				measured.height = defaultRect.bottom;
+			} else {
+				measured.minWidth = defaultRect.right;
+				measured.minHeight = defaultRect.bottom;
+			}
 		}
 		protected var defaultRect:Rectangle;
 		

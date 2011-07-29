@@ -14,6 +14,8 @@ package stealth.graphics
 	import flight.collections.IList;
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
+	import flight.display.Bitmap;
+	import flight.display.IInvalidating;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.ILayout;
@@ -24,7 +26,6 @@ package stealth.graphics
 	import stealth.graphics.shapes.Rect;
 	import stealth.layouts.Align;
 	import stealth.layouts.Box;
-	import stealth.layouts.BoxLayout;
 
 	[Event(name="validate", type="flight.events.InvalidationEvent")]
 
@@ -33,7 +34,9 @@ package stealth.graphics
 	{
 		public function Group(content:* = null, background:* = null)
 		{
-			this.background = background;
+			if (background != null) {
+				this.background = background;
+			}
 			layoutElement.snapToPixel = true;
 			
 			addEventListener(Event.ADDED, onChildAdded, true, 10);
@@ -99,6 +102,7 @@ package stealth.graphics
 		}
 		private var _vAlign:String = Align.TOP;
 		
+		
 		// ====== background implementation ====== //
 		
 		[Bindable(event="backgroundChange", style="noEvent")]
@@ -113,20 +117,112 @@ package stealth.graphics
 			}
 			
 			if (_background != value) {
-				if (_background) {
-					_background.canvas = null;
-				}
 				DataChange.change(this, "background", _background, _background = value as IGraphicShape);
 				if (_background) {
-					_background.canvas = this;
-					_background.depth = -1;
 					_background.width = width;
 					_background.height = height;
+					_background.validateNow();
 				}
 				invalidate();
 			}
 		}
 		private var _background:IGraphicShape;
+		
+		[Bindable(event="flattenedChange", style="noEvent")]
+		public function get flattened():Boolean { return _flattened; }
+		public function set flattened(value:Boolean):void
+		{
+			if (_flattened != value) {
+				DataChange.change(this, "flattened", _flattened, _flattened = value);
+				invalidate();
+				contentChanging = true;
+				var child:DisplayObject;
+				if (_flattened) {
+					for each (child in _content) {
+						if (child is IGraphicShape) {
+							IGraphicShape(child).validateNow();
+						}
+						removeChild(child);
+					}
+					_content.addEventListener(ListEvent.ITEM_CHANGE, onShapeChange, false, 10);
+				} else {
+					for each (child in _content) {
+						addChild(child);
+					}
+				}
+				contentChanging = false;
+			}
+		}
+		private var _flattened:Boolean;
+		
+		private function onShapeChange(event:ListEvent):void
+		{
+			invalidate();
+		}
+		
+		[Bindable(event="rasterizedChange", style="noEvent")]
+		public function get rasterized():Boolean { return _rasterized; }
+		public function set rasterized(value:Boolean):void
+		{
+			if (_rasterized != value) {
+				DataChange.change(this, "rasterized", _rasterized, _rasterized = value);
+				if (_rasterized) {
+					invalidate();
+				} else {
+					contentChanging = true;
+					removeChild(image);
+					image.bitmapData.dispose();
+					image = null;
+					for each (var child:DisplayObject in _content) {
+						addChild(child);
+					}
+					contentChanging = false;
+				}
+			}
+		}
+		private var _rasterized:Boolean;
+		private var image:Bitmap;
+		
+		override protected function render():void
+		{
+			if (_rasterized && image) {
+				return;
+			}
+			
+			var child:DisplayObject;
+			graphics.clear();
+			if (_background) {
+				_background.update();
+				_background.draw(graphics);
+			}
+			if (_flattened) {
+				for each (child in _content) {
+					if (child is IGraphicShape) {
+						IGraphicShape(child).update(child.transform.matrix);
+						IGraphicShape(child).draw(graphics);
+					}
+				}
+			}
+			
+			if (_rasterized && !image) {
+				contentChanging = true;
+				for each (child in _content) {
+					if (child is IInvalidating) {
+						IInvalidating(child).validateNow();
+					}
+				}
+				image = new Bitmap(this);
+				var rect:Rectangle = getRect(this);
+				image.x = rect.x;
+				image.y = rect.y;
+				graphics.clear();
+				for each (child in _content) {
+					removeChild(child);
+				}
+				addChild(image);
+				contentChanging = false;
+			}
+		}
 		
 		override protected function resize():void
 		{
@@ -290,6 +386,12 @@ package stealth.graphics
 			var child:DisplayObject = DisplayObject(event.target);
 			if (child.parent == this && !contentChanging) {
 				contentChanging = true;
+				if (_flattened || _rasterized) {
+					removeChild(child);
+					contentChanging = false;
+				} else {
+					content.add(child, getChildIndex(child));
+				}
 				content.add(child, getChildIndex(child));
 				contentChanging = false;
 				
@@ -314,15 +416,24 @@ package stealth.graphics
 		private function onContentChange(event:ListEvent):void
 		{
 			if (!contentChanging) {
-				contentChanging = true;
 				var child:DisplayObject;
-				for each (child in event.removed) {
-					removeChild(child);
+				if (!_flattened && !_rasterized) {
+					contentChanging = true;
+					for each (child in event.removed) {
+						removeChild(child);
+					}
+					for each (child in event.items) {
+						addChildAt(child, _content.getIndex(child));
+					}
+					contentChanging = false;
+				} else if (_flattened) {
+					for each (child in event.items) {
+						if (child is IGraphicShape) {
+							IGraphicShape(child).validateNow();
+						}
+					}
+					invalidate();
 				}
-				for each (child in event.items) {
-					addChildAt(child, _content.getIndex(child));
-				}
-				contentChanging = false;
 				
 				invalidate(LayoutEvent.MEASURE);
 				invalidate(LayoutEvent.LAYOUT);

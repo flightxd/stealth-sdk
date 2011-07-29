@@ -7,8 +7,6 @@
 package stealth.containers
 {
 	import stealth.graphics.Group;
-	import stealth.layouts.Box;
-	import stealth.layouts.BoxLayout;
 	import stealth.layouts.DockLayout;
 
 	public class Module extends Group

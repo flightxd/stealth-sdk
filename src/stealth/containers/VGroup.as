@@ -7,7 +7,6 @@
 package stealth.containers
 {
 	import stealth.graphics.Group;
-	import stealth.layouts.Box;
 	import stealth.layouts.VerticalLayout;
 
 	public class VGroup extends Group
