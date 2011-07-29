@@ -14,7 +14,7 @@ package stealth.components.ranges
 
 	public class RangeBase extends Component
 	{
-		[Bindable(event="positionChange")]
+		[Bindable("positionChange")]
 		public function get position():IPosition { return _position ||= new Position(); }
 		public function set position(value:IPosition):void
 		{

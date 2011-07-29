@@ -8,9 +8,9 @@ package stealth.skins
 {
 	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
-	
+
 	import flight.states.IStateful;
-	
+
 	public interface ISkin extends IStateful, IEventDispatcher
 	{
 		function get target():Sprite;

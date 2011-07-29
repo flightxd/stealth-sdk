@@ -10,14 +10,15 @@ package stealth.layouts
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-	
+
 	import flight.data.DataChange;
+	import flight.display.IInvalidating;
 	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
-	
+
 	import mx.events.PropertyChangeEvent;
 
 	dynamic public class LayoutElement implements ILayoutElement
@@ -30,7 +31,7 @@ package stealth.layouts
 			_measured.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMeasuredChange);
 		}
 		
-		[Bindable(event="xChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get x():Number { return _x; }
 		public function set x(value:Number):void
 		{
@@ -41,7 +42,7 @@ package stealth.layouts
 		}
 		private var _x:Number = 0;
 		
-		[Bindable(event="yChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get y():Number { return _y; }
 		public function set y(value:Number):void
 		{
@@ -58,7 +59,7 @@ package stealth.layouts
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="freeformChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get freeform():Boolean { return _freeform; }
 		public function set freeform(value:Boolean):void
 		{
@@ -75,7 +76,7 @@ package stealth.layouts
 		 * @inheritDoc
 		 */
 		[PercentProxy("percentWidth")]
-		[Bindable(event="widthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get width():Number { return _width; }
 		public function set width(value:Number):void
 		{
@@ -88,7 +89,7 @@ package stealth.layouts
 		 * @inheritDoc
 		 */
 		[PercentProxy("percentHeight")]
-		[Bindable(event="heightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get height():Number { return _height; }
 		public function set height(value:Number):void
 		{
@@ -100,7 +101,7 @@ package stealth.layouts
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="minWidthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get minWidth():Number { return _minWidth; }
 		public function set minWidth(value:Number):void
 		{
@@ -118,7 +119,7 @@ package stealth.layouts
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="minHeightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get minHeight():Number { return _minHeight; }
 		public function set minHeight(value:Number):void
 		{
@@ -136,7 +137,7 @@ package stealth.layouts
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="maxWidthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get maxWidth():Number { return _maxWidth; }
 		public function set maxWidth(value:Number):void
 		{
@@ -154,7 +155,7 @@ package stealth.layouts
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="maxHeightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get maxHeight():Number { return _maxHeight; }
 		public function set maxHeight(value:Number):void
 		{
@@ -172,7 +173,7 @@ package stealth.layouts
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="marginChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get margin():Box { return _margin || (margin = new Box()); }
 		public function set margin(value:*):void
 		{
@@ -198,7 +199,7 @@ package stealth.layouts
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="percentWidthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get percentWidth():Number { return _percentWidth; }
 		public function set percentWidth(value:Number):void
 		{
@@ -212,7 +213,7 @@ package stealth.layouts
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="percentHeightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get percentHeight():Number { return _percentHeight; }
 		public function set percentHeight(value:Number):void
 		{
@@ -239,10 +240,10 @@ package stealth.layouts
 			return !isNaN(explicit.height) ? Bounds.constrainHeight(_measured, explicit.height) : measured.height;
 		}
 		
-		[Bindable(event="contentWidthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get contentWidth():Number
 		{
-			if (!contained) {
+			if (!_contained) {
 				var preferredWidth:Number = !isNaN(_contentWidth) ? Bounds.constrainWidth(_measured, _contentWidth) : measured.width;
 				if (preferredWidth > _width) {
 					return preferredWidth;
@@ -252,7 +253,7 @@ package stealth.layouts
 		}
 		public function set contentWidth(value:Number):void
 		{
-			if (!contained) {
+			if (!_contained) {
 				DataChange.change(target, "contentWidth", _contentWidth, _contentWidth = value);
 			} else {
 				width = value;
@@ -260,10 +261,10 @@ package stealth.layouts
 		}
 		private var _contentWidth:Number = 0;
 		
-		[Bindable(event="contentHeightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get contentHeight():Number
 		{
-			if (!contained) {
+			if (!_contained) {
 				var preferredHeight:Number = !isNaN(_contentHeight) ? Bounds.constrainHeight(_measured, _contentHeight) : measured.height;
 				if (preferredHeight > _height) {
 					return preferredHeight;
@@ -273,7 +274,7 @@ package stealth.layouts
 		}
 		public function set contentHeight(value:Number):void
 		{
-			if (!contained) {
+			if (!_contained) {
 				DataChange.change(target, "contentHeight", _contentHeight, _contentHeight = value);
 			} else {
 				height = value;
@@ -281,7 +282,7 @@ package stealth.layouts
 		}
 		private var _contentHeight:Number = 0;
 		
-		[Bindable(event="containedChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get contained():Boolean { return _contained; }
 		public function set contained(value:Boolean):void
 		{
@@ -296,7 +297,7 @@ package stealth.layouts
 		}
 		private var _contained:Boolean = true;
 		
-		[Bindable(event="nativeSizingChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get nativeSizing():Boolean { return _nativeSizing; }
 		public function set nativeSizing(value:Boolean):void
 		{
@@ -311,7 +312,7 @@ package stealth.layouts
 		private var _nativeSizing:Boolean;
 		private var unscaledRect:Rectangle;
 		
-		[Bindable(event="snapToPixelChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get snapToPixel():Boolean { return _snapToPixel; }
 		public function set snapToPixel(value:Boolean):void
 		{
@@ -325,7 +326,7 @@ package stealth.layouts
 		}
 		private var _snapToPixel:Boolean;
 		
-		[Bindable(event="leftChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get left():Number { return _left; }
 		public function set left(value:Number):void
 		{
@@ -333,7 +334,7 @@ package stealth.layouts
 		}
 		private var _left:Number;
 		
-		[Bindable(event="topChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get top():Number { return _top; }
 		public function set top(value:Number):void
 		{
@@ -341,7 +342,7 @@ package stealth.layouts
 		}
 		private var _top:Number;
 		
-		[Bindable(event="rightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get right():Number { return _right; }
 		public function set right(value:Number):void
 		{
@@ -349,7 +350,7 @@ package stealth.layouts
 		}
 		private var _right:Number;
 		
-		[Bindable(event="bottomChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get bottom():Number { return _bottom; }
 		public function set bottom(value:Number):void
 		{
@@ -357,7 +358,7 @@ package stealth.layouts
 		}
 		private var _bottom:Number;
 		
-		[Bindable(event="hPercentChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get hPercent():Number { return _hPercent; }
 		public function set hPercent(value:Number):void
 		{
@@ -365,7 +366,7 @@ package stealth.layouts
 		}
 		private var _hPercent:Number;
 		
-		[Bindable(event="vPercentChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get vPercent():Number { return _vPercent; }
 		public function set vPercent(value:Number):void
 		{
@@ -373,7 +374,7 @@ package stealth.layouts
 		}
 		private var _vPercent:Number;
 		
-		[Bindable(event="hOffsetChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get hOffset():Number { return _hOffset; }
 		public function set hOffset(value:Number):void
 		{
@@ -381,7 +382,7 @@ package stealth.layouts
 		}
 		private var _hOffset:Number;
 		
-		[Bindable(event="vOffsetChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get vOffset():Number { return _vOffset; }
 		public function set vOffset(value:Number):void
 		{
@@ -389,7 +390,7 @@ package stealth.layouts
 		}
 		private var _vOffset:Number;
 		
-		[Bindable(event="dockChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get dock():String { return _dock; }
 		public function set dock(value:String):void
 		{
@@ -397,7 +398,7 @@ package stealth.layouts
 		}
 		private var _dock:String;
 		
-		[Bindable(event="tileChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get tile():String { return _tile; }
 		public function set tile(value:String):void
 		{
@@ -622,6 +623,9 @@ package stealth.layouts
 					target.scaleX = value / unscaledRect.width;
 				}
 				invalidate(LayoutEvent.RESIZE);
+				if (_contained) {
+					DataChange.queue(target, "contentWidth", _width, value);
+				}
 				DataChange.change(target, "width", _width, _width = value);
 			}
 		}
@@ -638,6 +642,9 @@ package stealth.layouts
 					target.scaleY = value / unscaledRect.height;
 				}
 				invalidate(LayoutEvent.RESIZE);
+				if (_contained) {
+					DataChange.queue(target, "contentHeight", _height, value);
+				}
 				DataChange.change(target, "height", _height, _height = value);
 			}
 		}
@@ -650,7 +657,11 @@ package stealth.layouts
 		 */
 		public function invalidate(phase:String = null):void
 		{
-			Invalidation.invalidate(target, phase || InvalidationEvent.VALIDATE);
+			if (target is IInvalidating) {
+				IInvalidating(target).invalidate(phase);
+			} else {
+				Invalidation.invalidate(target, phase || InvalidationEvent.VALIDATE);
+			}
 		}
 		
 		/**

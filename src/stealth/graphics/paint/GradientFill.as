@@ -14,7 +14,7 @@ package stealth.graphics.paint
 	import flash.display.SpreadMethod;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-	
+
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.data.DataChange;
@@ -52,7 +52,7 @@ package stealth.graphics.paint
 			_focalPointRatio = focalPointRatio;
 		}
 		
-		[Bindable(event="typeChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="linear,radial")]
 		public function get type():String { return _type; }
 		public function set type(value:String):void
@@ -63,7 +63,7 @@ package stealth.graphics.paint
 		private var _type:String;
 		
 		[ArrayElementType("stealth.graphics.paint.GradientEntry")]
-		[Bindable(event="entriesChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get entries():IList { return _entries; }
 		public function set entries(value:*):void
 		{
@@ -71,7 +71,7 @@ package stealth.graphics.paint
 		}
 		private var _entries:ArrayList;
 		
-		[Bindable(event="spreadMethodChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="pad,reflect,repeat")]
 		public function get spreadMethod():String { return _spreadMethod; }
 		public function set spreadMethod(value:String):void
@@ -81,7 +81,7 @@ package stealth.graphics.paint
 		}
 		private var _spreadMethod:String;
 		
-		[Bindable(event="interpolationMethodChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="rgb,linear")]
 		public function get interpolationMethod():String { return _interpolationMethod; }
 		public function set interpolationMethod(value:String):void
@@ -91,7 +91,7 @@ package stealth.graphics.paint
 		}
 		private var _interpolationMethod:String;
 		
-		[Bindable(event="focalPointRatioChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get focalPointRatio():Number { return _focalPointRatio; }
 		public function set focalPointRatio(value:Number):void
 		{
@@ -100,7 +100,7 @@ package stealth.graphics.paint
 		}
 		private var _focalPointRatio:Number;
 		
-		[Bindable(event="xChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get x():Number { return _x; }
 		public function set x(value:Number):void
 		{
@@ -109,7 +109,7 @@ package stealth.graphics.paint
 		}
 		private var _x:Number;
 		
-		[Bindable(event="yChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get y():Number { return _y; }
 		public function set y(value:Number):void
 		{
@@ -118,7 +118,7 @@ package stealth.graphics.paint
 		}
 		private var _y:Number;
 		
-		[Bindable(event="scaleXChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get scaleX():Number { return _scaleX; }
 		public function set scaleX(value:Number):void
 		{
@@ -130,7 +130,7 @@ package stealth.graphics.paint
 		}
 		private var _scaleX:Number = 1;
 		
-		[Bindable(event="scaleYChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get scaleY():Number { return _scaleY; }
 		public function set scaleY(value:Number):void
 		{
@@ -142,7 +142,7 @@ package stealth.graphics.paint
 		}
 		private var _scaleY:Number = 1;
 		
-		[Bindable(event="rotationChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get rotation():Number { return _rotation; }
 		public function set rotation(value:Number):void
 		{
@@ -154,7 +154,7 @@ package stealth.graphics.paint
 		}
 		private var _rotation:Number = 0;
 		
-		[Bindable(event="matrixChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get matrix():Matrix { return _matrix; }
 		public function set matrix(value:Matrix):void
 		{

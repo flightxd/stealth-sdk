@@ -7,7 +7,6 @@
 package stealth.components.buttons
 {
 	import theme.buttons.ThemeCheckBox;
-	
 
 	public class CheckBox extends Button
 	{

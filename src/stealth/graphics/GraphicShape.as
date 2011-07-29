@@ -51,7 +51,7 @@ package stealth.graphics
 		}
 		
 		
-		[Bindable(event="maskTypeChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get maskType():String { return _maskType; }
 		public function set maskType(value:String):void
 		{
@@ -64,7 +64,7 @@ package stealth.graphics
 		
 		protected var state:State;
 		
-		[Bindable(event="currentStateChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get currentState():String { return _currentState; }
 		public function set currentState(value:String):void
 		{
@@ -88,7 +88,7 @@ package stealth.graphics
 		private var _currentState:String;
 		
 		[ArrayElementType("flight.states.State")]
-		[Bindable(event="statesChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get states():Array { return _states || (states = []); }
 		public function set states(value:*):void
 		{
@@ -112,7 +112,7 @@ package stealth.graphics
 		private var graphicsData:Vector.<IGraphicsData>;
 		private static var pathBounds:Rectangle = new Rectangle();
 		
-		[Bindable(event="fillChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get fill():IFill { return _fill; }
 		public function set fill(value:*):void
 		{
@@ -131,7 +131,7 @@ package stealth.graphics
 		}
 		private var _fill:IFill;
 		
-		[Bindable(event="strokeChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get stroke():IStroke { return _stroke; }
 		public function set stroke(value:*):void
 		{
@@ -254,7 +254,7 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="transformXChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get transformX():Number { return _transformX; }
 		public function set transformX(value:Number):void
 		{
@@ -265,7 +265,7 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="transformYChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get transformY():Number { return _transformY; }
 		public function set transformY(value:Number):void
 		{
@@ -309,7 +309,7 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="rotationChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get skewX():Number
 		{
 			var matrix:Matrix = transform.matrix;
@@ -335,7 +335,7 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="rotationChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get skewY():Number
 		{
 			var matrix:Matrix = transform.matrix;
@@ -405,7 +405,7 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="freeformChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get freeform():Boolean { return layoutElement.freeform; }
 		public function set freeform(value:Boolean):void { layoutElement.freeform = value; }
 		
@@ -413,7 +413,7 @@ package stealth.graphics
 		 * @inheritDoc
 		 */
 		[PercentProxy("percentWidth")]
-		[Bindable(event="widthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		override public function get width():Number { return layoutElement.width; }
 		override public function set width(value:Number):void { layoutElement.width = value; }
 		
@@ -421,56 +421,56 @@ package stealth.graphics
 		 * @inheritDoc
 		 */
 		[PercentProxy("percentHeight")]
-		[Bindable(event="heightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		override public function get height():Number { return layoutElement.height; }
 		override public function set height(value:Number):void { layoutElement.height = value; }
 		
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="minWidthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get minWidth():Number { return layoutElement.minWidth; }
 		public function set minWidth(value:Number):void { layoutElement.minWidth = value; } 
 		
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="minHeightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get minHeight():Number { return layoutElement.minHeight; }
 		public function set minHeight(value:Number):void { layoutElement.minHeight = value; }
 		
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="maxWidthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get maxWidth():Number { return layoutElement.maxWidth; }
 		public function set maxWidth(value:Number):void { layoutElement.maxWidth = value; }
 		
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="maxHeightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get maxHeight():Number { return layoutElement.maxHeight; }
 		public function set maxHeight(value:Number):void { layoutElement.maxHeight = value; }
 		
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="marginChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get margin():Box { return layoutElement.margin; }
 		public function set margin(value:*):void { layoutElement.margin = value; }
 		
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="percentWidthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get percentWidth():Number { return layoutElement.percentWidth; }
 		public function set percentWidth(value:Number):void { layoutElement.percentWidth = value; }
 		
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="percentHeightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get percentHeight():Number { return layoutElement.percentHeight; }
 		public function set percentHeight(value:Number):void { layoutElement.percentHeight = value; }
 		
@@ -484,48 +484,48 @@ package stealth.graphics
 		 */
 		public function get preferredHeight():Number { return layoutElement.preferredHeight; }
 		
-		[Bindable(event="snapToPixelChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get snapToPixel():Boolean { return layoutElement.snapToPixel; }
 		public function set snapToPixel(value:Boolean):void { layoutElement.snapToPixel = value; }
 		
-		[Bindable(event="leftChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get left():Number { return layoutElement.left; }
 		public function set left(value:Number):void { layoutElement.left = value; }
 		
-		[Bindable(event="topChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get top():Number { return layoutElement.top; }
 		public function set top(value:Number):void { layoutElement.top = value; }
 		
-		[Bindable(event="rightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get right():Number { return layoutElement.right; }
 		public function set right(value:Number):void { layoutElement.right = value; }
 		
-		[Bindable(event="bottomChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get bottom():Number { return layoutElement.bottom; }
 		public function set bottom(value:Number):void { layoutElement.bottom = value; }
 		
-		[Bindable(event="hPercentChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get hPercent():Number { return layoutElement.hPercent; }
 		public function set hPercent(value:Number):void { layoutElement.hPercent = value; }
 		
-		[Bindable(event="vPercentChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get vPercent():Number { return layoutElement.vPercent; }
 		public function set vPercent(value:Number):void { layoutElement.vPercent = value; }
 		
-		[Bindable(event="hOffsetChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get hOffset():Number { return layoutElement.hOffset; }
 		public function set hOffset(value:Number):void { layoutElement.hOffset = value; }
 		
-		[Bindable(event="vOffsetChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get vOffset():Number { return layoutElement.vOffset; }
 		public function set vOffset(value:Number):void { layoutElement.vOffset = value; }
 		
-		[Bindable(event="dockChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="left,top,right,bottom,fill")]
 		public function get dock():String { return layoutElement.dock; }
 		public function set dock(value:String):void { layoutElement.dock = value; }
 		
-		[Bindable(event="tileChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="left,top,right,bottom")]
 		public function get tile():String { return layoutElement.tile; }
 		public function set tile(value:String):void { layoutElement.tile = value; }

@@ -7,7 +7,7 @@
 package stealth.components.ranges
 {
 	import theme.ranges.ThemeStepper;
-	
+
 	public class Stepper extends RangeBase
 	{
 		public function Stepper()

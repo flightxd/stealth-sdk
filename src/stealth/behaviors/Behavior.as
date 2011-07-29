@@ -8,16 +8,16 @@ package stealth.behaviors
 {
 	import flash.display.InteractiveObject;
 	import flash.events.IEventDispatcher;
-	
+
 	import flight.data.DataBind;
 	import flight.data.DataChange;
 	import flight.utils.Extension;
 	import flight.utils.getClassName;
-	
+
 	import mx.events.PropertyChangeEvent;
-	
+
 	import stealth.skins.ISkinnable;
-	
+
 	public class Behavior extends Extension implements IBehavior
 	{
 		protected var dataBind:DataBind = new DataBind();
@@ -32,7 +32,7 @@ package stealth.behaviors
 			addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
 		}
 		
-		[Bindable(event="nameChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get name():String { return _name ||= getDefaultName(this); }
 		public function set name(value:String):void
 		{
@@ -40,7 +40,7 @@ package stealth.behaviors
 		}
 		private var _name:String;
 		
-		[Bindable(event="targetChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get target():IEventDispatcher { return getTarget(); }
 		public function set target(value:IEventDispatcher):void
 		{
@@ -82,7 +82,7 @@ package stealth.behaviors
 			}
 		}
 		
-		[Bindable(event="skinChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		protected function get skin():IEventDispatcher { return _skin; }
 		protected function set skin(value:IEventDispatcher):void
 		{

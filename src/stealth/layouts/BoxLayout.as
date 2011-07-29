@@ -8,14 +8,14 @@ package stealth.layouts
 {
 	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
-	
+
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
 	import flight.events.LayoutEvent;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.layouts.Layout;
-	
+
 	import mx.events.PropertyChangeEvent;
 
 	public class BoxLayout extends Layout
@@ -62,7 +62,7 @@ package stealth.layouts
 			watchContent("percentHeight");
 		}
 		
-		[Bindable(event="paddingChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get padding():Box { return _padding || (padding = new Box()); }
 		public function set padding(value:*):void
 		{
@@ -97,7 +97,7 @@ package stealth.layouts
 			invalidate(LayoutEvent.LAYOUT);
 		}
 		
-		[Bindable(event="hAlignChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="left,center,right,fill", defaultValue="left", name="hAlign")]
 		public function get hAlign():String { return _hAlign; }
 		public function set hAlign(value:String):void
@@ -107,7 +107,7 @@ package stealth.layouts
 		}
 		private var _hAlign:String = Align.LEFT;
 		
-		[Bindable(event="vAlignChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="top,middle,bottom,fill", defaultValue="top", name="vAlign")]
 		public function get vAlign():String { return _vAlign; }
 		public function set vAlign(value:String):void

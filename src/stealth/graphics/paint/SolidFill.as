@@ -21,7 +21,7 @@ package stealth.graphics.paint
 			_alpha = alpha;
 		}
 		
-		[Bindable(event="colorChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get color():uint { return _color; }
 		public function set color(value:uint):void
 		{
@@ -30,7 +30,7 @@ package stealth.graphics.paint
 		}
 		private var _color:uint;
 		
-		[Bindable(event="alphaChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get alpha():Number { return _alpha; }
 		public function set alpha(value:Number):void
 		{

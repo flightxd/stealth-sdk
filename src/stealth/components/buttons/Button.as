@@ -8,14 +8,14 @@ package stealth.components.buttons
 {
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
-	
+
 	import flight.data.DataChange;
 	import flight.display.BitmapSource;
 	import flight.events.ButtonEvent;
-	
+
 	import stealth.components.ButtonState;
 	import stealth.components.Component;
-	
+
 	import theme.buttons.ThemeButton;
 
 	[SkinState("up")]
@@ -46,7 +46,7 @@ package stealth.components.buttons
 		}
 		
 		[SkinPart]
-		[Bindable(event="labelDisplayChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get labelDisplay():DisplayObject { return _labelDisplay; }
 		public function set labelDisplay(value:DisplayObject):void
 		{
@@ -70,7 +70,7 @@ package stealth.components.buttons
 		private var _labelDisplay:DisplayObject;
 		
 		[SkinPart]
-		[Bindable(event="iconDisplayChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get iconDisplay():DisplayObject { return _iconDisplay; }
 		public function set iconDisplay(value:DisplayObject):void
 		{
@@ -95,7 +95,7 @@ package stealth.components.buttons
 		
 		
 		
-		[Bindable(event="labelChange")]
+		[Bindable("propertyChange")]
 		public function get label():String { return _label; }
 		public function set label(value:String):void
 		{
@@ -103,7 +103,7 @@ package stealth.components.buttons
 		}
 		private var _label:String;
 		
-		[Bindable(event="iconChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get icon():BitmapData { return _icon; }
 		public function set icon(value:*):void
 		{
@@ -125,7 +125,7 @@ package stealth.components.buttons
 			super.currentState = getButtonState();
 		}
 		
-		[Bindable(event="selectedChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get selected():Boolean { return _selected; }
 		public function set selected(value:Boolean):void
 		{
@@ -136,7 +136,7 @@ package stealth.components.buttons
 		}
 		private var _selected:Boolean;
 		
-		[Bindable(event="toggleChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get toggle():Boolean { return _toggle; }
 		public function set toggle(value:Boolean):void
 		{
@@ -147,7 +147,7 @@ package stealth.components.buttons
 		}
 		private var _toggle:Boolean = false;
 		
-		[Bindable(event="emphasizedChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get emphasized():Boolean { return _emphasized; }
 		public function set emphasized(value:Boolean):void
 		{
@@ -155,7 +155,7 @@ package stealth.components.buttons
 		}
 		private var _emphasized:Boolean;
 		
-		[Bindable(event="holdPressChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get holdPress():Boolean { return _holdPress; }
 		public function set holdPress(value:Boolean):void
 		{

@@ -20,7 +20,7 @@ package stealth.layouts
 			_left = left;
 		}
 		
-		[Bindable(event="topChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get top():Number { return _top }
 		public function set top(value:Number):void
 		{
@@ -28,7 +28,7 @@ package stealth.layouts
 		}
 		private var _top:Number;
 		
-		[Bindable(event="rightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get right():Number { return _right }
 		public function set right(value:Number):void
 		{
@@ -36,7 +36,7 @@ package stealth.layouts
 		}
 		private var _right:Number;
 		
-		[Bindable(event="bottomChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get bottom():Number { return _bottom }
 		public function set bottom(value:Number):void
 		{
@@ -44,7 +44,7 @@ package stealth.layouts
 		}
 		private var _bottom:Number;
 		
-		[Bindable(event="leftChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get left():Number { return _left }
 		public function set left(value:Number):void
 		{
@@ -52,7 +52,7 @@ package stealth.layouts
 		}
 		private var _left:Number;
 		
-		[Bindable(event="verticalChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get vertical():Number { return _vertical }
 		public function set vertical(value:Number):void
 		{
@@ -60,7 +60,7 @@ package stealth.layouts
 		}
 		private var _vertical:Number = 0;
 		
-		[Bindable(event="horizontalChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get horizontal():Number { return _horizontal }
 		public function set horizontal(value:Number):void
 		{

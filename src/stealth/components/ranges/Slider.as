@@ -7,7 +7,6 @@
 package stealth.components.ranges
 {
 	import theme.ranges.ThemeSlider;
-	
 
 	public class Slider extends RangeBase
 	{

@@ -7,7 +7,7 @@
 package stealth.skins
 {
 	import flight.data.IDataRenderer;
-	
+
 	public interface ISkinnable extends IDataRenderer
 	{
 		function get skin():ISkin;

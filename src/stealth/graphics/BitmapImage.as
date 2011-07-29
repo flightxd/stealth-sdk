@@ -12,7 +12,7 @@ package stealth.graphics
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.net.URLRequest;
-	
+
 	import flight.data.DataChange;
 	import flight.display.BitmapSource;
 
@@ -43,7 +43,7 @@ package stealth.graphics
 		private var _backgroundColor:uint = 0xFFFFFF;
 		private var _backgroundAlpha:Number = 0;
 		
-		[Bindable(event="sourceChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get source():BitmapData { return _source; }
 		override public function set source(value:*):void
 		{
@@ -51,21 +51,21 @@ package stealth.graphics
 		}
 		private var _source:BitmapData;
 		
-		[Bindable(event="scalingChanged")]
+		[Bindable("propertyChange")]
 		public function get scaling():String { return _scaling; }
 		public function set scaling(value:String):void
 		{
 			DataChange.change(this, "scaling", _scaling, _scaling = value);
 		}
 		
-		[Bindable(event="backgroundColorChanged")]
+		[Bindable("propertyChange")]
 		public function get backgroundColor():uint { return _backgroundColor; }
 		public function set backgroundColor(value:uint):void
 		{
 			DataChange.change(this, "backgroundColor", _backgroundColor, _backgroundColor = value);
 		}
 		
-		[Bindable(event="backgroundAlphaChanged")]
+		[Bindable("propertyChange")]
 		public function get backgroundAlpha():Number { return _backgroundAlpha; }
 		public function set backgroundAlpha(value:Number):void
 		{

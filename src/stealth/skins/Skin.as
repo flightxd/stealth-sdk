@@ -11,7 +11,7 @@ package stealth.skins
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-	
+
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.containers.IContainer;
@@ -25,7 +25,7 @@ package stealth.skins
 	import flight.layouts.IMeasureable;
 	import flight.states.State;
 	import flight.utils.Extension;
-	
+
 	import stealth.graphics.MaskType;
 
 	/**
@@ -57,7 +57,7 @@ package stealth.skins
 			bindTarget("filters");
 		}
 		
-		[Bindable(event="alphaChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get alpha():Number { return _alpha; }
 		public function set alpha(value:Number):void
 		{
@@ -65,7 +65,7 @@ package stealth.skins
 		}
 		private var _alpha:Number = 1;
 		
-		[Bindable(event="maskChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get mask():DisplayObject { return _mask; }
 		public function set mask(value:DisplayObject):void
 		{
@@ -73,7 +73,7 @@ package stealth.skins
 		}
 		private var _mask:DisplayObject = null;
 		
-		[Bindable(event="maskTypeChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get maskType():String { return _maskType; }
 		public function set maskType(value:String):void
 		{
@@ -81,7 +81,7 @@ package stealth.skins
 		}
 		private var _maskType:String = MaskType.CLIP;
 		
-		[Bindable(event="blendModeChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get blendMode():String { return _blendMode; }
 		public function set blendMode(value:String):void
 		{
@@ -89,7 +89,7 @@ package stealth.skins
 		}
 		private var _blendMode:String = BlendMode.NORMAL;
 		
-		[Bindable(event="filtersChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get filters():Array { return _filters; }
 		public function set filters(value:Array):void
 		{
@@ -101,7 +101,7 @@ package stealth.skins
 		
 		protected var state:State;
 		
-		[Bindable(event="currentStateChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get currentState():String { return _currentState; }
 		public function set currentState(value:String):void
 		{
@@ -122,7 +122,7 @@ package stealth.skins
 		private var _currentState:String;
 		
 		[ArrayElementType("flight.states.State")]
-		[Bindable(event="statesChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get states():Array { return _states || (states = []); }
 		public function set states(value:*):void
 		{
@@ -142,7 +142,7 @@ package stealth.skins
 		
 		// ====== ISkin implementation ====== //
 		
-		[Bindable(event="targetChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get target():Sprite { return Sprite(getTarget()); }
 		public function set target(value:Sprite):void
 		{
@@ -183,7 +183,7 @@ package stealth.skins
 		 * @inheritDoc
 		 */
 		[ArrayElementType("flash.display.DisplayObject")]
-		[Bindable(event="contentChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get content():IList { return _content; }
 		public function set content(value:*):void
 		{
@@ -194,7 +194,7 @@ package stealth.skins
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="layoutChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get layout():ILayout { return _layout; }
 		public function set layout(value:ILayout):void
 		{
@@ -211,7 +211,7 @@ package stealth.skins
 		}
 		private var _layout:ILayout;
 		
-		[Bindable(event="widthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get width():Number { return _width; }
 		public function set width(value:Number):void
 		{
@@ -221,7 +221,7 @@ package stealth.skins
 		}
 		private var _width:Number = 0;
 		
-		[Bindable(event="heightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get height():Number { return _height; }
 		public function set height(value:Number):void
 		{
@@ -235,7 +235,7 @@ package stealth.skins
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="widthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get contentWidth():Number
 		{
 			return target ? target.width : 0;
@@ -245,13 +245,13 @@ package stealth.skins
 		 * @inheritDoc
 		 */
 		[Inspectable(category="General")]
-		[Bindable(event="heightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get contentHeight():Number
 		{
 			return target ? target.height : 0;
 		}
 		
-		[Bindable(event="minWidthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get minWidth():Number { return _minWidth; }
 		public function set minWidth(value:Number):void
 		{
@@ -259,7 +259,7 @@ package stealth.skins
 		}
 		private var _minWidth:Number = 0;
 		
-		[Bindable(event="minHeightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get minHeight():Number { return _minHeight; }
 		public function set minHeight(value:Number):void
 		{
@@ -267,7 +267,7 @@ package stealth.skins
 		}
 		private var _minHeight:Number = 0;
 		
-		[Bindable(event="maxWidthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get maxWidth():Number { return _maxWidth; }
 		public function set maxWidth(value:Number):void
 		{
@@ -275,7 +275,7 @@ package stealth.skins
 		}
 		private var _maxWidth:Number = int.MAX_VALUE;
 		
-		[Bindable(event="maxHeightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get maxHeight():Number { return _maxHeight; }
 		public function set maxHeight(value:Number):void
 		{

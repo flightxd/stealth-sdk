@@ -9,11 +9,10 @@ package stealth.behaviors
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	
+
 	import flight.data.DataChange;
 	import flight.events.ButtonEvent;
-	
-	import stealth.behaviors.Behavior;
+
 	import stealth.components.ButtonState;
 
 	[SkinState("up")]
@@ -28,7 +27,7 @@ package stealth.behaviors
 			dataBind.bind(this, "holdPress", this, "target.holdPress", true);
 		}
 		
-		[Bindable(event="holdPressChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get holdPress():Boolean { return _holdPress; }
 		public function set holdPress(value:Boolean):void
 		{
@@ -47,7 +46,7 @@ package stealth.behaviors
 		}
 		private var _holdPress:Boolean = false;
 		
-		[Bindable(event="currentStateChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get currentState():String { return _currentState; }
 		public function set currentState(value:String):void
 		{
@@ -58,7 +57,7 @@ package stealth.behaviors
 		}
 		private var _currentState:String = ButtonState.UP;
 		
-		[Bindable(event="statesChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get states():Array { return _states }
 		public function set states(value:Array):void
 		{

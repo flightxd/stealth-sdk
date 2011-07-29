@@ -55,7 +55,7 @@ package stealth.graphics
 		/**
 		 * @copy stealth.layout.BoxLayout#padding
 		 */
-		[Bindable(event="paddingChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get padding():Box { return _padding ||= new Box(); }
 		public function set padding(value:*):void
 		{
@@ -81,7 +81,7 @@ package stealth.graphics
 		/**
 		 * @copy stealth.layout.BoxLayout#hAlign
 		 */
-		[Bindable(event="hAlignChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="left,center,right,fill", defaultValue="left", name="hAlign")]
 		public function get hAlign():String { return _hAlign; }
 		public function set hAlign(value:String):void
@@ -93,7 +93,7 @@ package stealth.graphics
 		/**
 		 * @copy stealth.layout.BoxLayout#vAlign
 		 */
-		[Bindable(event="vAlignChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="top,middle,bottom,fill", defaultValue="top", name="vAlign")]
 		public function get vAlign():String { return _vAlign; }
 		public function set vAlign(value:String):void
@@ -105,7 +105,7 @@ package stealth.graphics
 		
 		// ====== background implementation ====== //
 		
-		[Bindable(event="backgroundChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get background():IGraphicShape { return _background; }
 		public function set background(value:*):void
 		{
@@ -128,7 +128,7 @@ package stealth.graphics
 		}
 		private var _background:IGraphicShape;
 		
-		[Bindable(event="flattenedChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get flattened():Boolean { return _flattened; }
 		public function set flattened(value:Boolean):void
 		{
@@ -160,7 +160,7 @@ package stealth.graphics
 			invalidate();
 		}
 		
-		[Bindable(event="rasterizedChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get rasterized():Boolean { return _rasterized; }
 		public function set rasterized(value:Boolean):void
 		{
@@ -206,11 +206,6 @@ package stealth.graphics
 			
 			if (_rasterized && !image) {
 				contentChanging = true;
-				for each (child in _content) {
-					if (child is IInvalidating) {
-						IInvalidating(child).validateNow();
-					}
-				}
 				image = new Bitmap(this);
 				var rect:Rectangle = getRect(this);
 				image.x = rect.x;
@@ -236,7 +231,7 @@ package stealth.graphics
 		 * @inheritDoc
 		 */
 		[ArrayElementType("flash.display.DisplayObject")]
-		[Bindable(event="contentChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get content():IList { return _content; }
 		override public function set content(value:*):void
 		{
@@ -247,7 +242,7 @@ package stealth.graphics
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="layoutChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get layout():ILayout { return _layout; }
 		public function set layout(value:ILayout):void
 		{
@@ -264,15 +259,15 @@ package stealth.graphics
 		}
 		private var _layout:ILayout;
 		
-		[Bindable(event="contentWidthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get contentWidth():Number { return layoutElement.contentWidth; }
 		public function set contentWidth(value:Number):void { layoutElement.contentWidth = value; }
 		
-		[Bindable(event="contentHeightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get contentHeight():Number { return layoutElement.contentHeight; }
 		public function set contentHeight(value:Number):void { layoutElement.contentHeight = value; }
 		
-		[Bindable(event="hPositionChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get hPosition():IPosition { return _hPosition || (hPosition = new Position()); }
 		public function set hPosition(value:IPosition):void
 		{
@@ -286,7 +281,7 @@ package stealth.graphics
 		}
 		private var _hPosition:IPosition;
 		
-		[Bindable(event="vPositionChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get vPosition():IPosition { return _vPosition || (vPosition = new Position()); }
 		public function set vPosition(value:IPosition):void
 		{
@@ -300,7 +295,7 @@ package stealth.graphics
 		}
 		private var _vPosition:IPosition;
 		
-		[Bindable(event="clippedChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get clipped():Boolean { return _clipped; }
 		public function set clipped(value:Boolean):void
 		{

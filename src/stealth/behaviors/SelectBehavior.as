@@ -8,11 +8,9 @@ package stealth.behaviors
 {
 	import flash.display.InteractiveObject;
 	import flash.events.MouseEvent;
-	
+
 	import flight.data.DataChange;
 	import flight.events.ButtonEvent;
-	
-	import stealth.behaviors.Behavior;
 
 	public class SelectBehavior extends Behavior
 	{
@@ -21,7 +19,7 @@ package stealth.behaviors
 			dataBind.bind(this, "selected", this, "target.selected", true);
 		}
 		
-		[Bindable(event="selectedChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get selected():Boolean { return _selected; }
 		public function set selected(value:Boolean):void
 		{

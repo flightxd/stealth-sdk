@@ -11,11 +11,10 @@ package stealth.behaviors
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
-	import stealth.behaviors.Behavior;
 	import flight.data.DataChange;
+	import flight.events.ButtonEvent;
 	import flight.ranges.IPosition;
 	import flight.ranges.Position;
-	import flight.events.ButtonEvent;
 
 	public class SlideBehavior extends Behavior
 	{
@@ -29,7 +28,7 @@ package stealth.behaviors
 			skinParts = { thumb:InteractiveObject, track:InteractiveObject };
 		}
 		
-		[Bindable(event="positionChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get position():IPosition { return _position || (position = new Position()); }
 		public function set position(value:IPosition):void
 		{
@@ -46,7 +45,7 @@ package stealth.behaviors
 		}
 		private var _position:IPosition;
 		
-		[Bindable(event="horizontalChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get horizontal():Boolean { return _horizontal; }
 		public function set horizontal(value:Boolean):void
 		{
@@ -54,7 +53,7 @@ package stealth.behaviors
 		}
 		private var _horizontal:Boolean;
 		
-		[Bindable(event="snapThumbChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get snapThumb():Boolean { return _snapThumb; }
 		public function set snapThumb(value:Boolean):void
 		{
@@ -63,7 +62,7 @@ package stealth.behaviors
 		private var _snapThumb:Boolean;
 		
 		[SkinPart]
-		[Bindable(event="thumbChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get thumb():InteractiveObject { return _thumb; }
 		public function set thumb(value:InteractiveObject):void
 		{
@@ -72,7 +71,7 @@ package stealth.behaviors
 		private var _thumb:InteractiveObject;
 		
 		[SkinPart]
-		[Bindable(event="trackChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get track():InteractiveObject { return _track; }
 		public function set track(value:InteractiveObject):void
 		{
@@ -80,7 +79,7 @@ package stealth.behaviors
 		}
 		private var _track:InteractiveObject;
 		
-		[Bindable(event="percentChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		protected function get percent():Number { return _percent; }
 		private var _percent:Number = 0;
 		

@@ -26,7 +26,7 @@ package stealth.containers
 		}
 		
 		[ArrayElementType("Object")]
-		[Bindable(event="dataProviderChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get dataProvider():IList { return _dataProvider; }
 		public function set dataProvider(value:*):void
 		{
@@ -50,7 +50,7 @@ package stealth.containers
 		}
 		private var _dataProvider:IList;
 		
-		[Bindable(event="templateChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get template():IFactory { return _template }
 		public function set template(value:*):void
 		{

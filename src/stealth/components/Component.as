@@ -8,7 +8,7 @@ package stealth.components
 {
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
-	
+
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.containers.IContainer;
@@ -18,9 +18,9 @@ package stealth.components
 	import flight.events.ListEvent;
 	import flight.layouts.ILayout;
 	import flight.utils.Factory;
-	
+
 	import mx.events.PropertyChangeEvent;
-	
+
 	import stealth.behaviors.IBehavior;
 	import stealth.graphics.GraphicElement;
 	import stealth.skins.ISkin;
@@ -38,7 +38,7 @@ package stealth.components
 			skinParts = { contents:IContainer };
 		}
 		
-		[Bindable(event="disabledChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get disabled():Boolean { return _disabled; }
 		public function set disabled(value:Boolean):void
 		{
@@ -63,7 +63,7 @@ package stealth.components
 		}
 		
 		[ArrayElementType("stealth.behaviors.IBehavior")]
-		[Bindable(event="behaviorsChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get behaviors():IList { return _behaviors; }
 		public function set behaviors(value:*):void
 		{
@@ -74,7 +74,7 @@ package stealth.components
 		
 		// ====== IDataRenderer implementation ====== //
 		
-		[Bindable(event="dataChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get data():Object { return _data; }
 		public function set data(value:Object):void
 		{
@@ -82,7 +82,7 @@ package stealth.components
 		}
 		private var _data:Object;
 		
-		[Bindable(event="skinChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get skin():ISkin { return _skin; }
 		public function set skin(value:ISkin):void
 		{
@@ -184,7 +184,7 @@ package stealth.components
 		 * @inheritDoc
 		 */
 		[ArrayElementType("flash.display.DisplayObject")]
-		[Bindable(event="contentChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get content():IList { return _content; }
 		override public function set content(value:*):void
 		{
@@ -197,7 +197,7 @@ package stealth.components
 		/**
 		 * @inheritDoc
 		 */
-		[Bindable(event="layoutChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get layout():ILayout { return _layout; }
 		public function set layout(value:ILayout):void
 		{
@@ -213,14 +213,14 @@ package stealth.components
 		private var _layout:ILayout;
 		private var explicitLayout:Boolean;
 		
-		[Bindable(event="contentWidthChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get contentWidth():Number { return _contents ? _contents.contentWidth : 0; }
 		
-		[Bindable(event="contentHeightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get contentHeight():Number { return _contents ? _contents.contentHeight : 0; }
 		
 		[SkinPart]
-		[Bindable(event="contentsChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get contents():IContainer { return _contents; }
 		public function set contents(value:IContainer):void
 		{

@@ -16,7 +16,7 @@ package stealth.graphics.shapes
 		{
 		}
 		/*
-		[Bindable(event="dataChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get data():Object { return _data }
 		public function set data(value:Object):void
 		{
@@ -42,7 +42,7 @@ package stealth.graphics.shapes
 		}
 		
 		[ElementType("flight.drawing.shapes.commands.CommandElement")]
-		[Bindable(event="dataChange")]
+		[Bindable("propertyChange")]
 		public function get data():ArrayList
 		{
 			if (_data == null)

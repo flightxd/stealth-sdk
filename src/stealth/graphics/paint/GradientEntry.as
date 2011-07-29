@@ -7,7 +7,7 @@
 package stealth.graphics.paint
 {
 	import flash.events.EventDispatcher;
-	
+
 	import flight.data.DataChange;
 
 	public class GradientEntry extends EventDispatcher 
@@ -19,7 +19,7 @@ package stealth.graphics.paint
 			_ratio = ratio;
 		}
 		
-		[Bindable(event="colorChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get color():Number { return _color; }
 		public function set color(value:Number):void
 		{
@@ -27,7 +27,7 @@ package stealth.graphics.paint
 		}
 		private var _color:Number;
 		
-		[Bindable(event="alphaChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get alpha():Number { return _alpha; }
 		public function set alpha(value:Number):void
 		{
@@ -38,7 +38,7 @@ package stealth.graphics.paint
 		}
 		private var _alpha:Number;
 		
-		[Bindable(event="ratioChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get ratio():Number { return _ratio; }
 		public function set ratio(value:Number):void
 		{

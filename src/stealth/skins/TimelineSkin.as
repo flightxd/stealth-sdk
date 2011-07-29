@@ -8,14 +8,14 @@ package stealth.skins
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
-	
+
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
 	import flight.utils.Type;
 	import flight.utils.getClassName;
-	
+
 	import mx.events.PropertyChangeEvent;
-	
+
 	import stealth.graphics.Group;
 	import stealth.layouts.Align;
 	import stealth.layouts.Box;
@@ -40,7 +40,7 @@ package stealth.skins
 		
 		// ====== ISkin implementation ====== //
 		
-		[Bindable(event="targetChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get target():Sprite { return _target; }
 		public function set target(value:Sprite):void
 		{
@@ -139,7 +139,7 @@ package stealth.skins
 			
 			var layoutPart:Object = ILayoutElement(skinPart);
 			var childRect:Rectangle = layoutPart.getLayoutRect();
-			trace(childRect);
+			
 			// support for simple docking
 			if (layoutPart.dock != null) {
 				var margin:Box = layoutPart.margin;
@@ -250,7 +250,6 @@ package stealth.skins
 				bindings[property] = false;
 				var bindTarget:Object = event.target != this ? this : _target;
 				var newValue:Object = bindTarget[property] = event.newValue;
-				trace("property changed", this, property, newValue);
 				if (newValue != event.newValue) {
 					event.target[property] = newValue;
 					event.newValue = newValue;

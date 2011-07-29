@@ -30,7 +30,7 @@ package stealth.graphics.paint
 		// TODO: implement matrix transformation of Bitmap
 		// TODO: implement clip fillMode
 		
-		[Bindable(event="sourceChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get source():BitmapData { return _source; }
 		public function set source(value:*):void
 		{
@@ -38,7 +38,7 @@ package stealth.graphics.paint
 		}
 		private var _source:BitmapData;
 		
-		[Bindable(event="fillModeChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get fillMode():String { return _fillMode; }
 		public function set fillMode(value:String):void
 		{
@@ -47,7 +47,7 @@ package stealth.graphics.paint
 		}
 		private var _fillMode:String;
 		
-		[Bindable(event="smoothChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get smooth():Boolean { return _smooth; }
 		public function set smooth(value:Boolean):void
 		{
@@ -56,7 +56,7 @@ package stealth.graphics.paint
 		}
 		private var _smooth:Boolean;
 		
-		[Bindable(event="xChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get x():Number { return _x; }
 		public function set x(value:Number):void
 		{
@@ -64,7 +64,7 @@ package stealth.graphics.paint
 		}
 		private var _x:Number;
 		
-		[Bindable(event="yChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get y():Number { return _y; }
 		public function set y(value:Number):void
 		{
@@ -72,7 +72,7 @@ package stealth.graphics.paint
 		}
 		private var _y:Number;
 		
-		[Bindable(event="scaleXChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get scaleX():Number { return _scaleX; }
 		public function set scaleX(value:Number):void
 		{
@@ -80,7 +80,7 @@ package stealth.graphics.paint
 		}
 		private var _scaleX:Number;
 		
-		[Bindable(event="scaleYChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get scaleY():Number { return _scaleY; }
 		public function set scaleY(value:Number):void
 		{
@@ -88,7 +88,7 @@ package stealth.graphics.paint
 		}
 		private var _scaleY:Number;
 		
-		[Bindable(event="rotationChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get rotation():Number { return _rotation; }
 		public function set rotation(value:Number):void
 		{
@@ -96,7 +96,7 @@ package stealth.graphics.paint
 		}
 		private var _rotation:Number;
 		
-		[Bindable(event="transformXChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get transformX():Number { return _transformX; }
 		public function set transformX(value:Number):void
 		{
@@ -104,7 +104,7 @@ package stealth.graphics.paint
 		}
 		private var _transformX:Number = 0;
 		
-		[Bindable(event="transformYChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get transformY():Number { return _transformY; }
 		public function set transformY(value:Number):void
 		{
@@ -112,7 +112,7 @@ package stealth.graphics.paint
 		}
 		private var _transformY:Number = 0;
 		
-		[Bindable(event="matrixChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get matrix():Matrix { return _matrix; }
 		public function set matrix(value:Matrix):void
 		{

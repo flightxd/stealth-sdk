@@ -11,7 +11,7 @@ package stealth.graphics.paint
 	import flash.display.JointStyle;
 	import flash.display.LineScaleMode;
 	import flash.geom.Matrix;
-	
+
 	import flight.data.DataChange;
 
 	public class BitmapStroke extends BitmapFill implements IStroke
@@ -32,7 +32,7 @@ package stealth.graphics.paint
 			_miterLimit = miterLimit;
 		}
 		
-		[Bindable(event="weightChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get weight():Number { return _weight; }
 		public function set weight(value:Number):void
 		{
@@ -41,7 +41,7 @@ package stealth.graphics.paint
 		}
 		private var _weight:Number;
 		
-		[Bindable(event="pixelHintingChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get pixelHinting():Boolean { return _pixelHinting; }
 		public function set pixelHinting(value:Boolean):void
 		{
@@ -50,7 +50,7 @@ package stealth.graphics.paint
 		}
 		private var _pixelHinting:Boolean;
 		
-		[Bindable(event="scaleModeChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="normal,horizontal,vertical,none")]
 		public function get scaleMode():String { return _scaleMode; }
 		public function set scaleMode(value:String):void
@@ -60,7 +60,7 @@ package stealth.graphics.paint
 		}
 		private var _scaleMode:String;
 		
-		[Bindable(event="capesChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="round,square,none")]
 		public function get caps():String { return _caps; }
 		public function set caps(value:String):void
@@ -70,7 +70,7 @@ package stealth.graphics.paint
 		}
 		private var _caps:String;
 		
-		[Bindable(event="jointsChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		[Inspectable(enumeration="round,bevel,miter")]
 		public function get joints():String { return _joints; }
 		public function set joints(value:String):void
@@ -80,7 +80,7 @@ package stealth.graphics.paint
 		}
 		private var _joints:String;
 		
-		[Bindable(event="miterLimitChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get miterLimit():Number { return _miterLimit; }
 		public function set miterLimit(value:Number):void
 		{

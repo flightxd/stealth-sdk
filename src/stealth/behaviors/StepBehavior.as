@@ -8,11 +8,10 @@ package stealth.behaviors
 {
 	import flash.display.InteractiveObject;
 
-	import stealth.behaviors.Behavior;
 	import flight.data.DataChange;
+	import flight.events.ButtonEvent;
 	import flight.ranges.IPosition;
 	import flight.ranges.Position;
-	import flight.events.ButtonEvent;
 
 	public class StepBehavior extends Behavior
 	{
@@ -21,7 +20,7 @@ package stealth.behaviors
 			skinParts = { forwardButton:InteractiveObject, backwardButton:InteractiveObject };
 		}
 		
-		[Bindable(event="positionChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get position():IPosition { return _position ||= new Position(); }
 		public function set position(value:IPosition):void
 		{
@@ -30,7 +29,7 @@ package stealth.behaviors
 		private var _position:IPosition;
 		
 		[SkinPart]
-		[Bindable(event="forwardButtonChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get forwardButton():InteractiveObject { return _forwardButton; }
 		public function set forwardButton(value:InteractiveObject):void
 		{
@@ -39,7 +38,7 @@ package stealth.behaviors
 		private var _forwardButton:InteractiveObject;
 		
 		[SkinPart]
-		[Bindable(event="backwardButtonChange", style="noEvent")]
+		[Bindable("propertyChange")]
 		public function get backwardButton():InteractiveObject { return _backwardButton; }
 		public function set backwardButton(value:InteractiveObject):void
 		{

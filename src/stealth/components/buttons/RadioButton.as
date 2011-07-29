@@ -7,7 +7,6 @@
 package stealth.components.buttons
 {
 	import theme.buttons.ThemeRadioButton;
-	
 
 	public class RadioButton extends Button
 	{
