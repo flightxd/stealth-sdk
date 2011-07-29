@@ -7,39 +7,35 @@
 package stealth.graphics
 {
 	import flash.display.DisplayObject;
-	import flash.display.GraphicsEndFill;
-	import flash.display.GraphicsPath;
-	import flash.display.GraphicsPathCommand;
-	import flash.display.IGraphicsData;
 	import flash.events.Event;
-	import flash.events.IEventDispatcher;
 	import flash.geom.Rectangle;
 	
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
-	import flight.data.IPosition;
-	import flight.data.Position;
-	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.ILayout;
+	import flight.ranges.IPosition;
+	import flight.ranges.Position;
 	
-	import mx.events.PropertyChangeEvent;
-	import mx.graphics.SolidColor;
-	
-	import stealth.graphics.GraphicElement;
-	import stealth.graphics.paint.IPaint;
 	import stealth.graphics.paint.Paint;
-	
+	import stealth.graphics.shapes.Rect;
+	import stealth.layouts.Align;
+	import stealth.layouts.Box;
+	import stealth.layouts.BoxLayout;
+
 	[Event(name="validate", type="flight.events.InvalidationEvent")]
 
 	[DefaultProperty("content")]
 	public class Group extends GraphicElement implements IContainer
 	{
-		public function Group(content:* = null)
+		public function Group(content:* = null, background:* = null)
 		{
+			this.background = background;
+			layoutElement.snapToPixel = true;
+			
 			addEventListener(Event.ADDED, onChildAdded, true, 10);
 			addEventListener(Event.REMOVED, onChildRemoved, true, 10);
 			
@@ -51,65 +47,92 @@ package stealth.graphics
 			if (content) {
 				this.content = content;
 			}
-			
-			layoutElement.snapToPixel = true;
 		}
+		
+		/**
+		 * @copy stealth.layout.BoxLayout#padding
+		 */
+		[Bindable(event="paddingChange", style="noEvent")]
+		public function get padding():Box { return _padding ||= new Box(); }
+		public function set padding(value:*):void
+		{
+			if (!(value is Box)) {
+				value = Box.getInstance(value, _padding);
+			}
+			DataChange.change(this, "padding", _padding, _padding = value);
+		}
+		private var _padding:Box;
+		
+		/**
+		 * @copy stealth.layout.BoxLayout#gap
+		 */
+		public function get gap():Box { return _padding ||= new Box(); }
+		public function set gap(value:*):void
+		{
+			if (!(value is Box)) {
+				value = Box.getDirectional(value, _padding);
+			}
+			DataChange.change(this, "padding", _padding, _padding = value);
+		}
+		
+		/**
+		 * @copy stealth.layout.BoxLayout#hAlign
+		 */
+		[Bindable(event="hAlignChange", style="noEvent")]
+		[Inspectable(enumeration="left,center,right,fill", defaultValue="left", name="hAlign")]
+		public function get hAlign():String { return _hAlign; }
+		public function set hAlign(value:String):void
+		{
+			DataChange.change(this, "hAlign", _hAlign, _hAlign = value);
+		}
+		private var _hAlign:String = Align.LEFT;
+		
+		/**
+		 * @copy stealth.layout.BoxLayout#vAlign
+		 */
+		[Bindable(event="vAlignChange", style="noEvent")]
+		[Inspectable(enumeration="top,middle,bottom,fill", defaultValue="top", name="vAlign")]
+		public function get vAlign():String { return _vAlign; }
+		public function set vAlign(value:String):void
+		{
+			DataChange.change(this, "vAlign", _vAlign, _vAlign = value);
+		}
+		private var _vAlign:String = Align.TOP;
 		
 		// ====== background implementation ====== //
 		
-		private static var graphicsPath:GraphicsPath = new GraphicsPath(
-			Vector.<int>([GraphicsPathCommand.MOVE_TO,
-				GraphicsPathCommand.LINE_TO,
-				GraphicsPathCommand.LINE_TO,
-				GraphicsPathCommand.LINE_TO]),
-			Vector.<Number>([0,0, 0,0, 0,0, 0,0, 0,0]));
-		private static var graphicsData:Vector.<IGraphicsData> = new Vector.<IGraphicsData>();
-		private static var pathBounds:Rectangle = new Rectangle();
-		private static var endFill:GraphicsEndFill = new GraphicsEndFill();
-		
 		[Bindable(event="backgroundChange", style="noEvent")]
-		public function get background():IPaint { return _background; }
+		public function get background():IGraphicShape { return _background; }
 		public function set background(value:*):void
 		{
-			value = Paint.getInstance(value);
-			
-			if (_background != value) {
-				
-				if (_background && _background is IEventDispatcher) {
-					IEventDispatcher(_background).removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
-				}
-				DataChange.change(this, "background", _background, _background = value);
-				invalidate();
-				if (_background && IEventDispatcher) {
-					IEventDispatcher(_background).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaintChange);
-				} else if (!_background) {
-					graphics.clear();
+			if (!(value is IGraphicShape)) {
+				value = Paint.getInstance(value);
+				if (value) {
+					value = new Rect(0, 0, value);
 				}
 			}
+			
+			if (_background != value) {
+				if (_background) {
+					_background.canvas = null;
+				}
+				DataChange.change(this, "background", _background, _background = value as IGraphicShape);
+				if (_background) {
+					_background.canvas = this;
+					_background.depth = -1;
+					_background.width = width;
+					_background.height = height;
+				}
+				invalidate();
+			}
 		}
-		private var _background:IPaint;
+		private var _background:IGraphicShape;
 		
-		private function onPaintChange(event:PropertyChangeEvent):void
-		{
-			invalidate();
-		}
-		
-		override protected function render():void
+		override protected function resize():void
 		{
 			if (_background) {
-				var data:Vector.<Number> = graphicsPath.data;
-				data[2] = data[4] = width;
-				data[5] = data[7] = height;
-				pathBounds.width = width;
-				pathBounds.height = height;
-				
-				graphicsData.length = 0;
-				_background.update(graphicsPath, pathBounds);
-				_background.paint(graphicsData);
-				graphicsData.push(graphicsPath, endFill);
-				
-				graphics.clear();
-				graphics.drawGraphicsData(graphicsData);
+				_background.width = width;
+				_background.height = height;
 			}
 		}
 		
@@ -214,10 +237,10 @@ package stealth.graphics
 			if (width < contentWidth || height < contentHeight) {
 				var rect:Rectangle = scrollRect || new Rectangle();
 				if (_hPosition) {
-					rect.x = _hPosition.value;
+					rect.x = _hPosition.current;
 				}
 				if (_vPosition) {
-					rect.y = _vPosition.value;
+					rect.y = _vPosition.current;
 				}
 				scrollRect = rect;
 			}
@@ -226,14 +249,14 @@ package stealth.graphics
 		protected function scrollRectSize():void
 		{
 			if (_hPosition) {
-				_hPosition.minimum = 0;
-				_hPosition.maximum = contentWidth - width;
-				_hPosition.pageSize = width;
+				_hPosition.begin = 0;
+				_hPosition.end = contentWidth - width;
+				_hPosition.skipSize = width;
 			}
 			if (_vPosition) {
-				_vPosition.minimum = 0;
-				_vPosition.maximum = contentHeight - height;
-				_vPosition.pageSize = height;
+				_vPosition.begin = 0;
+				_vPosition.end = contentHeight - height;
+				_vPosition.skipSize = height;
 			}
 			
 			if (width < contentWidth || height < contentHeight) {
@@ -241,10 +264,10 @@ package stealth.graphics
 				rect.width = width;
 				rect.height = height;
 				if (_hPosition) {
-					rect.x = hPosition.value;
+					rect.x = hPosition.current;
 				}
 				if (_vPosition) {
-					rect.y = vPosition.value;
+					rect.y = vPosition.current;
 				}
 				scrollRect = rect;
 			} else if (scrollRect) {

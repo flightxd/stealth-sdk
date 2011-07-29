@@ -20,7 +20,7 @@ package stealth.layouts
 	
 	import mx.events.PropertyChangeEvent;
 
-	public class LayoutElement implements ILayoutElement
+	dynamic public class LayoutElement implements ILayoutElement
 	{
 		private var target:DisplayObject;
 		
@@ -149,7 +149,7 @@ package stealth.layouts
 				updateWidth();
 			}
 		}
-		private var _maxWidth:Number = Number.MAX_VALUE;
+		private var _maxWidth:Number = int.MAX_VALUE;
 		
 		/**
 		 * @inheritDoc
@@ -167,7 +167,7 @@ package stealth.layouts
 				updateHeight();
 			}
 		}
-		private var _maxHeight:Number = Number.MAX_VALUE;
+		private var _maxHeight:Number = int.MAX_VALUE;
 		
 		/**
 		 * @inheritDoc

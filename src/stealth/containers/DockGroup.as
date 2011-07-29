@@ -19,18 +19,5 @@ package stealth.containers
 			layout = dockLayout = new DockLayout();
 		}
 		
-		/**
-		 * @copy stealth.layout.BoxLayout#padding
-		 */
-		public function get padding():Box { return dockLayout.padding; }
-		public function set padding(value:*):void { dockLayout.padding = value; }
-		
-		/**
-		 * @copy stealth.layout.BoxLayout#gap
-		 */
-		[Inspectable(type="String")]
-		public function get gap():Box { return dockLayout.gap; }
-		public function set gap(value:*):void { dockLayout.gap = value; }
-		
 	}
 }

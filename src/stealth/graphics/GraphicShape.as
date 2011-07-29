@@ -6,27 +6,35 @@
 
 package stealth.graphics
 {
+	import flash.display.DisplayObject;
 	import flash.display.Graphics;
 	import flash.display.GraphicsEndFill;
 	import flash.display.GraphicsPath;
 	import flash.display.IGraphicsData;
+	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.IEventDispatcher;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-	
+
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
 	import flight.data.DataChange;
+	import flight.display.Invalidation;
 	import flight.display.Shape;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
+	import flight.events.LifecycleEvent;
+	import flight.events.ListEvent;
 	import flight.layouts.IBounds;
-	
+	import flight.states.IStateful;
+	import flight.states.State;
+
 	import mx.events.PropertyChangeEvent;
-	
+
 	import stealth.graphics.paint.IFill;
 	import stealth.graphics.paint.IStroke;
 	import stealth.graphics.paint.Paint;
-	import stealth.graphics.paint.SolidColor;
-	import stealth.graphics.paint.SolidColorStroke;
 	import stealth.layouts.Box;
 	import stealth.layouts.LayoutElement;
 
@@ -37,14 +45,15 @@ package stealth.graphics
 	 * A generic shape element providing position, size and transformation.
 	 * GraphicShape inherits basic drawing from Shape.
 	 */
-	public class GraphicShape extends Shape implements IGraphicShape, IGraphicElement
+	public class GraphicShape extends Shape implements IGraphicShape, IStateful
 	{
 		public function GraphicShape()
 		{
 			layoutElement = new LayoutElement(this);
+			addEventListener(InvalidationEvent.VALIDATE, onClear, false, 20);
+			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
 			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
-			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
 			invalidate(LayoutEvent.RESIZE);
 			measure();
 		}
@@ -57,7 +66,50 @@ package stealth.graphics
 			DataChange.change(this, "maskType", _maskType, _maskType = value);
 		}
 		private var _maskType:String = "default";
+
 		
+		// ====== IStateful implementation ====== //
+		
+		protected var state:State;
+		
+		[Bindable(event="currentStateChange", style="noEvent")]
+		public function get currentState():String { return _currentState; }
+		public function set currentState(value:String):void
+		{
+			if (_currentState != value) {
+				var newState:State = State(_states.getById(value));
+				if (!newState) {
+					newState = _states[0];
+				}
+				
+				if (state != newState) {
+					state.undo();
+					state = newState;
+					state.execute();
+					DataChange.change(this, "currentState", _currentState, _currentState = state.name);
+				}
+			}
+		}
+		private var _currentState:String;
+		
+		[ArrayElementType("flight.states.State")]
+		[Bindable(event="statesChange", style="noEvent")]
+		public function get states():Array { return _states || (states = []); }
+		public function set states(value:*):void
+		{
+			if (!_states) {
+				_states = new ArrayList(null, "name");
+				_states.addEventListener(ListEvent.LIST_CHANGE, onStatesChanged);
+			}
+			ArrayList.getInstance(value, _states);
+		}
+		private var _states:ArrayList;
+		
+		private function onStatesChanged(event:ListEvent):void
+		{
+			currentState = _states[0];
+		}
+				
 		
 		// ====== IGraphicShape implementation ====== //
 		
@@ -104,6 +156,37 @@ package stealth.graphics
 		}
 		private var _stroke:IStroke;
 		
+		[Bindable(event="canvasChange", style="noEvent")]
+		public function get canvas():Sprite { return _canvas; }
+		public function set canvas(value:Sprite):void
+		{
+			if (_canvas != value) {
+				var canvas:DisplayObject = _canvas || this;
+				canvas.removeEventListener(InvalidationEvent.VALIDATE, onClear);
+				canvas.removeEventListener(InvalidationEvent.VALIDATE, onRender);
+				canvas.removeEventListener(LayoutEvent.RESIZE, onResize);
+				DataChange.change(this, "canvas", _canvas, _canvas = value);
+				validateNow(LifecycleEvent.CREATE);
+				canvas = _canvas || this;
+				canvas.addEventListener(InvalidationEvent.VALIDATE, onClear, false, 0xFFF);
+				canvas.addEventListener(InvalidationEvent.VALIDATE, onRender, false, 0xFF - _depth);
+				canvas.addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
+				invalidate();
+			}
+		}
+		private var _canvas:Sprite;
+		
+		[Bindable(event="depthChange", style="noEvent")]
+		public function get depth():int { return _depth; }
+		public function set depth(value:int):void
+		{
+			if (_canvas) {
+				_canvas.addEventListener(InvalidationEvent.VALIDATE, onRender, false, 0xFF - _depth);
+			}
+			DataChange.change(this, "depth", _depth, _depth = value);
+		}
+		private var _depth:int = 0;
+		
 		private function onPaintChange(event:PropertyChangeEvent):void
 		{
 			invalidate();
@@ -116,7 +199,7 @@ package stealth.graphics
 		
 		public function update(transform:Matrix = null):void
 		{
-			// clear and reuse graphicsData & graphicsPath
+			// clear and reuse graphicsData & graphicsPath instances
 			graphicsData.length = 0;
 			graphicsPath.data.length = 0;
 			graphicsPath.commands.length = 0;
@@ -125,6 +208,9 @@ package stealth.graphics
 			pathBounds.height = height;
 			updatePath(graphicsPath, pathBounds);
 			
+			if (_canvas) {
+				transform = matrix;
+			}
 			if (transform) {
 				var data:Vector.<Number> = graphicsPath.data;
 				for (var i:int = 0; i < data.length; i += 2) {
@@ -137,12 +223,12 @@ package stealth.graphics
 			
 			var fillLength:int, strokeLength:int;
 			if (_fill) {
-				_fill.update(graphicsPath, pathBounds);
+				_fill.update(graphicsPath, pathBounds, transform);
 				_fill.paint(graphicsData);
 				fillLength = graphicsData.length;
 			}
 			if (_stroke) {
-				_stroke.update(graphicsPath, pathBounds);
+				_stroke.update(graphicsPath, pathBounds, transform);
 				_stroke.paint(graphicsData);
 				strokeLength = graphicsData.length - fillLength;
 			}
@@ -179,6 +265,11 @@ package stealth.graphics
 			graphicsData = null;
 		}
 		
+		override public function invalidate(phase:String = null):void
+		{
+			var canvas:DisplayObject = _canvas || this;
+			Invalidation.invalidate(canvas, phase || InvalidationEvent.VALIDATE);
+		}
 		
 		// ====== ITransform implementation ====== //
 		
@@ -347,6 +438,7 @@ package stealth.graphics
 		
 		// ====== ILayoutBounds implementation ====== //
 		
+		public function get layoutData():Object { return layoutElement; }
 		protected var layoutElement:LayoutElement;
 		
 		/**
@@ -468,7 +560,7 @@ package stealth.graphics
 		public function set vOffset(value:Number):void { layoutElement.vOffset = value; }
 		
 		[Bindable(event="dockChange", style="noEvent")]
-		[Inspectable(enumeration="left,top,right,bottom,justify")]
+		[Inspectable(enumeration="left,top,right,bottom,fill")]
 		public function get dock():String { return layoutElement.dock; }
 		public function set dock(value:String):void { layoutElement.dock = value; }
 		
@@ -500,8 +592,8 @@ package stealth.graphics
 		
 		protected function render():void
 		{
+			var graphics:Graphics = _canvas ? _canvas.graphics : this.graphics;
 			update();
-			graphics.clear();
 			draw(graphics);
 		}
 		
@@ -509,9 +601,9 @@ package stealth.graphics
 		{
 		}
 		
-		private function onRender(event:InvalidationEvent):void
+		private function onMeasure(event:LayoutEvent):void
 		{
-			render();
+			measure();
 		}
 		
 		private function onResize(event:LayoutEvent):void
@@ -519,9 +611,14 @@ package stealth.graphics
 			invalidate();
 		}
 		
-		private function onMeasure(event:LayoutEvent):void
+		private function onRender(event:InvalidationEvent):void
 		{
-			measure();
+			render();
+		}
+		
+		private static function onClear(event:Event):void
+		{
+			event.target.graphics.clear();
 		}
 	}
 }

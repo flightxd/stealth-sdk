@@ -9,14 +9,21 @@ package stealth.graphics
 	import flash.display.DisplayObject;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-	
+
+	import flight.collections.ArrayList;
+	import flight.collections.IList;
 	import flight.data.DataChange;
 	import flight.display.MovieClip;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
+	import flight.events.ListEvent;
 	import flight.layouts.IBounds;
-	import flight.utils.Type;
-	
+	import flight.states.Change;
+	import flight.states.IStateful;
+	import flight.states.State;
+
+	import spark.effects.Resize;
+
 	import stealth.layouts.Box;
 	import stealth.layouts.LayoutElement;
 
@@ -26,7 +33,7 @@ package stealth.graphics
 	 * A generic graphic element providing position, size and transformation.
 	 * GraphicElement inherits basic drawing and containment from Sprite.
 	 */
-	public class GraphicElement extends MovieClip implements IGraphicElement
+	public class GraphicElement extends MovieClip implements IGraphicElement, IStateful
 	{
 		public function GraphicElement()
 		{
@@ -51,7 +58,63 @@ package stealth.graphics
 		{
 			DataChange.change(this, "maskType", _maskType, _maskType = value);
 		}
-		private var _maskType:String = "default";
+		private var _maskType:String = MaskType.CLIP;
+		
+		// required in the superclass of any subclass using [SkinPart] metadata (ie Component)
+		protected function get skinParts():Object { return _skinParts; }
+		protected function set skinParts(value:Object):void
+		{
+			for (var i:String in value) {
+				_skinParts[i] = value[i];
+			}
+		}
+		private var _skinParts:Object = {};
+		
+		
+		// ====== IStateful implementation ====== //
+		
+		protected var state:State;
+		
+		[Bindable(event="currentStateChange", style="noEvent")]
+		public function get currentState():String { return _currentState; }
+		public function set currentState(value:String):void
+		{
+			if (_currentState != value) {
+				var newState:State = State(_states.getById(value));
+				if (!newState) {
+					newState = _states[0];
+				}
+				
+				if (state != newState) {
+					if (state) {
+						state.undo();
+					}
+					state = newState;
+					state.source = this;
+					state.execute();
+					DataChange.change(this, "currentState", _currentState, _currentState = state.name);
+				}
+			}
+		}
+		private var _currentState:String;
+		
+		[ArrayElementType("flight.states.State")]
+		[Bindable(event="statesChange", style="noEvent")]
+		public function get states():Array { return _states || (states = []); }
+		public function set states(value:*):void
+		{
+			if (!_states) {
+				_states = new ArrayList(null, "name");
+				_states.addEventListener(ListEvent.LIST_CHANGE, onStatesChanged);
+			}
+			ArrayList.getInstance(value, _states);
+		}
+		private var _states:ArrayList;
+		
+		private function onStatesChanged(event:ListEvent):void
+		{
+			currentState = _states[0];
+		}
 		
 		
 		// ====== ITransform implementation ====== //
@@ -221,6 +284,7 @@ package stealth.graphics
 		
 		// ====== ILayoutBounds implementation ====== //
 		
+		public function get layoutData():Object { return layoutElement; }
 		protected var layoutElement:LayoutElement;
 		
 		/**
@@ -347,7 +411,7 @@ package stealth.graphics
 		public function set vOffset(value:Number):void { layoutElement.vOffset = value; }
 		
 		[Bindable(event="dockChange", style="noEvent")]
-		[Inspectable(enumeration="left,top,right,bottom,justify")]
+		[Inspectable(enumeration="left,top,right,bottom,fill")]
 		public function get dock():String { return layoutElement.dock; }
 		public function set dock(value:String):void { layoutElement.dock = value; }
 		
@@ -381,6 +445,10 @@ package stealth.graphics
 		{
 		}
 		
+		protected function resize():void
+		{
+		}
+		
 		protected function measure():void
 		{
 			measured.minWidth = defaultRect.right;
@@ -388,19 +456,20 @@ package stealth.graphics
 		}
 		protected var defaultRect:Rectangle;
 		
-		private function onRender(event:InvalidationEvent):void
+		private function onMeasure(event:LayoutEvent):void
 		{
-			render();
+			measure();
 		}
 		
 		private function onResize(event:LayoutEvent):void
 		{
+			resize();
 			invalidate();
 		}
 		
-		private function onMeasure(event:LayoutEvent):void
+		private function onRender(event:InvalidationEvent):void
 		{
-			measure();
+			render();
 		}
 	}
 }

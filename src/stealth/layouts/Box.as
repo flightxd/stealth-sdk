@@ -137,6 +137,38 @@ package stealth.layouts
 						box.left = Number(values[3]);
 						break;
 				}
+			} else if (value is Box) {
+				box.top = value.top;
+				box.right = value.right;
+				box.bottom = value.bottom;
+				box.left = value.left;
+			}
+			return box;
+		}
+		
+		public static function getDirectional(value:*, box:Box = null):Box
+		{
+			if (!box) {
+				box = new Box();
+			}
+			
+			if (value is Number) {
+				box.vertical = box.horizontal = value;
+			} else if (value is String) {
+				value = value.replace(/[,\s]+/g, " ");
+				var values:Array = value.split(" ");
+				switch (values.length) {
+					case 1:
+						box.vertical = box.horizontal = Number(values[0]);
+						break;
+					case 2:
+						box.vertical = Number(values[0]);
+						box.horizontal = Number(values[1]);
+						break;
+				}
+			} else if (value is Box) {
+				box.vertical = value._vertical;
+				box.horizontal = value._horizontal
 			}
 			return box;
 		}

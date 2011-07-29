@@ -19,7 +19,7 @@ package stealth.layouts
 			
 			// vertical size
 			var space:Number = childMargin.top + childMargin.bottom;
-			if (vAlign == Align.JUSTIFY || !isNaN(childPercentHeight)) {
+			if (vAlign == Align.FILL || !isNaN(childPercentHeight)) {
 				measured.minHeight = Bounds.constrainHeight(measured, childBounds.minHeight + space);
 				measured.maxHeight = Bounds.constrainHeight(measured, childBounds.maxHeight + space);
 			} else {
@@ -70,7 +70,7 @@ package stealth.layouts
 				case Align.BOTTOM:
 					childBounds.y = contentRect.y + (contentRect.height - childBounds.height - childMargin.bottom);
 					break;
-				case Align.JUSTIFY:
+				case Align.FILL:
 					childBounds.y = contentRect.y + childMargin.top;
 					childBounds.height = contentRect.height - childMargin.top - childMargin.bottom;
 					break;

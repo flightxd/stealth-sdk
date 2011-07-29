@@ -14,6 +14,6 @@ package stealth.layouts
 		public static const BOTTOM:String = "bottom";
 		public static const CENTER:String = "center";
 		public static const MIDDLE:String = "middle";
-		public static const JUSTIFY:String = "justify";
+		public static const FILL:String = "fill";
 	}
 }

@@ -19,7 +19,7 @@ package stealth.layouts
 			
 			// horizontal size
 			var space:Number = childMargin.left + childMargin.right;
-			if (hAlign == Align.JUSTIFY || !isNaN(childPercentWidth)) {
+			if (hAlign == Align.FILL || !isNaN(childPercentWidth)) {
 				measured.minWidth = Bounds.constrainWidth(measured, childBounds.minWidth + space);
 				measured.maxWidth = Bounds.constrainWidth(measured, childBounds.maxWidth + space);
 			} else {
@@ -69,7 +69,7 @@ package stealth.layouts
 				case Align.RIGHT:
 					childBounds.x = contentRect.x + (contentRect.width - childBounds.width - childMargin.right);
 					break;
-				case Align.JUSTIFY:
+				case Align.FILL:
 					childBounds.x = contentRect.x + childMargin.left;
 					childBounds.width = contentRect.width - childMargin.left - childMargin.right;
 					break;

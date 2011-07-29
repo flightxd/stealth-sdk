@@ -25,7 +25,7 @@ package stealth.layouts
 		protected var measuredWidth:Number;
 		protected var measuredHeight:Number;
 		
-		private var validDockValues:Array = [Align.LEFT, Align.TOP, Align.RIGHT, Align.BOTTOM, Align.JUSTIFY];
+		private var validDockValues:Array = [Align.LEFT, Align.TOP, Align.RIGHT, Align.BOTTOM, Align.FILL];
 		
 		public function DockLayout()
 		{
@@ -168,7 +168,7 @@ package stealth.layouts
 					dockMeasured.minWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.minWidth);
 					dockMeasured.maxWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.maxWidth);
 				}
-			} else {	// if (dock == JUSTIFY) {
+			} else {	// if (dock == FILL) {
 				space = measuredWidth + childMargin.left + childMargin.right + gap.horizontal;
 				dockMeasured.minWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.minWidth);
 				dockMeasured.maxWidth = Bounds.constrainWidth(dockMeasured, space + childBounds.maxWidth);
@@ -273,7 +273,7 @@ package stealth.layouts
 					childBounds.y = area.y + area.height - childBounds.height - margin.bottom;
 					childBounds.width = area.width - margin.left - margin.right;
 					break;
-				case Align.JUSTIFY:
+				case Align.FILL:
 					childBounds.x = area.x + margin.left;
 					childBounds.y = area.y + margin.top;
 					childBounds.height = area.height - margin.top - margin.bottom;
@@ -313,7 +313,7 @@ package stealth.layouts
 						childBounds.x = area.x + area.width - childBounds.width - margin.right;
 					}
 					break;
-				case Align.JUSTIFY:
+				case Align.FILL:
 					childBounds.x = area.x + margin.left;
 					childBounds.y = area.y + margin.top;
 					break;

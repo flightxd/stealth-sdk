@@ -8,14 +8,14 @@ package stealth.layouts
 {
 	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
-
+	
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
 	import flight.events.LayoutEvent;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.layouts.Layout;
-
+	
 	import mx.events.PropertyChangeEvent;
 
 	public class BoxLayout extends Layout
@@ -39,12 +39,10 @@ package stealth.layouts
 		{
 			super(target);
 			
+			bindTarget("padding");
 			bindTarget("hAlign");
 			bindTarget("vAlign");
-			bindTarget("padding");
 			
-			watchTarget("width");
-			watchTarget("height");
 			watchTarget("contentWidth");
 			watchTarget("contentHeight");
 			
@@ -69,51 +67,38 @@ package stealth.layouts
 		public function set padding(value:*):void
 		{
 			if (!(value is Box)) {
-				value = Box.getInstance(value);
+				value = Box.getInstance(value, _padding);
 			}
 			
-			if (_padding) {
-				_padding.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
+			if (_padding != value) {
+				if (_padding) {
+					_padding.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
+				}
+				DataChange.change(this, "padding", _padding, _padding = value);
+				invalidate(LayoutEvent.LAYOUT);
+				if (_padding) {
+					_padding.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
+				}
 			}
-			DataChange.change(this, "padding", _padding, _padding = value);
-			if (_padding) {
-				_padding.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
-			}
-			invalidate(LayoutEvent.LAYOUT);
 		}
 		private var _padding:Box;
+		
+		public function get gap():Box { return _padding || (padding = new Box()); }
+		public function set gap(value:*):void
+		{
+			if (!(value is Box)) {
+				value = Box.getDirectional(value, _padding);
+			}
+			padding = value;
+		}
 		
 		private function onPaddingChange(event:PropertyChangeEvent):void
 		{
 			invalidate(LayoutEvent.LAYOUT);
 		}
 		
-		public function get gap():Box { return _padding || (padding = new Box()); }
-		public function set gap(value:*):void
-		{
-			_padding = padding;
-			if (value is Number) {
-				_padding.vertical = _padding.horizontal = value;
-			} else if (value is String) {
-				value = value.replace(/[,\s]+/g, " ");
-				var values:Array = value.split(" ");
-				switch (values.length) {
-					case 1:
-						_padding.vertical = _padding.horizontal = Number(values[0]);
-						break;
-					case 2:
-						_padding.vertical = Number(values[0]);
-						_padding.horizontal = Number(values[1]);
-						break;
-				}
-			} else if (value is Box) {
-				_padding.vertical = value._vertical;
-				_padding.horizontal = value._horizontal
-			}
-		}
-		
 		[Bindable(event="hAlignChange", style="noEvent")]
-		[Inspectable(enumeration="left,center,right,justify", defaultValue="left", name="hAlign")]
+		[Inspectable(enumeration="left,center,right,fill", defaultValue="left", name="hAlign")]
 		public function get hAlign():String { return _hAlign; }
 		public function set hAlign(value:String):void
 		{
@@ -123,7 +108,7 @@ package stealth.layouts
 		private var _hAlign:String = Align.LEFT;
 		
 		[Bindable(event="vAlignChange", style="noEvent")]
-		[Inspectable(enumeration="top,middle,bottom,justify", defaultValue="top", name="vAlign")]
+		[Inspectable(enumeration="top,middle,bottom,fill", defaultValue="top", name="vAlign")]
 		public function get vAlign():String { return _vAlign; }
 		public function set vAlign(value:String):void
 		{
@@ -175,8 +160,9 @@ package stealth.layouts
 			updateChildBounds(child, last);
 			if (!childBounds.equalsRect(childRect)) {
 				childBounds.getRect(childRect);
-				if (child is ILayoutElement) {
-					ILayoutElement(child).setLayoutRect(childRect);
+				var layoutChild:ILayoutElement = getLayoutElement(child);
+				if (layoutChild) {
+					layoutChild.setLayoutRect(childRect);
 				} else {
 					child.x = childRect.x;
 					child.y = childRect.y;
@@ -196,8 +182,8 @@ package stealth.layouts
 				return false;
 			}
 			
-			if (child is ILayoutElement) {
-				var layoutChild:ILayoutElement = ILayoutElement(child);
+			var layoutChild:ILayoutElement = getLayoutElement(child);
+			if (layoutChild) {
 				if (layoutChild.freeform) {
 					return false;
 				}
@@ -241,6 +227,17 @@ package stealth.layouts
 					var layoutChild:ILayoutElement = ILayoutElement(child);
 					layoutChild.setLayoutRect( layoutChild.getLayoutRect() );
 				}
+			}
+		}
+		
+		protected function getLayoutElement(element:DisplayObject):ILayoutElement
+		{
+			if (element is ILayoutElement) {
+				return ILayoutElement(element);
+			} else if ("layoutData" in element && element["layoutData"] is ILayoutElement) {
+				return ILayoutElement(element["layoutData"]);
+			} else {
+				return null;
 			}
 		}
 	}
