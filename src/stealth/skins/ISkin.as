@@ -6,17 +6,14 @@
 
 package stealth.skins
 {
-	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
-
-	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
-	public interface ISkin extends IEventDispatcher
+	import flight.states.IStateful;
+	
+	public interface ISkin extends IStateful, IEventDispatcher
 	{
 		function get target():Sprite;
 		function set target(value:Sprite):void;
-		
-		function getSkinPart(partName:String):InteractiveObject;
 	}
 }

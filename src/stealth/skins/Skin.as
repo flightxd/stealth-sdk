@@ -6,18 +6,16 @@
 
 package stealth.skins
 {
+	import flash.display.BlendMode;
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.geom.Rectangle;
-
+	
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.containers.IContainer;
-	import flight.data.DataBind;
 	import flight.data.DataChange;
-	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
@@ -25,22 +23,122 @@ package stealth.skins
 	import flight.layouts.IBounds;
 	import flight.layouts.ILayout;
 	import flight.layouts.IMeasureable;
+	import flight.states.State;
 	import flight.utils.Extension;
-
-	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
+	import stealth.graphics.MaskType;
+
 	/**
 	 * Skin is a convenient base class for many skins, swappable graphic
 	 * definitions. Skins decorate a target Sprite by drawing on its surface,
 	 * adding children to the Sprite, or both.
 	 */
 	[DefaultProperty("content")]
-	public class Skin extends Extension implements ISkin, IContainer//, IStateful
+	public class Skin extends Extension implements ISkin, IContainer
 	{
 		public function Skin()
 		{
+			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
+			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
+			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
+			
 			bindTarget("currentState");
+			bindTarget("width");
+			bindTarget("height");
+			bindTarget("minWidth");
+			bindTarget("minHeight");
+			bindTarget("maxWidth");
+			bindTarget("maxHeight");
+			
+			bindTarget("alpha");
+			bindTarget("mask");
+			bindTarget("maskType");
+			bindTarget("blendMode");
+			bindTarget("filters");
 		}
+		
+		[Bindable(event="alphaChange", style="noEvent")]
+		public function get alpha():Number { return _alpha; }
+		public function set alpha(value:Number):void
+		{
+			DataChange.change(this, "alpha", _alpha, _alpha = value);
+		}
+		private var _alpha:Number = 1;
+		
+		[Bindable(event="maskChange", style="noEvent")]
+		public function get mask():DisplayObject { return _mask; }
+		public function set mask(value:DisplayObject):void
+		{
+			DataChange.change(this, "mask", _mask, _mask = value);
+		}
+		private var _mask:DisplayObject = null;
+		
+		[Bindable(event="maskTypeChange", style="noEvent")]
+		public function get maskType():String { return _maskType; }
+		public function set maskType(value:String):void
+		{
+			DataChange.change(this, "maskType", _maskType, _maskType = value);
+		}
+		private var _maskType:String = MaskType.CLIP;
+		
+		[Bindable(event="blendModeChange", style="noEvent")]
+		public function get blendMode():String { return _blendMode; }
+		public function set blendMode(value:String):void
+		{
+			DataChange.change(this, "blendMode", _blendMode, _blendMode = value);
+		}
+		private var _blendMode:String = BlendMode.NORMAL;
+		
+		[Bindable(event="filtersChange", style="noEvent")]
+		public function get filters():Array { return _filters; }
+		public function set filters(value:Array):void
+		{
+			DataChange.change(this, "filters", _filters, _filters = value);
+		}
+		private var _filters:Array;
+		
+		// ====== IStateful implementation ====== //
+		
+		protected var state:State;
+		
+		[Bindable(event="currentStateChange", style="noEvent")]
+		public function get currentState():String { return _currentState; }
+		public function set currentState(value:String):void
+		{
+			if (_currentState != value) {
+				var newState:State = State(_states.getById(value));
+				if (!newState) {
+					newState = _states[0];
+				}
+				
+				if (state != newState) {
+					state.undo();
+					state = newState;
+					state.execute();
+					DataChange.change(this, "currentState", _currentState, _currentState = state.name);
+				}
+			}
+		}
+		private var _currentState:String;
+		
+		[ArrayElementType("flight.states.State")]
+		[Bindable(event="statesChange", style="noEvent")]
+		public function get states():Array { return _states || (states = []); }
+		public function set states(value:*):void
+		{
+			if (!_states) {
+				_states = new ArrayList(null, "name");
+				_states.addEventListener(ListEvent.LIST_CHANGE, onStatesChanged);
+			}
+			ArrayList.getInstance(value, _states);
+		}
+		private var _states:ArrayList;
+		
+		private function onStatesChanged(event:ListEvent):void
+		{
+			currentState = _states[0];
+		}
+		
 		
 		// ====== ISkin implementation ====== //
 		
@@ -61,59 +159,23 @@ package stealth.skins
 		
 		override protected function attach():void
 		{
-			var target:Sprite = this.target;
-			for (var i:int = 0; i < target.numChildren; i ++) {
-				_content.add(target.getChildAt(i), i);
-			}
-			for (i; i < _content.length; i++) {
+			for (var i:int; i < _content.length; i++) {
 				target.addChildAt(DisplayObject(_content.get(i, 0)), i);
 			}
-			target.addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10, true);
-			target.addEventListener(Event.ADDED, onChildAdded, true);
-			target.addEventListener(Event.REMOVED, onChildRemoved, true);
 			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
+			target.addEventListener(LayoutEvent.MEASURE, dispatchEvent, false, -10);
+			invalidate(LayoutEvent.MEASURE);
 		}
 		
 		override protected function detach():void
 		{
-			var target:Sprite = this.target;
-			target.removeEventListener(Event.ADDED, onChildAdded, true);
-			target.removeEventListener(Event.REMOVED, onChildRemoved, true);
+			target.removeEventListener(LayoutEvent.MEASURE, onMeasure);
 			_content.removeEventListener(ListEvent.LIST_CHANGE, onContentChange);
-			
-			while (target.numChildren) {
-				target.removeChildAt(0);
+			for (var i:int; i < _content.length; i++) {
+				target.removeChild(DisplayObject(_content.get(i, 0)));
 			}
 		}
 		
-		public function invalidate(phase:String = null):void
-		{
-			Invalidation.invalidate(target, phase || InvalidationEvent.VALIDATE);
-		}
-		
-		
-		public function validateNow(phase:String = null):void
-		{
-			Invalidation.validateNow(target, phase);
-		}
-		
-		// ====== IStateful implementation ====== //
-		
-		[Bindable(event="currentStateChange", style="noEvent")]
-		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void
-		{
-			DataChange.change(this, "currentState", _currentState, _currentState = value);
-		}
-		private var _currentState:String;
-		
-		[Bindable(event="statesChange", style="noEvent")]
-		public function get states():Array { return _states; }
-		public function set states(value:Array):void
-		{
-			DataChange.change(this, "states", _states, _states = value);
-		}
-		private var _states:Array;
 		
 		// ====== IContainer implementation ====== //
 		
@@ -149,6 +211,26 @@ package stealth.skins
 		}
 		private var _layout:ILayout;
 		
+		[Bindable(event="widthChange", style="noEvent")]
+		public function get width():Number { return _width; }
+		public function set width(value:Number):void
+		{
+			DataChange.queue(this, "contentWidth", _width, value);
+			DataChange.change(this, "width", _width, _width = value);
+			invalidate(LayoutEvent.RESIZE);
+		}
+		private var _width:Number = 0;
+		
+		[Bindable(event="heightChange", style="noEvent")]
+		public function get height():Number { return _height; }
+		public function set height(value:Number):void
+		{
+			DataChange.queue(this, "contentHeight", _height, value);
+			DataChange.change(this, "height", _height, _height = value);
+			invalidate(LayoutEvent.RESIZE);
+		}
+		private var _height:Number = 0;
+		
 		/**
 		 * @inheritDoc
 		 */
@@ -169,20 +251,63 @@ package stealth.skins
 			return target ? target.height : 0;
 		}
 		
+		[Bindable(event="minWidthChange", style="noEvent")]
+		public function get minWidth():Number { return _minWidth; }
+		public function set minWidth(value:Number):void
+		{
+			DataChange.change(this, "minWidth", _minWidth, _minWidth = value);
+		}
+		private var _minWidth:Number = 0;
+		
+		[Bindable(event="minHeightChange", style="noEvent")]
+		public function get minHeight():Number { return _minHeight; }
+		public function set minHeight(value:Number):void
+		{
+			DataChange.change(this, "minHeight", _minHeight, _minHeight = value);
+		}
+		private var _minHeight:Number = 0;
+		
+		[Bindable(event="maxWidthChange", style="noEvent")]
+		public function get maxWidth():Number { return _maxWidth; }
+		public function set maxWidth(value:Number):void
+		{
+			DataChange.change(this, "maxWidth", _maxWidth, _maxWidth = value);
+		}
+		private var _maxWidth:Number = int.MAX_VALUE;
+		
+		[Bindable(event="maxHeightChange", style="noEvent")]
+		public function get maxHeight():Number { return _maxHeight; }
+		public function set maxHeight(value:Number):void
+		{
+			DataChange.change(this, "maxHeight", _maxHeight, _maxHeight = value);
+		}
+		private var _maxHeight:Number = int.MAX_VALUE;
+		
 		/**
 		 * @inheritDoc
 		 */
 		public function get measured():IBounds { return _measured; }
 		private var _measured:IBounds = new Bounds();
 		
-		protected function measure():void
+		protected function render():void
 		{
-			var rect:Rectangle = target.getRect(target);
-			_measured.width = rect.width;
-			_measured.height = rect.height;
 		}
 		
-		private function onMeasure(event:Event):void
+		protected function resize():void
+		{
+		}
+		
+		protected function measure():void
+		{
+			if (!layout) {
+				var rect:Rectangle = target.getRect(target);
+				_measured.minWidth = rect.right;
+				_measured.minHeight = rect.bottom;
+			}
+		}
+		protected var defaultRect:Rectangle;
+		
+		private function onMeasure(event:LayoutEvent):void
 		{
 			measure();
 			if (target is IMeasureable) {
@@ -196,28 +321,15 @@ package stealth.skins
 			}
 		}
 		
-		private function onChildAdded(event:Event):void
+		private function onResize(event:LayoutEvent):void
 		{
-			var child:DisplayObject = DisplayObject(event.target);
-			if (contentChanging || child.parent != target) {
-				return;
-			}
-			
-			contentChanging = true;
-			content.add(child, target.getChildIndex(child));
-			contentChanging = false;
+			resize();
+			invalidate();
 		}
 		
-		private function onChildRemoved(event:Event):void
+		private function onRender(event:InvalidationEvent):void
 		{
-			var child:DisplayObject = DisplayObject(event.target);
-			if (contentChanging || child.parent != target) {
-				return;
-			}
-			
-			contentChanging = true;
-			content.remove(child);
-			contentChanging = false;
+			render();
 		}
 		
 		private function onContentChange(event:ListEvent):void

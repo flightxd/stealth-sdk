@@ -10,8 +10,8 @@ package stealth.behaviors
 
 	import stealth.behaviors.Behavior;
 	import flight.data.DataChange;
-	import flight.data.IPosition;
-	import flight.data.Position;
+	import flight.ranges.IPosition;
+	import flight.ranges.Position;
 	import flight.events.ButtonEvent;
 
 	public class StepBehavior extends Behavior

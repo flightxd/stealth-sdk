@@ -11,7 +11,6 @@ package stealth.skins
 	
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
-	import flight.events.SkinEvent;
 	import flight.utils.Type;
 	import flight.utils.getClassName;
 	
@@ -23,11 +22,8 @@ package stealth.skins
 	import stealth.layouts.DockLayout;
 	import stealth.layouts.ILayoutElement;
 
-	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
-
-	public class TimelineSkin extends Group implements ISkin, IContainer//, IStateful	// TODO: determine extend of state implementation
+	public class TimelineSkin extends Group implements ISkin, IContainer
 	{
-		protected var skinParts:Object;
 		protected var statefulParts:Object;
 		
 		private var tweens:Dictionary;
@@ -83,7 +79,6 @@ package stealth.skins
 		protected function attach():void
 		{
 			_target.addChild(this);
-			skinParts = {};
 			statefulParts = [];
 			inspectSkin(target);
 		}
@@ -125,8 +120,8 @@ package stealth.skins
 							}
 						}
 						
+						// TODO: dispatch propety change event even for burried children to trigger skinPart changes
 						this[id] = child;
-						dispatchEvent(new SkinEvent(SkinEvent.SKIN_PART_CHANGE, false, false, id, null, InteractiveObject(child)));
 					}
 					// inspect child if not its own component/skin
 					if (child is Sprite && !(child is ISkinnable)) {
@@ -212,27 +207,6 @@ package stealth.skins
 				layout = new DockLayout();
 			}
 		}
-		
-		// ====== IStateful implementation ====== //
-		
-		[Bindable(event="currentStateChange", style="noEvent")]
-		public function get currentState():String { return _currentState; }
-		public function set currentState(value:String):void
-		{
-			if (_currentState != value) {
-				DataChange.change(this, "currentState", _currentState, _currentState = value);
-				gotoState(value);
-			}
-		}
-		private var _currentState:String;
-		
-		[Bindable(event="statesChange", style="noEvent")]
-		public function get states():Array { return _states; }
-		public function set states(value:Array):void
-		{
-			DataChange.change(this, "states", _states, _states = value);
-		}
-		private var _states:Array;
 		
 		protected function gotoState(state:String):void
 		{

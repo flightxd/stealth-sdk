@@ -7,10 +7,10 @@
 package stealth.behaviors
 {
 	import flash.display.InteractiveObject;
+	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-
-	import stealth.behaviors.Behavior;
+	
 	import flight.events.ButtonEvent;
 
 	public class DragBehavior extends Behavior
@@ -22,10 +22,10 @@ package stealth.behaviors
 		{
 		}
 		
-		override public function set target(value:InteractiveObject):void
+		override public function set target(value:IEventDispatcher):void
 		{
 			if (value != null) {
-				ButtonEvent.initialize(value);
+				ButtonEvent.initialize(value as InteractiveObject);
 			}
 			super.target = value;
 		}

@@ -15,6 +15,12 @@ package stealth.skins.buttons
 		
 		public function ButtonSkin()
 		{
+			
+		}
+		
+		override protected function create():void
+		{
+			
 		}
 	}
 }

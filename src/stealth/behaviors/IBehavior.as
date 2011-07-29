@@ -6,14 +6,14 @@
 
 package stealth.behaviors
 {
-	import flash.display.InteractiveObject;
+	import flash.events.IEventDispatcher;
 
 	public interface IBehavior
 	{
-		function get type():String;
-		function set type(value:String):void;
+		function get name():String;
+		function set name(value:String):void;
 		
-		function get target():InteractiveObject;
-		function set target(value:InteractiveObject):void;
+		function get target():IEventDispatcher;
+		function set target(value:IEventDispatcher):void;
 	}
 }

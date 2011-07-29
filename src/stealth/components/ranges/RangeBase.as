@@ -7,8 +7,8 @@
 package stealth.components.ranges
 {
 	import flight.data.DataChange;
-	import flight.data.IPosition;
-	import flight.data.Position;
+	import flight.ranges.IPosition;
+	import flight.ranges.Position;
 
 	import stealth.components.Component;
 

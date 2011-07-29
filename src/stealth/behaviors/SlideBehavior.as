@@ -13,8 +13,8 @@ package stealth.behaviors
 
 	import stealth.behaviors.Behavior;
 	import flight.data.DataChange;
-	import flight.data.IPosition;
-	import flight.data.Position;
+	import flight.ranges.IPosition;
+	import flight.ranges.Position;
 	import flight.events.ButtonEvent;
 
 	public class SlideBehavior extends Behavior
@@ -170,9 +170,9 @@ package stealth.behaviors
 			} else {
 				forwardPress = mousePoint > ((horizontal ? _thumb.width / 2 : _thumb.height / 2) + size * position.percent);
 				if (forwardPress) {
-					position.pageForward();
+					position.skipForward();
 				} else {
-					position.pageBackward();
+					position.skipBackward();
 				}
 			}
 			event.updateAfterEvent();
@@ -189,9 +189,9 @@ package stealth.behaviors
 			}
 			
 			if (forwardPress) {
-				position.pageForward();
+				position.skipForward();
 			} else {
-				position.pageBackward();
+				position.skipBackward();
 			}
 			event.updateAfterEvent();
 		}

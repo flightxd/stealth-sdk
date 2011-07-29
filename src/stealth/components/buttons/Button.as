@@ -8,13 +8,14 @@ package stealth.components.buttons
 {
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
-
+	
 	import flight.data.DataChange;
 	import flight.display.BitmapSource;
 	import flight.events.ButtonEvent;
-
+	
 	import stealth.components.ButtonState;
-	import stealth.components.containers.Container;
+	import stealth.components.Component;
+	
 	import theme.buttons.ThemeButton;
 
 	[SkinState("up")]
@@ -34,7 +35,7 @@ package stealth.components.buttons
 	[Event(name="release", type="flight.events.ButtonEvent")]
 	[Event(name="releaseOutside", type="flight.events.ButtonEvent")]
 	
-	public class Button extends Container
+	public class Button extends Component
 	{
 		protected var mouseState:String = ButtonState.UP;
 		

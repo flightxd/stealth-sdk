@@ -6,11 +6,13 @@
 
 package stealth.behaviors
 {
+	import flash.display.InteractiveObject;
 	import flash.events.MouseEvent;
-
-	import stealth.behaviors.Behavior;
+	
 	import flight.data.DataChange;
 	import flight.events.ButtonEvent;
+	
+	import stealth.behaviors.Behavior;
 
 	public class SelectBehavior extends Behavior
 	{
@@ -30,7 +32,7 @@ package stealth.behaviors
 		override protected function attach():void
 		{
 			super.attach();
-			ButtonEvent.initialize(target);
+			ButtonEvent.initialize(target as InteractiveObject);
 			target.addEventListener(MouseEvent.CLICK, onClick, false, 10, true);
 		}
 		

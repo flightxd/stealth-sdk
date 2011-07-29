@@ -37,8 +37,10 @@
 	<component id="DockGroup"				class="stealth.containers.DockGroup"/>
 	<component id="DataGroup"				class="stealth.containers.DataGroup"/>
 	<component id="Graphic"					class="stealth.graphics.Graphic"/>
-	<component id="Application"				class="stealth.components.containers.Application"/>
+	<component id="Application"				class="stealth.containers.Application"/>
 	
-	<!-- buttons -->
+	<!-- skins -->
+	<component id="Skin"					class="stealth.skins.Skin"/>
+	<component id="TimelineSkin"			class="stealth.skins.TimelineSkin"/>
 	
 </componentPackage>

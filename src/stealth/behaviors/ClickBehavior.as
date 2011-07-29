@@ -6,13 +6,14 @@
 
 package stealth.behaviors
 {
+	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-
-	import stealth.behaviors.Behavior;
+	
 	import flight.data.DataChange;
 	import flight.events.ButtonEvent;
-
+	
+	import stealth.behaviors.Behavior;
 	import stealth.components.ButtonState;
 
 	[SkinState("up")]
@@ -69,7 +70,7 @@ package stealth.behaviors
 		override protected function attach():void
 		{
 			super.attach();
-			ButtonEvent.initialize(target);
+			ButtonEvent.initialize(target as InteractiveObject);
 			if (target is Sprite) {
 				//Sprite(target).mouseChildren = false;
 			}

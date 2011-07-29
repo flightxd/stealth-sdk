@@ -5,14 +5,12 @@ package stealth.skins
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
-	
+
 	import flight.utils.callLater;
 	import flight.utils.getClassName;
 	import flight.utils.getType;
-	
+
 	import stealth.events.ThemeEvent;
-	import stealth.skins.ISkin;
-	import stealth.skins.ISkinnable;
 
 	/**
 	 * For delivering skins throughout an application.

@@ -6,13 +6,9 @@
 
 package stealth.skins
 {
-	import flash.events.IEventDispatcher;
-
 	import flight.data.IDataRenderer;
-
-	[Event(name="skinPartChange", type="flight.events.SkinEvent")]
 	
-	public interface ISkinnable extends IEventDispatcher, IDataRenderer
+	public interface ISkinnable extends IDataRenderer
 	{
 		function get skin():ISkin;
 		function set skin(value:ISkin):void;
