@@ -212,7 +212,7 @@ package stealth.graphics.paint
 			}
 		}
 		
-		override public function update(graphicsPath:GraphicsPath, pathBounds:Rectangle):void
+		override public function update(graphicsPath:GraphicsPath, pathBounds:Rectangle, transform:Matrix = null):void
 		{
 			_matrix.x = isNaN(_x) ? pathBounds.x + pathBounds.width/2 : _x;
 			_matrix.y = isNaN(_y) ? pathBounds.y + pathBounds.height/2 : _y;

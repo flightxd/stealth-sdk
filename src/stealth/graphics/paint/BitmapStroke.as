@@ -18,7 +18,7 @@ package stealth.graphics.paint
 	{
 		protected var stroke:GraphicsStroke;
 		
-		public function BitmapStroke(weight:Number = 1, source:* = null, matrix:Matrix = null, fillMode:String = "pad", smooth:Boolean = false,
+		public function BitmapStroke(weight:Number = 1, source:* = null, matrix:Matrix = null, fillMode:String = BitmapFillMode.SCALE, smooth:Boolean = false,
 									 pixelHinting:Boolean = false, scaleMode:String = LineScaleMode.NORMAL, caps:String = CapsStyle.ROUND,
 									 joints:String = JointStyle.ROUND, miterLimit:Number = 3)
 		{

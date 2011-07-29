@@ -6,32 +6,29 @@
 
 package stealth.graphics.paint
 {
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display.DisplayObject;
 	import flash.display.GraphicsBitmapFill;
 	import flash.geom.Matrix;
-	import flash.geom.Rectangle;
-	
+
 	import flight.data.DataChange;
 	import flight.display.BitmapSource;
-	import flight.display.Invalidation;
 
 	[DefaultProperty("source")]
 	public class BitmapFill extends Paint implements IFill
 	{
 		protected var bitmapFill:GraphicsBitmapFill;
 		
-		public function BitmapFill(source:* = null, matrix:Matrix = null, repeat:Boolean = true, smooth:Boolean = false)
+		public function BitmapFill(source:* = null, matrix:Matrix = null, fillMode:String = BitmapFillMode.SCALE, smooth:Boolean = false)
 		{
 			this.source = source;
-			paintData = bitmapFill = new GraphicsBitmapFill(_source, matrix, repeat, smooth);
+			paintData = bitmapFill = new GraphicsBitmapFill(_source, matrix, fillMode == BitmapFillMode.REPEAT, smooth);
 			_matrix = matrix;
-			_fillMode = repeat ? "repeat" : "scale";	// TODO: implement BitmapFillMode
+			_fillMode = fillMode;
 			_smooth = smooth;
 		}
 		
 		// TODO: implement matrix transformation of Bitmap
+		// TODO: implement clip fillMode
 		
 		[Bindable(event="sourceChange", style="noEvent")]
 		public function get source():BitmapData { return _source; }
@@ -45,7 +42,7 @@ package stealth.graphics.paint
 		public function get fillMode():String { return _fillMode; }
 		public function set fillMode(value:String):void
 		{
-			bitmapFill.repeat = value == "repeat";
+			bitmapFill.repeat = value == BitmapFillMode.REPEAT;
 			DataChange.change(this, "fillMode", _fillMode, _fillMode = value);
 		}
 		private var _fillMode:String;

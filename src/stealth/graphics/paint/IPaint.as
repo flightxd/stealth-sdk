@@ -8,12 +8,12 @@ package stealth.graphics.paint
 {
 	import flash.display.GraphicsPath;
 	import flash.display.IGraphicsData;
-	import flash.events.IEventDispatcher;
+	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 
 	public interface IPaint
 	{
-		function update(graphicsPath:GraphicsPath, pathBounds:Rectangle):void;
+		function update(graphicsPath:GraphicsPath, pathBounds:Rectangle, transform:Matrix = null):void;
 		
 		function paint(graphicsData:Vector.<IGraphicsData>):void;
 	}

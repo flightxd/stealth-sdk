@@ -9,6 +9,7 @@ package stealth.graphics.paint
 	import flash.display.GraphicsPath;
 	import flash.display.IGraphicsData;
 	import flash.events.EventDispatcher;
+	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
 	import flight.display.BitmapSource;
@@ -17,7 +18,7 @@ package stealth.graphics.paint
 	{
 		protected var paintData:IGraphicsData;
 		
-		public function update(graphicsPath:GraphicsPath, pathBounds:Rectangle):void
+		public function update(graphicsPath:GraphicsPath, pathBounds:Rectangle, transform:Matrix = null):void
 		{
 		}
 		
@@ -56,11 +57,11 @@ package stealth.graphics.paint
 					case 2:
 						if (stroke) {
 							var gradientStroke:LinearGradientStroke = new LinearGradientStroke(1, [Number(values[0]), Number(values[1])]);
-							gradientStroke.rotation = 90;
+							gradientStroke.rotation = -90;
 							return gradientStroke;
 						} else {
 							var gradient:LinearGradient = new LinearGradient([Number(values[0]), Number(values[1])]);
-							gradient.rotation = 90;
+							gradient.rotation = -90;
 							return gradient;
 						}
 						break;
