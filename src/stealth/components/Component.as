@@ -157,8 +157,14 @@ package stealth.components
 			return null;
 		}
 		
+		private var behaviorsChanging:Boolean;
 		private function onBehaviorsChange(event:ListEvent):void
 		{
+			if (behaviorsChanging) {
+				return;
+			}
+			behaviorsChanging = true;
+			
 			var behavior:IBehavior;
 			for each (behavior in event.removed) {
 				delete behaviorsIndex[behavior.name];
@@ -168,14 +174,16 @@ package stealth.components
 			_behaviors.queueChanges = true;
 			for each (behavior in event.items) {
 				if (behaviorsIndex[behavior.name]) {
+					behaviorsIndex[behavior.name].target = null;
 					_behaviors.remove(behaviorsIndex[behavior.name]);
 				}
 				behaviorsIndex[behavior.name] = behavior;
 				behavior.target = this;
 			}
 			_behaviors.queueChanges = false;
+			behaviorsChanging = false;
 		}
-		private var behaviorsIndex:Object;
+		private var behaviorsIndex:Object = {};
 		
 		
 		// ====== IContainer implementation ====== //

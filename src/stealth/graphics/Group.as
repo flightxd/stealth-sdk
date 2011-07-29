@@ -22,10 +22,13 @@ package stealth.graphics
 	import flight.ranges.IPosition;
 	import flight.ranges.Position;
 	
+	import mx.events.PropertyChangeEvent;
+	
 	import stealth.graphics.paint.Paint;
 	import stealth.graphics.shapes.Rect;
 	import stealth.layouts.Align;
 	import stealth.layouts.Box;
+	import stealth.layouts.BoxLayout;
 
 	[Event(name="validate", type="flight.events.InvalidationEvent")]
 
@@ -56,26 +59,23 @@ package stealth.graphics
 		 * @copy stealth.layout.BoxLayout#padding
 		 */
 		[Bindable("propertyChange")]
-		public function get padding():Box { return _padding ||= new Box(); }
+		public function get padding():Box { return _layout is BoxLayout ? BoxLayout(_layout).padding : null; }
 		public function set padding(value:*):void
 		{
-			if (!(value is Box)) {
-				value = Box.getInstance(value, _padding);
+			if (_layout is BoxLayout) {
+				BoxLayout(_layout).padding = value;
 			}
-			DataChange.change(this, "padding", _padding, _padding = value);
 		}
-		private var _padding:Box;
 		
 		/**
 		 * @copy stealth.layout.BoxLayout#gap
 		 */
-		public function get gap():Box { return _padding ||= new Box(); }
+		public function get gap():Box { return _layout is BoxLayout ? BoxLayout(_layout).gap : null; }
 		public function set gap(value:*):void
 		{
-			if (!(value is Box)) {
-				value = Box.getDirectional(value, _padding);
+			if (_layout is BoxLayout) {
+				BoxLayout(_layout).gap = value;
 			}
-			DataChange.change(this, "padding", _padding, _padding = value);
 		}
 		
 		/**
@@ -83,24 +83,26 @@ package stealth.graphics
 		 */
 		[Bindable("propertyChange")]
 		[Inspectable(enumeration="left,center,right,fill", defaultValue="left", name="hAlign")]
-		public function get hAlign():String { return _hAlign; }
+		public function get hAlign():String { return _layout is BoxLayout ? BoxLayout(_layout).hAlign : null; }
 		public function set hAlign(value:String):void
 		{
-			DataChange.change(this, "hAlign", _hAlign, _hAlign = value);
+			if (_layout is BoxLayout) {
+				BoxLayout(_layout).hAlign = value;
+			}
 		}
-		private var _hAlign:String = Align.LEFT;
 		
 		/**
 		 * @copy stealth.layout.BoxLayout#vAlign
 		 */
 		[Bindable("propertyChange")]
 		[Inspectable(enumeration="top,middle,bottom,fill", defaultValue="top", name="vAlign")]
-		public function get vAlign():String { return _vAlign; }
+		public function get vAlign():String { return _layout is BoxLayout ? BoxLayout(_layout).vAlign : null; }
 		public function set vAlign(value:String):void
 		{
-			DataChange.change(this, "vAlign", _vAlign, _vAlign = value);
+			if (_layout is BoxLayout) {
+				BoxLayout(_layout).vAlign = value;
+			}
 		}
-		private var _vAlign:String = Align.TOP;
 		
 		
 		// ====== background implementation ====== //
@@ -117,13 +119,16 @@ package stealth.graphics
 			}
 			
 			if (_background != value) {
+				if (_background) {
+					_background.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onShapeChange);
+				}
 				DataChange.change(this, "background", _background, _background = value as IGraphicShape);
 				if (_background) {
 					_background.width = width;
 					_background.height = height;
-					_background.validateNow();
+					_background.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onShapeChange, false, 10);
+					invalidate();
 				}
-				invalidate();
 			}
 		}
 		private var _background:IGraphicShape;
@@ -133,29 +138,25 @@ package stealth.graphics
 		public function set flattened(value:Boolean):void
 		{
 			if (_flattened != value) {
-				DataChange.change(this, "flattened", _flattened, _flattened = value);
-				invalidate();
+				DataChange.queue(this, "flattened", _flattened, _flattened = value);
 				contentChanging = true;
-				var child:DisplayObject;
 				if (_flattened) {
-					for each (child in _content) {
-						if (child is IGraphicShape) {
-							IGraphicShape(child).validateNow();
-						}
-						removeChild(child);
-					}
+					invalidate();
 					_content.addEventListener(ListEvent.ITEM_CHANGE, onShapeChange, false, 10);
 				} else {
-					for each (child in _content) {
+					_content.removeEventListener(ListEvent.ITEM_CHANGE, onShapeChange);
+					graphics.clear();
+					for each (var child:DisplayObject in _content) {
 						addChild(child);
 					}
+					contentChanging = false;
 				}
-				contentChanging = false;
+				DataChange.change();
 			}
 		}
 		private var _flattened:Boolean;
 		
-		private function onShapeChange(event:ListEvent):void
+		private function onShapeChange(event:Event):void
 		{
 			invalidate();
 		}
@@ -173,8 +174,10 @@ package stealth.graphics
 					removeChild(image);
 					image.bitmapData.dispose();
 					image = null;
-					for each (var child:DisplayObject in _content) {
-						addChild(child);
+					if (!_flattened) {
+						for each (var child:DisplayObject in _content) {
+							addChild(child);
+						}
 					}
 					contentChanging = false;
 				}
@@ -185,17 +188,24 @@ package stealth.graphics
 		
 		override protected function render():void
 		{
-			if (_rasterized && image) {
+			if (!_background && !_flattened && (!_rasterized || image)) {
 				return;
 			}
 			
-			var child:DisplayObject;
 			graphics.clear();
 			if (_background) {
+				_background.validateNow();
 				_background.update();
 				_background.draw(graphics);
 			}
+			
+			var child:DisplayObject;
 			if (_flattened) {
+				if (numChildren) {
+					for each (child in _content) {
+						removeChild(child);
+					}
+				}
 				for each (child in _content) {
 					if (child is IGraphicShape) {
 						IGraphicShape(child).update(child.transform.matrix);
@@ -384,8 +394,6 @@ package stealth.graphics
 				if (_flattened || _rasterized) {
 					removeChild(child);
 					contentChanging = false;
-				} else {
-					content.add(child, getChildIndex(child));
 				}
 				content.add(child, getChildIndex(child));
 				contentChanging = false;
