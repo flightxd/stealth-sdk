@@ -7,16 +7,12 @@
 package stealth.graphics.paint
 {
 	import flash.display.GradientType;
-	import flash.display.InterpolationMethod;
-	import flash.display.SpreadMethod;
-	import flash.geom.Matrix;
 
 	public class LinearGradient extends GradientFill
 	{
-		public function LinearGradient(colors:Array = null, alphas:Array = null, ratios:Array = null, matrix:Matrix = null,
-									   spreadMethod:String = SpreadMethod.PAD, interpolationMethod:String = InterpolationMethod.RGB)
+		public function LinearGradient(entries:* = null, rotation:Number = 0)
 		{
-			super(GradientType.LINEAR, colors, alphas, ratios, matrix, spreadMethod, interpolationMethod);
+			super(GradientType.LINEAR, entries, rotation);
 		}
 		
 		/**

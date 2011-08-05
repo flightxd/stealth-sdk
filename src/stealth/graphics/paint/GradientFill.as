@@ -28,28 +28,19 @@ package stealth.graphics.paint
 		
 		protected var gradientFill:GraphicsGradientFill;
 		
-		public function GradientFill(type:String = GradientType.LINEAR, colors:Array = null, alphas:Array = null, ratios:Array = null, matrix:Matrix = null,
-									 spreadMethod:String = SpreadMethod.PAD, interpolationMethod:String = InterpolationMethod.RGB, focalPointRatio:Number = 0)
+		public function GradientFill(type:String = GradientType.LINEAR, entries:* = null, rotation:Number = 0)
 		{
-			// set default fill colors
-			paintData = gradientFill = new GraphicsGradientFill(type, [0x000000, 0xFFFFFF], [1, 1], [0, 255], paintMatrix, spreadMethod, interpolationMethod, focalPointRatio);
+			_type = type;
 			_entries = new ArrayList();
 			_entries.addEventListener(ListEvent.LIST_CHANGE, updateEntries);
 			_entries.addEventListener(ListEvent.ITEM_CHANGE, updateEntries);
+			this.rotation = rotation;
 			
-			if (colors) {
-				var entries:Array = [];
-				for (var i:int = 0; i < colors.length; i++) {
-					var entry:GradientEntry = new GradientEntry(colors[i], alphas ? alphas[i] : 1, ratios ? ratios[i] : NaN);
-					entries.push(entry);
-				}
+			// set default fill colors
+			paintData = gradientFill = new GraphicsGradientFill(type, [0x000000, 0xFFFFFF], [1, 1], [0, 255], paintMatrix);
+			if (entries) {
 				this.entries = entries;
 			}
-			this.matrix = matrix;
-			_type = type;
-			_spreadMethod = spreadMethod;
-			_interpolationMethod = interpolationMethod;
-			_focalPointRatio = focalPointRatio;
 		}
 		
 		[Bindable("propertyChange")]
@@ -79,7 +70,7 @@ package stealth.graphics.paint
 			gradientFill.spreadMethod = value;
 			DataChange.change(this, "spreadMethod", _spreadMethod, _spreadMethod = value);
 		}
-		private var _spreadMethod:String;
+		private var _spreadMethod:String = SpreadMethod.PAD;
 		
 		[Bindable("propertyChange")]
 		[Inspectable(enumeration="rgb,linear")]
@@ -89,7 +80,7 @@ package stealth.graphics.paint
 			gradientFill.interpolationMethod = value;
 			DataChange.change(this, "interpolationMethod", _interpolationMethod, _interpolationMethod = value);
 		}
-		private var _interpolationMethod:String;
+		private var _interpolationMethod:String = InterpolationMethod.RGB;
 		
 		[Bindable("propertyChange")]
 		public function get focalPointRatio():Number { return _focalPointRatio; }
@@ -98,7 +89,7 @@ package stealth.graphics.paint
 			gradientFill.focalPointRatio = value;
 			DataChange.change(this, "focalPointRatio", _focalPointRatio, _focalPointRatio = value);
 		}
-		private var _focalPointRatio:Number;
+		private var _focalPointRatio:Number = 0;
 		
 		[Bindable("propertyChange")]
 		public function get x():Number { return _x; }
@@ -202,7 +193,7 @@ package stealth.graphics.paint
 				++ratios.nan;
 			} else {
 				if (ratios.nan > 0) {
-					var space:Number = (ratio - ratios.base) / (ratios.nan + 1);
+					var space:Number = (ratio - ratios.base) / (ratios.nan);
 					for (var i:int = 0; i < ratios.nan; i++) {
 						ratios.push(Math.round(space * i));
 					}

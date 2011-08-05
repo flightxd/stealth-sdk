@@ -17,18 +17,12 @@ package stealth.graphics.paint
 	{
 		protected var stroke:GraphicsStroke;
 		
-		public function SolidStroke(weight:Number = 1, color:uint = 0x000000, alpha:Number = 1,
-									pixelHinting:Boolean = false, scaleMode:String = LineScaleMode.NORMAL, caps:String = CapsStyle.ROUND,
-									joints:String = JointStyle.ROUND, miterLimit:Number = 3)
+		public function SolidStroke(weight:Number = 1, color:uint = 0x000000, alpha:Number = 1, pixelHinting:Boolean = false)
 		{
-			super(color, alpha);
-			paintData = stroke = new GraphicsStroke(weight, pixelHinting, scaleMode, caps, joints, miterLimit, solidFill);
 			_weight = weight;
 			_pixelHinting = pixelHinting;
-			_scaleMode = scaleMode;
-			_caps = caps;
-			_joints = joints;
-			_miterLimit = miterLimit;
+			super(color, alpha);
+			paintData = stroke = new GraphicsStroke(_weight, _pixelHinting, _scaleMode, _caps, _joints, _miterLimit, solidFill);
 		}
 		
 		[Bindable("propertyChange")]
@@ -47,7 +41,7 @@ package stealth.graphics.paint
 			stroke.pixelHinting = value;
 			DataChange.change(this, "pixelHinting", _pixelHinting, _pixelHinting = value);
 		}
-		private var _pixelHinting:Boolean;
+		private var _pixelHinting:Boolean = false;
 		
 		[Bindable("propertyChange")]
 		[Inspectable(enumeration="normal,horizontal,vertical,none")]
@@ -57,7 +51,7 @@ package stealth.graphics.paint
 			stroke.scaleMode = value;
 			DataChange.change(this, "scaleMode", _scaleMode, _scaleMode = value);
 		}
-		private var _scaleMode:String;
+		private var _scaleMode:String = LineScaleMode.NORMAL;
 		
 		[Bindable("propertyChange")]
 		[Inspectable(enumeration="round,square,none")]
@@ -67,7 +61,7 @@ package stealth.graphics.paint
 			stroke.caps = value;
 			DataChange.change(this, "caps", _caps, _caps = value);
 		}
-		private var _caps:String;
+		private var _caps:String = CapsStyle.ROUND;
 		
 		[Bindable("propertyChange")]
 		[Inspectable(enumeration="round,bevel,miter")]
@@ -77,7 +71,7 @@ package stealth.graphics.paint
 			stroke.joints = value;
 			DataChange.change(this, "joints", _joints, _joints = value);
 		}
-		private var _joints:String;
+		private var _joints:String = JointStyle.ROUND;
 		
 		[Bindable("propertyChange")]
 		public function get miterLimit():Number { return _miterLimit; }
@@ -86,6 +80,6 @@ package stealth.graphics.paint
 			stroke.miterLimit = value;
 			DataChange.change(this, "miterLimit", _miterLimit, _miterLimit = value);
 		}
-		private var _miterLimit:Number;
+		private var _miterLimit:Number = 3;
 	}
 }

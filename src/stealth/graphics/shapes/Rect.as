@@ -7,7 +7,6 @@
 package stealth.graphics.shapes
 {
 	import flash.display.GraphicsPath;
-	import flash.display.GraphicsPathCommand;
 	import flash.geom.Rectangle;
 
 	import flight.data.DataChange;
@@ -28,7 +27,11 @@ package stealth.graphics.shapes
 		public function get radiusX():Number { return _radiusX }
 		public function set radiusX(value:Number):void
 		{
-			DataChange.change(this, "radiusX", _radiusX, _radiusX = value);
+			DataChange.queue(this, "radiusX", _radiusX, _radiusX = value);
+			DataChange.queue(this, "topLeftRadiusX", _topLeftRadiusX, _topLeftRadiusX = value);
+			DataChange.queue(this, "topRightRadiusX", _topRightRadiusX, _topRightRadiusX = value);
+			DataChange.queue(this, "bottomLeftRadiusX", _bottomLeftRadiusX, _bottomLeftRadiusX = value);
+			DataChange.change(this, "bottomRightRadiusX", _bottomRightRadiusX, _bottomRightRadiusX = value);
 			invalidate();
 		}
 		private var _radiusX:Number = 0;
@@ -37,7 +40,11 @@ package stealth.graphics.shapes
 		public function get radiusY():Number { return _radiusY }
 		public function set radiusY(value:Number):void
 		{
-			DataChange.change(this, "radiusY", _radiusY, _radiusY = value);
+			DataChange.queue(this, "radiusY", _radiusY, _radiusY = value);
+			DataChange.queue(this, "topLeftRadiusY", _topLeftRadiusY, _topLeftRadiusY = value);
+			DataChange.queue(this, "topRightRadiusY", _topRightRadiusY, _topRightRadiusY = value);
+			DataChange.queue(this, "bottomLeftRadiusY", _bottomLeftRadiusY, _bottomLeftRadiusY = value);
+			DataChange.change(this, "bottomRightRadiusY", _bottomRightRadiusY, _bottomRightRadiusY = value);
 			invalidate();
 		}
 		private var _radiusY:Number = 0;
@@ -46,89 +53,160 @@ package stealth.graphics.shapes
 		public function get topLeftRadiusX():Number { return _topLeftRadiusX }
 		public function set topLeftRadiusX(value:Number):void
 		{
+			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
 			DataChange.change(this, "topLeftRadiusX", _topLeftRadiusX, _topLeftRadiusX = value);
 			invalidate();
 		}
-		private var _topLeftRadiusX:Number = NaN;
+		private var _topLeftRadiusX:Number = 0;
 		
 		[Bindable("propertyChange")]
 		public function get topLeftRadiusY():Number { return _topLeftRadiusY }
 		public function set topLeftRadiusY(value:Number):void
 		{
+			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
 			DataChange.change(this, "topLeftRadiusY", _topLeftRadiusY, _topLeftRadiusY = value);
 			invalidate();
 		}
-		private var _topLeftRadiusY:Number = NaN;
+		private var _topLeftRadiusY:Number = 0;
 		
 		[Bindable("propertyChange")]
 		public function get topRightRadiusX():Number { return _topRightRadiusX }
 		public function set topRightRadiusX(value:Number):void
 		{
+			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
 			DataChange.change(this, "topRightRadiusX", _topRightRadiusX, _topRightRadiusX = value);
 			invalidate();
 		}
-		private var _topRightRadiusX:Number = NaN;
+		private var _topRightRadiusX:Number = 0;
 		
 		[Bindable("propertyChange")]
 		public function get topRightRadiusY():Number { return _topRightRadiusY }
 		public function set topRightRadiusY(value:Number):void
 		{
+			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
 			DataChange.change(this, "topRightRadiusY", _topRightRadiusY, _topRightRadiusY = value);
 			invalidate();
 		}
-		private var _topRightRadiusY:Number = NaN;
+		private var _topRightRadiusY:Number = 0;
 		
 		[Bindable("propertyChange")]
 		public function get bottomLeftRadiusX():Number { return _bottomLeftRadiusX }
 		public function set bottomLeftRadiusX(value:Number):void
 		{
+			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
 			DataChange.change(this, "bottomLeftRadiusX", _bottomLeftRadiusX, _bottomLeftRadiusX = value);
 			invalidate();
 		}
-		private var _bottomLeftRadiusX:Number = NaN;
+		private var _bottomLeftRadiusX:Number = 0;
 		
 		[Bindable("propertyChange")]
 		public function get bottomLeftRadiusY():Number { return _bottomLeftRadiusY }
 		public function set bottomLeftRadiusY(value:Number):void
 		{
+			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
 			DataChange.change(this, "bottomLeftRadiusY", _bottomLeftRadiusY, _bottomLeftRadiusY = value);
 			invalidate();
 		}
-		private var _bottomLeftRadiusY:Number = NaN;
+		private var _bottomLeftRadiusY:Number = 0;
 		
 		[Bindable("propertyChange")]
 		public function get bottomRightRadiusX():Number { return _bottomRightRadiusX }
 		public function set bottomRightRadiusX(value:Number):void
 		{
+			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
 			DataChange.change(this, "bottomRightRadiusX", _bottomRightRadiusX, _bottomRightRadiusX = value);
 			invalidate();
 		}
-		private var _bottomRightRadiusX:Number = NaN;
+		private var _bottomRightRadiusX:Number = 0;
 		
 		[Bindable("propertyChange")]
 		public function get bottomRightRadiusY():Number { return _bottomRightRadiusY }
 		public function set bottomRightRadiusY(value:Number):void
 		{
+			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
 			DataChange.change(this, "bottomRightRadiusY", _bottomRightRadiusY, _bottomRightRadiusY = value);
 			invalidate();
 		}
-		private var _bottomRightRadiusY:Number = NaN;
+		private var _bottomRightRadiusY:Number = 0;
 		
 		override protected function updatePath(graphicsPath:GraphicsPath, pathBounds:Rectangle):void
 		{
-			var cmds:Vector.<int> = graphicsPath.commands;
-			var data:Vector.<Number> = graphicsPath.data;
+			var tlRadiusX:Number = _topLeftRadiusX;
+			var tlRadiusY:Number = _topLeftRadiusY;
+			var trRadiusX:Number = _topRightRadiusX;
+			var trRadiusY:Number = _topRightRadiusY;
+			var blRadiusX:Number = _bottomLeftRadiusX;
+			var blRadiusY:Number = _bottomLeftRadiusY;
+			var brRadiusX:Number = _bottomRightRadiusX;
+			var brRadiusY:Number = _bottomRightRadiusY;
 			
-			cmds.push(GraphicsPathCommand.MOVE_TO);
-			data.push(0, 0);
-			cmds.push(GraphicsPathCommand.LINE_TO);
-			data.push(pathBounds.width, 0);
-			cmds.push(GraphicsPathCommand.LINE_TO);
-			data.push(pathBounds.width, pathBounds.height);
-			cmds.push(GraphicsPathCommand.LINE_TO);
-			data.push(0, pathBounds.height);
-			cmds.push(GraphicsPathCommand.LINE_TO);
-			data.push(0, 0);
+			if (_radiusX != 0 && _radiusY != 0) {
+				var topRatio:Number = _topLeftRadiusX + _topRightRadiusX;
+				topRatio = topRatio > width ? width / topRatio : 1;
+				
+				var leftRatio:Number = _topLeftRadiusY + _bottomLeftRadiusY;
+				leftRatio = leftRatio > height ? height / leftRatio : 1;
+				
+				var bottomRatio:Number = _bottomLeftRadiusX + _bottomRightRadiusX;
+				bottomRatio = bottomRatio > width ? width / bottomRatio : 1;
+				
+				var rightRatio:Number = _topRightRadiusY + _bottomRightRadiusY;
+				rightRatio = rightRatio > height ? height / rightRatio : 1;
+				
+				var cornerRatio:Number;
+				cornerRatio = topRatio <= leftRatio ? topRatio : leftRatio;
+				tlRadiusX *= cornerRatio;
+				tlRadiusY *= cornerRatio;
+				
+				cornerRatio = topRatio <= rightRatio ? topRatio : rightRatio;
+				trRadiusX *= cornerRatio;
+				trRadiusY *= cornerRatio;
+				
+				cornerRatio = topRatio <= leftRatio ? topRatio : leftRatio;
+				blRadiusX *= cornerRatio;
+				blRadiusY *= cornerRatio;
+				
+				cornerRatio = topRatio <= rightRatio ? topRatio : rightRatio;
+				brRadiusX *= cornerRatio;
+				brRadiusY *= cornerRatio;
+			}
+			
+			
+			if (tlRadiusX && tlRadiusY) {
+				graphicsPath.moveTo(0, tlRadiusY);
+				graphicsPath.curveTo(0, 0, tlRadiusX, 0);
+			} else {
+				graphicsPath.moveTo(0, 0);
+			}
+			
+			if (trRadiusX && trRadiusY) {
+				graphicsPath.lineTo(pathBounds.width - trRadiusX, 0);
+				graphicsPath.curveTo(pathBounds.width, 0, pathBounds.width, trRadiusY);
+			} else {
+				graphicsPath.lineTo(pathBounds.width, 0);
+			}
+			
+			if (brRadiusX && brRadiusY) {
+				graphicsPath.lineTo(pathBounds.width, pathBounds.height - brRadiusY);
+				graphicsPath.curveTo(pathBounds.width, pathBounds.height, pathBounds.width - brRadiusX, pathBounds.height);
+			} else {
+				graphicsPath.lineTo(pathBounds.width, pathBounds.height);
+			}
+			
+			if (blRadiusX && blRadiusY) {
+				graphicsPath.lineTo(blRadiusX, pathBounds.height);
+				graphicsPath.curveTo(0, pathBounds.height, 0, pathBounds.height - blRadiusY);
+			} else {
+				graphicsPath.lineTo(0, pathBounds.height);
+			}
+			
+			graphicsPath.lineTo(graphicsPath.data[0], graphicsPath.data[1]);
+		}
+		
+		override protected function measure():void
+		{
+			measured.width = width;
+			measured.height = height;
 		}
 	}
 }

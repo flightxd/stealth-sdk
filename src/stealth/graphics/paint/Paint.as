@@ -52,22 +52,26 @@ package stealth.graphics.paint
 				value = value.replace(/[,\s]+/g, " ");
 				var values:Array = value.split(" ");
 				switch (values.length) {
+					case 0: values[0] = 0x000000;
 					case 1:
 						if (stroke) {
-							new SolidColorStroke(1, Number(values[0]));
+							return new SolidColorStroke(1, Number(values[0]), 1, true);
 						} else {
-							new SolidColor(Number(values[0]));
+							return new SolidColor(Number(values[0]));
 						}
 						break;
-					case 2:
+					default:
+						var entries:Array = [];
+						for each (value in values) {
+							if (value && !isNaN(value)) {
+								entries.push(new GradientEntry( Number(value) ));
+							}
+						}
+						
 						if (stroke) {
-							var gradientStroke:LinearGradientStroke = new LinearGradientStroke(1, [Number(values[0]), Number(values[1])]);
-							gradientStroke.rotation = -90;
-							return gradientStroke;
+							return new LinearGradientStroke(1, entries, -90, true);
 						} else {
-							var gradient:LinearGradient = new LinearGradient([Number(values[0]), Number(values[1])]);
-							gradient.rotation = -90;
-							return gradient;
+							return new LinearGradient(entries, -90);
 						}
 						break;
 				}

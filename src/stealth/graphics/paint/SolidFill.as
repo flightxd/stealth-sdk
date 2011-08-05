@@ -16,9 +16,9 @@ package stealth.graphics.paint
 		
 		public function SolidFill(color:uint = 0x000000, alpha:Number = 1)
 		{
-			paintData = solidFill = new GraphicsSolidFill(color, alpha);
 			_color = color;
 			_alpha = alpha;
+			paintData = solidFill = new GraphicsSolidFill(_color, _alpha);
 		}
 		
 		[Bindable("propertyChange")]

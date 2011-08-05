@@ -10,7 +10,6 @@ package stealth.graphics.paint
 	import flash.display.GraphicsStroke;
 	import flash.display.JointStyle;
 	import flash.display.LineScaleMode;
-	import flash.geom.Matrix;
 
 	import flight.data.DataChange;
 
@@ -18,18 +17,12 @@ package stealth.graphics.paint
 	{
 		protected var stroke:GraphicsStroke;
 		
-		public function BitmapStroke(weight:Number = 1, source:* = null, matrix:Matrix = null, fillMode:String = BitmapFillMode.SCALE, smooth:Boolean = false,
-									 pixelHinting:Boolean = false, scaleMode:String = LineScaleMode.NORMAL, caps:String = CapsStyle.ROUND,
-									 joints:String = JointStyle.ROUND, miterLimit:Number = 3)
+		public function BitmapStroke(weight:Number = 1, source:* = null, fillMode:String = BitmapFillMode.SCALE, pixelHinting:Boolean = false)
 		{
-			super(source, matrix, fillMode, smooth);
-			paintData = stroke = new GraphicsStroke(weight, pixelHinting, scaleMode, caps, joints, miterLimit, bitmapFill);
 			_weight = weight;
 			_pixelHinting = pixelHinting;
-			_scaleMode = scaleMode;
-			_caps = caps;
-			_joints = joints;
-			_miterLimit = miterLimit;
+			super(source, fillMode);
+			paintData = stroke = new GraphicsStroke(_weight, _pixelHinting, _scaleMode, _caps, _joints, _miterLimit, bitmapFill);
 		}
 		
 		[Bindable("propertyChange")]
@@ -48,7 +41,7 @@ package stealth.graphics.paint
 			stroke.pixelHinting = value;
 			DataChange.change(this, "pixelHinting", _pixelHinting, _pixelHinting = value);
 		}
-		private var _pixelHinting:Boolean;
+		private var _pixelHinting:Boolean = false;
 		
 		[Bindable("propertyChange")]
 		[Inspectable(enumeration="normal,horizontal,vertical,none")]
@@ -58,7 +51,7 @@ package stealth.graphics.paint
 			stroke.scaleMode = value;
 			DataChange.change(this, "scaleMode", _scaleMode, _scaleMode = value);
 		}
-		private var _scaleMode:String;
+		private var _scaleMode:String = LineScaleMode.NORMAL;
 		
 		[Bindable("propertyChange")]
 		[Inspectable(enumeration="round,square,none")]
@@ -68,7 +61,7 @@ package stealth.graphics.paint
 			stroke.caps = value;
 			DataChange.change(this, "caps", _caps, _caps = value);
 		}
-		private var _caps:String;
+		private var _caps:String = CapsStyle.ROUND;
 		
 		[Bindable("propertyChange")]
 		[Inspectable(enumeration="round,bevel,miter")]
@@ -78,7 +71,7 @@ package stealth.graphics.paint
 			stroke.joints = value;
 			DataChange.change(this, "joints", _joints, _joints = value);
 		}
-		private var _joints:String;
+		private var _joints:String = JointStyle.ROUND;
 		
 		[Bindable("propertyChange")]
 		public function get miterLimit():Number { return _miterLimit; }
@@ -87,6 +80,6 @@ package stealth.graphics.paint
 			stroke.miterLimit = value;
 			DataChange.change(this, "miterLimit", _miterLimit, _miterLimit = value);
 		}
-		private var _miterLimit:Number;
+		private var _miterLimit:Number = 3;
 	}
 }

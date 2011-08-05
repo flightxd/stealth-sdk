@@ -6,17 +6,11 @@
 
 package stealth.graphics.paint
 {
-	import flash.display.CapsStyle;
-	import flash.display.JointStyle;
-	import flash.display.LineScaleMode;
-
 	public class SolidColorStroke extends SolidStroke
 	{
-		public function SolidColorStroke(weight:Number = 1, color:uint = 0x000000, alpha:Number = 1,
-										 pixelHinting:Boolean = false, scaleMode:String = LineScaleMode.NORMAL, caps:String = CapsStyle.ROUND,
-										 joints:String = JointStyle.ROUND, miterLimit:Number = 3)
+		public function SolidColorStroke(weight:Number = 1, color:uint = 0x000000, alpha:Number = 1, pixelHinting:Boolean = false)
 		{
-			super(weight, color, alpha, pixelHinting, scaleMode, caps, joints, miterLimit);
+			super(weight, color, alpha, pixelHinting);
 		}
 	}
 }

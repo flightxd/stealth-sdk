@@ -12,23 +12,22 @@ package stealth.graphics.paint
 
 	import flight.data.DataChange;
 	import flight.display.BitmapSource;
+	import flight.geom.MatrixData;
 
 	[DefaultProperty("source")]
 	public class BitmapFill extends Paint implements IFill
 	{
 		protected var bitmapFill:GraphicsBitmapFill;
 		
-		public function BitmapFill(source:* = null, matrix:Matrix = null, fillMode:String = BitmapFillMode.SCALE, smooth:Boolean = false)
+		public function BitmapFill(source:* = null, fillMode:String = BitmapFillMode.SCALE)
 		{
-			this.source = source;
-			paintData = bitmapFill = new GraphicsBitmapFill(_source, matrix, fillMode == BitmapFillMode.REPEAT, smooth);
-			_matrix = matrix;
 			_fillMode = fillMode;
-			_smooth = smooth;
+			this.source = source;
+			paintData = bitmapFill = new GraphicsBitmapFill(_source, null, _fillMode == BitmapFillMode.REPEAT);
 		}
 		
 		// TODO: implement matrix transformation of Bitmap
-		// TODO: implement clip fillMode
+		// TODO: implement 'clip' fillMode
 		
 		[Bindable("propertyChange")]
 		public function get source():BitmapData { return _source; }
@@ -54,7 +53,7 @@ package stealth.graphics.paint
 			bitmapFill.smooth = value;
 			DataChange.change(this, "smooth", _smooth, _smooth = value);
 		}
-		private var _smooth:Boolean;
+		private var _smooth:Boolean = false;
 		
 		[Bindable("propertyChange")]
 		public function get x():Number { return _x; }
@@ -118,6 +117,6 @@ package stealth.graphics.paint
 		{
 			DataChange.change(this, "matrix", _matrix, _matrix = value);
 		}
-		private var _matrix:Matrix;
+		private var _matrix:Matrix = new MatrixData();
 	}
 }
