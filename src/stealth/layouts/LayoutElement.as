@@ -191,7 +191,7 @@ package stealth.layouts
 		}
 		private var _margin:Box;
 		
-		private function onMarginChange(event:Event):void
+		private function onMarginChange(event:PropertyChangeEvent):void
 		{
 			DataChange.change(target, "margin", _margin, _margin, true);
 		}
@@ -304,6 +304,14 @@ package stealth.layouts
 			DataChange.queue(target, "nativeSizing", _nativeSizing, _nativeSizing = value);
 			if (value) {
 				unscaledRect = target.getRect(target) || new Rectangle();
+				if (target.scaleX != 1) {
+					_measured.minWidth *= target.scaleX;
+					_explicit.minWidth *= target.scaleX;
+				}
+				if (target.scaleY != 1) {
+					_measured.minHeight *= target.scaleY;
+					_explicit.minHeight *= target.scaleY;
+				}
 				updateWidth();
 				updateHeight();
 			}

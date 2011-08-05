@@ -32,11 +32,11 @@ package stealth.graphics
 	{
 		public function GraphicBitmap(bitmapData:BitmapData = null, pixelSnapping:String = PixelSnapping.AUTO, smoothing:Boolean = false)
 		{
-			super(bitmapData, pixelSnapping, smoothing);
-			
 			layoutElement = new LayoutElement(this);
 			layoutElement.nativeSizing = true;
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
+			super(bitmapData, pixelSnapping, smoothing);
+			
 			measure();
 		}
 		
@@ -53,7 +53,6 @@ package stealth.graphics
 		override public function set bitmapData(value:BitmapData):void
 		{
 			DataChange.change(this, "bitmapData", super.bitmapData, super.bitmapData = value);
-			layoutElement.nativeSizing = true;
 			measure();
 		}
 

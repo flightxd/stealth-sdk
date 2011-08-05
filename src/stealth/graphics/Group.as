@@ -9,24 +9,23 @@ package stealth.graphics
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
-	
+
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
 	import flight.display.Bitmap;
-	import flight.display.IInvalidating;
 	import flight.events.LayoutEvent;
+	import flight.events.LifecycleEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.ILayout;
 	import flight.ranges.IPosition;
 	import flight.ranges.Position;
-	
+
 	import mx.events.PropertyChangeEvent;
-	
+
 	import stealth.graphics.paint.Paint;
 	import stealth.graphics.shapes.Rect;
-	import stealth.layouts.Align;
 	import stealth.layouts.Box;
 	import stealth.layouts.BoxLayout;
 
@@ -194,7 +193,7 @@ package stealth.graphics
 			
 			graphics.clear();
 			if (_background) {
-				_background.validateNow();
+				_background.validateNow(LifecycleEvent.CREATE);
 				_background.update();
 				_background.draw(graphics);
 			}
@@ -208,6 +207,7 @@ package stealth.graphics
 				}
 				for each (child in _content) {
 					if (child is IGraphicShape) {
+						IGraphicShape(child).validateNow(LifecycleEvent.CREATE);
 						IGraphicShape(child).update(child.transform.matrix);
 						IGraphicShape(child).draw(graphics);
 					}
@@ -327,6 +327,8 @@ package stealth.graphics
 		{
 			if (!layout) {
 				super.measure();
+			} else {
+				measured.minWidth = measured.minHeight = 0;
 			}
 			if (!layoutElement.contained) {
 				scrollRectSize();

@@ -10,6 +10,7 @@ package stealth.containers
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 
+	import flight.display.Invalidation;
 	import flight.events.LifecycleEvent;
 
 	[SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]
@@ -19,7 +20,7 @@ package stealth.containers
 		{
 			// if this is the root application class
 			if (this == root) {
-				addEventListener(LifecycleEvent.CREATE, onCreate, false, 20);
+				addEventListener(LifecycleEvent.CREATE, onCreate, false, -10);
 			}
 		}
 		
@@ -31,6 +32,7 @@ package stealth.containers
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
 			onStageResize(null);
+			Invalidation.validateNow();
 		}
 		
 		private function onCreate(event:LifecycleEvent):void

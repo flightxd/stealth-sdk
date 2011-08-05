@@ -6,6 +6,8 @@
 
 package stealth.containers
 {
+	import flight.events.LifecycleEvent;
+
 	import stealth.graphics.Group;
 	import stealth.layouts.DockLayout;
 
@@ -13,7 +15,14 @@ package stealth.containers
 	{
 		public function Module()
 		{
-			layout = new DockLayout();
+			addEventListener(LifecycleEvent.CREATE, onCreate, false, -10);
+		}
+		
+		private function onCreate(event:LifecycleEvent):void
+		{
+			if (!layout) {
+				layout = new DockLayout();
+			}
 		}
 	}
 }

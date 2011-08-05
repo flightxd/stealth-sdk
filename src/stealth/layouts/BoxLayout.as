@@ -60,6 +60,7 @@ package stealth.layouts
 			watchContent("maxHeight", true);
 			watchContent("percentWidth");
 			watchContent("percentHeight");
+			watchContent("margin");
 		}
 		
 		[Bindable("propertyChange")]

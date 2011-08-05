@@ -9,7 +9,7 @@ package stealth.graphics
 	import flash.display.DisplayObject;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-
+	
 	import flight.collections.ArrayList;
 	import flight.data.DataChange;
 	import flight.display.MovieClip;
@@ -19,7 +19,7 @@ package stealth.graphics
 	import flight.layouts.IBounds;
 	import flight.states.IStateful;
 	import flight.states.State;
-
+	
 	import stealth.layouts.Box;
 	import stealth.layouts.LayoutElement;
 
@@ -33,18 +33,19 @@ package stealth.graphics
 	{
 		public function GraphicElement()
 		{
-			var bounds:DisplayObject = getChildByName("bounds");
-			if (bounds) {
-				defaultRect = bounds.getRect(this);
-				removeChild(bounds);
-				this["bounds"] = null;
-			} else {
-				defaultRect = getRect(this);
-			}
 			layoutElement = new LayoutElement(this);
 			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
+			super();
+			
+			var bounds:DisplayObject = getChildByName("bounds");
+			if (bounds) {
+				defaultRect = bounds.getRect(this);
+				bounds.visible = false;
+			} else {
+				defaultRect = getRect(this);
+			}
 			measure();
 		}
 		
@@ -448,8 +449,8 @@ package stealth.graphics
 		{
 			if (nativeSizing) {
 				measured.minWidth = measured.minHeight = 0;
-				measured.width = defaultRect.right;
-				measured.height = defaultRect.bottom;
+				measured.width = defaultRect.right * scaleX;
+				measured.height = defaultRect.bottom * scaleY;
 			} else {
 				measured.minWidth = defaultRect.right;
 				measured.minHeight = defaultRect.bottom;

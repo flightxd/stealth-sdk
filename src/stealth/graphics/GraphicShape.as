@@ -47,6 +47,8 @@ package stealth.graphics
 			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			invalidate(LayoutEvent.RESIZE);
+			super();
+			
 			measure();
 		}
 		
@@ -223,6 +225,8 @@ package stealth.graphics
 			graphicsPath = new GraphicsPath();
 			graphicsPath.data = new Vector.<Number>();
 			graphicsPath.commands = new Vector.<int>();
+			// initial render on creation for measurement
+			render();
 		}
 		
 		override protected function destroy():void

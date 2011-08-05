@@ -33,11 +33,26 @@ package stealth.graphics
 		public function GraphicText()
 		{
 			layoutElement = new LayoutElement(this);
-			layoutElement.nativeSizing = true;
+			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
+			addEventListener(Event.CHANGE, onTextChange, false, 10);
+			super();
+			
 			measure();
 		}
 		
+		// TODO: remeasure on all TextField changes (ie autoSize, textformat, etc)
+		override public function set text(value:String):void
+		{
+			super.text = value;
+			invalidate(LayoutEvent.MEASURE);
+		}
+		
+		override public function set htmlText(value:String):void
+		{
+			super.htmlText = value;
+			invalidate(LayoutEvent.MEASURE);
+		}
 		
 		[Bindable("propertyChange")]
 		public function get maskType():String { return _maskType; }
@@ -415,13 +430,19 @@ package stealth.graphics
 		protected function measure():void
 		{
 			var metrics:TextLineMetrics = getLineMetrics(0);
-			measured.width = metrics.width;
-			measured.height = metrics.height;
+			measured.width = metrics.width + 4;
+			measured.height = metrics.height + 4;
 		}
 		
 		private function onMeasure(event:LayoutEvent):void
 		{
 			measure();
+		}
+		
+		private function onResize(event:LayoutEvent):void
+		{
+			super.width = width;
+			super.height = height;
 		}
 		
 		private function onTextChange(event:Event):void
