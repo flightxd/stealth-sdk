@@ -170,31 +170,5 @@ package stealth.layouts
 				childBounds.y = layoutChild.vPercent * (target.contentHeight - childBounds.height) + vOffset;
 			}
 		}
-		
-		override protected function childReady(child:DisplayObject):Boolean
-		{
-			if (child is ILayoutElement) {
-				var layoutChild:ILayoutElement = ILayoutElement(child);
-				if (layoutChildReady(layoutChild)) {
-					return super.childReady(child);
-				}
-			}
-			return false;
-		}
-		
-		protected function layoutChildReady(layoutChild:ILayoutElement):Boolean
-		{
-			if (!isNaN(layoutChild.left) ||
-				!isNaN(layoutChild.top) ||
-				!isNaN(layoutChild.right) ||
-				!isNaN(layoutChild.bottom) ||
-				!isNaN(layoutChild.hPercent) ||
-				!isNaN(layoutChild.vPercent) ||
-				!isNaN(layoutChild.percentWidth) ||
-				!isNaN(layoutChild.percentHeight)) {
-				return true;
-			}
-			return false;
-		}
 	}
 }

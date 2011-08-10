@@ -1,4 +1,4 @@
-package stealth.skins
+﻿package stealth.skins
 {
 	import flash.display.DisplayObject;
 	import flash.display.FrameLabel;
@@ -6,11 +6,14 @@ package stealth.skins
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
+	import flight.layouts.IBounds;
+	import flight.layouts.IMeasureable;
 	import flight.utils.Type;
 	import flight.utils.getClassName;
 
@@ -30,12 +33,9 @@ package stealth.skins
 		
 		public function TimelineSkin()
 		{
-			bindTarget("currentState");
 			bindTarget("width");
 			bindTarget("height");
-			
-			width = defaultRect.width;
-			height = defaultRect.height;
+			IEventDispatcher(measured).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10);
 		}
 		
 		// ====== ISkin implementation ====== //
@@ -70,11 +70,6 @@ package stealth.skins
 			}
 		}
 		private var _target:Sprite;
-		
-		public function getSkinPart(partName:String):InteractiveObject
-		{
-			return partName in this ? this[partName] : null;
-		}
 		
 		protected function attach():void
 		{
@@ -131,6 +126,7 @@ package stealth.skins
 			}	
 		}
 		
+		// TODO: refactor to a utility to work anywhere in the Timeline (not just on TimelineSkin)
 		protected function setMargins(skinPart:InteractiveObject):void
 		{
 			if (!(skinPart is ILayoutElement)) {
@@ -144,10 +140,10 @@ package stealth.skins
 			if (layoutPart.dock != null) {
 				var margin:Box = layoutPart.margin;
 				if (layoutPart.dock != Align.LEFT) {
-					margin.right = defaultRect.right - childRect.right;
+					margin.right = layoutElement.nativeRect.right - childRect.right;
 				}
 				if (layoutPart.dock != Align.TOP) {
-					margin.bottom = defaultRect.bottom - childRect.bottom;
+					margin.bottom = layoutElement.nativeRect.bottom - childRect.bottom;
 				}
 				if (layoutPart.dock != Align.RIGHT) {
 					margin.left = childRect.left;
@@ -163,20 +159,21 @@ package stealth.skins
 					layoutPart.top = childRect.top;
 				}
 				if (!isNaN(layoutPart.right)) {
-					layoutPart.right = defaultRect.right - childRect.right;
+					layoutPart.right = layoutElement.nativeRect.right - childRect.right;
 				}
 				if (!isNaN(layoutPart.bottom)) {
-					layoutPart.bottom = defaultRect.bottom - childRect.bottom;
+					layoutPart.bottom = layoutElement.nativeRect.bottom - childRect.bottom;
 				}
 				if (!isNaN(layoutPart.horizontal)) {
-					layoutPart.offsetX = childRect.x - layoutPart.horizontal * (defaultRect.width - childRect.width);
+					layoutPart.offsetX = childRect.x - layoutPart.horizontal * (layoutElement.nativeRect.width - childRect.width);
 				}
 				if (!isNaN(layoutPart.vertical)) {
-					layoutPart.offsetY = childRect.y - layoutPart.vertical * (defaultRect.height - childRect.height);
+					layoutPart.offsetY = childRect.y - layoutPart.vertical * (layoutElement.nativeRect.height - childRect.height);
 				}
 			}
 		}
 		
+		// TODO: refactor to a utility to work anywhere in the Timeline (not just on TimelineSkin)
 		private function onTweenFrame(event:Event):void
 		{
 			var tweening:Boolean = false;
@@ -198,16 +195,20 @@ package stealth.skins
 			}
 		}
 		
-		protected override function create():void
+		private function onMeasuredChange(event:PropertyChangeEvent):void
 		{
-			if (parent is ISkinnable) {
-				ISkinnable(parent).skin = this;
-			}
-			if (!layout) {
-				layout = new DockLayout();
+			if (target is IMeasureable) {
+				var targetMeasured:IBounds = IMeasureable(target).measured;
+				targetMeasured.minWidth = measured.minWidth;
+				targetMeasured.minHeight = measured.minHeight;
+				targetMeasured.maxWidth = measured.maxWidth;
+				targetMeasured.maxHeight = measured.maxHeight;
+				targetMeasured.width = measured.width;
+				targetMeasured.height = measured.height;
 			}
 		}
 		
+		// TODO: refactor to a utility to work anywhere in the Timeline (not just on TimelineSkin)
 		protected function gotoState(state:String):void
 		{
 			removeEventListener(Event.ENTER_FRAME, onTweenFrame);
@@ -224,6 +225,16 @@ package stealth.skins
 				} else {
 					skinPart.gotoAndStop(states[state]);
 				}
+			}
+		}
+		
+		protected override function create():void
+		{
+			if (parent is ISkinnable) {
+				ISkinnable(parent).skin = this;
+			}
+			if (!layout) {
+				layout = new DockLayout();
 			}
 		}
 		

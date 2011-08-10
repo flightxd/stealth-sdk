@@ -33,7 +33,10 @@ package stealth.components
 		{
 			_behaviors = new ArrayList();
 			_behaviors.addEventListener(ListEvent.LIST_CHANGE, onBehaviorsChange);
-			addEventListener(LifecycleEvent.CREATE, onCreate, false, 20);
+			addEventListener(LifecycleEvent.CREATE, onCreate, false, 5);
+			minWidth = minHeight = 2;
+			snapToPixel = true;
+			
 			
 			skinParts = { contents:IContainer };
 		}
@@ -90,16 +93,17 @@ package stealth.components
 				_skin = value;
 			} else if (_skin != value) {
 				if (_skin) {
-					_skin.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPropertyChange);
+					_skin.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPartChange);
+					_skin.target = null;
 				}
-				invalidate(LayoutEvent.MEASURE);
 				DataChange.queue(this, "skin", _skin, _skin = value);
+				invalidate(LayoutEvent.MEASURE);
 				if (_skin) {
-					_skin.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPropertyChange);
+					_skin.target = this;
+					_skin.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPartChange);
 					for (var i:String in skinParts) {
 						this[i] = i in _skin ? _skin[i] : null;
 					}
-					_skin.target = this;
 				}
 				DataChange.change();
 			}
@@ -114,7 +118,7 @@ package stealth.components
 		{
 		}
 		
-		private function onSkinPropertyChange(event:PropertyChangeEvent):void
+		private function onSkinPartChange(event:PropertyChangeEvent):void
 		{
 			if (event.property in skinParts) {
 				this[event.property] = _skin[event.property];

@@ -19,6 +19,7 @@ package stealth.graphics
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
+	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.states.IStateful;
 	import flight.states.State;
@@ -46,10 +47,9 @@ package stealth.graphics
 			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
 			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
-			invalidate(LayoutEvent.RESIZE);
+			invalidate(LayoutEvent.MEASURE);
+			invalidate();
 			super();
-			
-			measure();
 		}
 		
 		
@@ -217,7 +217,9 @@ package stealth.graphics
 		
 		protected function updatePath(graphicsPath:GraphicsPath, pathBounds:Rectangle):void
 		{
+			nullPath = true;
 		}
+		private var nullPath:Boolean;
 		
 		override protected function create():void
 		{
@@ -225,8 +227,15 @@ package stealth.graphics
 			graphicsPath = new GraphicsPath();
 			graphicsPath.data = new Vector.<Number>();
 			graphicsPath.commands = new Vector.<int>();
+			
 			// initial render on creation for measurement
-			render();
+			update();
+			if (!nullPath) {
+				graphics.clear();
+				draw(graphics);
+			} else {
+				nativeSizing = true;
+			}
 		}
 		
 		override protected function destroy():void
@@ -488,6 +497,11 @@ package stealth.graphics
 		 */
 		public function get preferredHeight():Number { return layoutElement.preferredHeight; }
 		
+		
+		[Bindable("propertyChange")]
+		public function get nativeSizing():Boolean { return layoutElement.nativeSizing; }
+		public function set nativeSizing(value:Boolean):void { layoutElement.nativeSizing = value; }
+		
 		[Bindable("propertyChange")]
 		public function get snapToPixel():Boolean { return layoutElement.snapToPixel; }
 		public function set snapToPixel(value:Boolean):void { layoutElement.snapToPixel = value; }
@@ -557,13 +571,20 @@ package stealth.graphics
 		
 		protected function render():void
 		{
-			update();
-			graphics.clear();
-			draw(graphics);
+			if (!nullPath) {
+				update();
+				graphics.clear();
+				draw(graphics);
+			}
 		}
 		
 		protected function measure():void
 		{
+			if (nullPath) {
+				Bounds.reset(measured);
+				measured.width = layoutElement.nativeRect.right * scaleX;
+				measured.height = layoutElement.nativeRect.bottom * scaleY;
+			}
 		}
 		
 		private function onMeasure(event:LayoutEvent):void

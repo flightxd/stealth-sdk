@@ -6,6 +6,8 @@
 
 package stealth.containers
 {
+	import flight.layouts.ILayout;
+
 	import stealth.graphics.Group;
 	import stealth.layouts.VerticalLayout;
 
@@ -13,7 +15,12 @@ package stealth.containers
 	{
 		public function VGroup()
 		{
-			layout = new VerticalLayout();
+			layout = getDefaultLayout();
+		}
+		
+		override protected function getDefaultLayout():ILayout
+		{
+			return new VerticalLayout();
 		}
 	}
 }

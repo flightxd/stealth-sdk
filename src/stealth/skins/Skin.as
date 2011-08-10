@@ -10,6 +10,7 @@ package stealth.skins
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.geom.Rectangle;
 
 	import flight.collections.ArrayList;
@@ -26,7 +27,10 @@ package stealth.skins
 	import flight.states.State;
 	import flight.utils.Extension;
 
+	import mx.events.PropertyChangeEvent;
+
 	import stealth.graphics.MaskType;
+	import stealth.layouts.DockLayout;
 
 	/**
 	 * Skin is a convenient base class for many skins, swappable graphic
@@ -41,8 +45,8 @@ package stealth.skins
 			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
+			_measured.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10);
 			
-			bindTarget("currentState");
 			bindTarget("width");
 			bindTarget("height");
 			bindTarget("minWidth");
@@ -56,6 +60,10 @@ package stealth.skins
 			bindTarget("blendMode");
 			bindTarget("filters");
 		}
+		
+		public function get stage():Stage { return target.stage; }
+		
+		public function get root():DisplayObject { return target.root; }
 		
 		[Bindable("propertyChange")]
 		public function get alpha():Number { return _alpha; }
@@ -97,6 +105,7 @@ package stealth.skins
 		}
 		private var _filters:Array;
 		
+		
 		// ====== IStateful implementation ====== //
 		
 		protected var state:State;
@@ -112,8 +121,11 @@ package stealth.skins
 				}
 				
 				if (state != newState) {
-					state.undo();
+					if (state) {
+						state.undo();
+					}
 					state = newState;
+					state.source = this;
 					state.execute();
 					DataChange.change(this, "currentState", _currentState, _currentState = state.name);
 				}
@@ -159,12 +171,15 @@ package stealth.skins
 		
 		override protected function attach():void
 		{
-			for (var i:int; i < _content.length; i++) {
+			for (var i:int = 0; i < _content.length; i++) {
 				target.addChildAt(DisplayObject(_content.get(i, 0)), i);
 			}
 			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
 			target.addEventListener(LayoutEvent.MEASURE, dispatchEvent, false, -10);
+			target.addEventListener(LayoutEvent.LAYOUT, dispatchEvent, false, -10);
+			target.addEventListener(LayoutEvent.RESIZE, dispatchEvent, false, -10);
 			invalidate(LayoutEvent.MEASURE);
+			invalidate(LayoutEvent.LAYOUT);
 		}
 		
 		override protected function detach():void
@@ -209,7 +224,7 @@ package stealth.skins
 				DataChange.change();
 			}
 		}
-		private var _layout:ILayout;
+		private var _layout:ILayout = new DockLayout();
 		
 		[Bindable("propertyChange")]
 		public function get width():Number { return _width; }
@@ -287,7 +302,15 @@ package stealth.skins
 		 * @inheritDoc
 		 */
 		public function get measured():IBounds { return _measured; }
-		private var _measured:IBounds = new Bounds();
+		private var _measured:Bounds = new Bounds(0, 0);
+		
+		private function onMeasuredChange(event:PropertyChangeEvent):void
+		{
+			if (target is IMeasureable) {
+				var targetMeasured:IBounds = IMeasureable(target).measured;
+				targetMeasured[event.property] = event.newValue;
+			}
+		}
 		
 		protected function render():void
 		{
@@ -305,20 +328,10 @@ package stealth.skins
 				_measured.minHeight = rect.bottom;
 			}
 		}
-		protected var defaultRect:Rectangle;
 		
 		private function onMeasure(event:LayoutEvent):void
 		{
 			measure();
-			if (target is IMeasureable) {
-				var targetMeasured:IBounds = IMeasureable(target).measured;
-				targetMeasured.minWidth = _measured.minWidth;
-				targetMeasured.minHeight = _measured.minHeight;
-				targetMeasured.maxWidth = _measured.maxWidth;
-				targetMeasured.maxHeight = _measured.maxHeight;
-				targetMeasured.width = _measured.width;
-				targetMeasured.height = _measured.height;
-			}
 		}
 		
 		private function onResize(event:LayoutEvent):void

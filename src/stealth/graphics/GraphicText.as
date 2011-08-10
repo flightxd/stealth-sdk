@@ -36,9 +36,8 @@ package stealth.graphics
 			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			addEventListener(Event.CHANGE, onTextChange, false, 10);
+			invalidate(LayoutEvent.MEASURE);
 			super();
-			
-			measure();
 		}
 		
 		// TODO: remeasure on all TextField changes (ie autoSize, textformat, etc)

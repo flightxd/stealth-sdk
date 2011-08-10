@@ -6,23 +6,16 @@
 
 package stealth.containers
 {
-	import flight.events.LifecycleEvent;
+	import flight.layouts.ILayout;
 
 	import stealth.graphics.Group;
 	import stealth.layouts.DockLayout;
 
 	public class Module extends Group
 	{
-		public function Module()
+		override protected function getDefaultLayout():ILayout
 		{
-			addEventListener(LifecycleEvent.CREATE, onCreate, false, -10);
-		}
-		
-		private function onCreate(event:LifecycleEvent):void
-		{
-			if (!layout) {
-				layout = new DockLayout();
-			}
+			return new DockLayout();
 		}
 	}
 }

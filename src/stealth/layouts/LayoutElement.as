@@ -7,6 +7,7 @@
 package stealth.layouts
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
@@ -28,6 +29,7 @@ package stealth.layouts
 		public function LayoutElement(target:DisplayObject)
 		{
 			this.target = target;
+			target.addEventListener(LayoutEvent.MEASURE, onMeasure, false, 20);
 			_measured.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMeasuredChange);
 		}
 		
@@ -229,7 +231,7 @@ package stealth.layouts
 		 */
 		public function get preferredWidth():Number
 		{
-			return !isNaN(explicit.width) ? Bounds.constrainWidth(_measured, explicit.width) : measured.width;
+			return !isNaN(_explicit.width) ? Bounds.constrainWidth(_measured, _explicit.width) : _measured.width;
 		}
 		
 		/**
@@ -237,14 +239,14 @@ package stealth.layouts
 		 */
 		public function get preferredHeight():Number
 		{
-			return !isNaN(explicit.height) ? Bounds.constrainHeight(_measured, explicit.height) : measured.height;
+			return !isNaN(_explicit.height) ? Bounds.constrainHeight(_measured, _explicit.height) : _measured.height;
 		}
 		
 		[Bindable("propertyChange")]
 		public function get contentWidth():Number
 		{
 			if (!_contained) {
-				var preferredWidth:Number = !isNaN(_contentWidth) ? Bounds.constrainWidth(_measured, _contentWidth) : measured.width;
+				var preferredWidth:Number = !isNaN(_contentWidth) ? Bounds.constrainWidth(_measured, _contentWidth) : _measured.width;
 				if (preferredWidth > _width) {
 					return preferredWidth;
 				}
@@ -265,7 +267,7 @@ package stealth.layouts
 		public function get contentHeight():Number
 		{
 			if (!_contained) {
-				var preferredHeight:Number = !isNaN(_contentHeight) ? Bounds.constrainHeight(_measured, _contentHeight) : measured.height;
+				var preferredHeight:Number = !isNaN(_contentHeight) ? Bounds.constrainHeight(_measured, _contentHeight) : _measured.height;
 				if (preferredHeight > _height) {
 					return preferredHeight;
 				}
@@ -281,6 +283,26 @@ package stealth.layouts
 			}
 		}
 		private var _contentHeight:Number = 0;
+		
+		[Bindable("propertyChange")]
+		public function get nativeRect():Rectangle { return _nativeRect; }
+		private var _nativeRect:Rectangle = emptyRect;
+		
+		private function updateNativeRect():void
+		{
+			var bounds:DisplayObject;
+			if (target is DisplayObjectContainer) {
+				bounds = DisplayObjectContainer(target).getChildByName("bounds");
+			}
+			
+			if (bounds) {
+				bounds.visible = false;
+			} else {
+				bounds = target;
+			}
+			DataChange.change(this, "nativeRect", _nativeRect, _nativeRect = bounds.getRect(target) || emptyRect);
+		}
+		private static var emptyRect:Rectangle = new Rectangle();
 		
 		[Bindable("propertyChange")]
 		public function get contained():Boolean { return _contained; }
@@ -303,7 +325,7 @@ package stealth.layouts
 		{
 			DataChange.queue(target, "nativeSizing", _nativeSizing, _nativeSizing = value);
 			if (value) {
-				unscaledRect = target.getRect(target) || new Rectangle();
+				updateNativeRect();
 				if (target.scaleX != 1) {
 					_measured.minWidth *= target.scaleX;
 					_explicit.minWidth *= target.scaleX;
@@ -318,7 +340,6 @@ package stealth.layouts
 			DataChange.change();
 		}
 		private var _nativeSizing:Boolean;
-		private var unscaledRect:Rectangle;
 		
 		[Bindable("propertyChange")]
 		public function get snapToPixel():Boolean { return _snapToPixel; }
@@ -572,25 +593,15 @@ package stealth.layouts
 		private function onMeasuredChange(event:PropertyChangeEvent):void
 		{
 			switch (event.property) {
-				case "width":
-					updateWidth();
-					break;
-				case "height":
-					updateHeight();
-					break;
-				case "minWidth":
-					minWidth = _explicit.minWidth;
-					break;
-				case "minHeight":
-					minHeight = _explicit.minHeight;
-					break;
-				case "maxWidth":
-					maxWidth = _explicit.maxWidth;
-					break;
-				case "maxHeight":
-					maxHeight = _explicit.maxHeight;
-					break;
+				case "width": updateWidth(); break;
+				case "height": updateHeight(); break;
+				default: this[event.property] = _explicit[event.property];
 			}
+		}
+		
+		private function onMeasure(event:LayoutEvent):void
+		{
+			updateNativeRect();
 		}
 		
 		private function updateX():void
@@ -628,7 +639,7 @@ package stealth.layouts
 			}
 			if (_width != value) {
 				if (_nativeSizing) {
-					target.scaleX = value / unscaledRect.width;
+					target.scaleX = _nativeRect.width ? value / _nativeRect.width : 1;
 				}
 				invalidate(LayoutEvent.RESIZE);
 				if (_contained) {
@@ -647,7 +658,7 @@ package stealth.layouts
 			}
 			if (_height != value) {
 				if (_nativeSizing) {
-					target.scaleY = value / unscaledRect.height;
+					target.scaleY = _nativeRect.height ? value / _nativeRect.height : 1;
 				}
 				invalidate(LayoutEvent.RESIZE);
 				if (_contained) {

@@ -69,9 +69,9 @@ package stealth.graphics.paint
 						}
 						
 						if (stroke) {
-							return new LinearGradientStroke(1, entries, -90, true);
+							return new LinearGradientStroke(1, entries, 90, true);
 						} else {
-							return new LinearGradient(entries, -90);
+							return new LinearGradient(entries, 90);
 						}
 						break;
 				}

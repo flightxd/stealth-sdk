@@ -159,22 +159,25 @@ package stealth.layouts
 		override protected function updateChild(child:DisplayObject, last:Boolean = false):void
 		{
 			updateChildBounds(child, last);
-			if (!childBounds.equalsRect(childRect)) {
+			var layoutChild:ILayoutElement = getLayoutElement(child);
+			if (layoutChild) {
 				childBounds.getRect(childRect);
-				var layoutChild:ILayoutElement = getLayoutElement(child);
-				if (layoutChild) {
-					layoutChild.setLayoutRect(childRect);
-				} else {
-					child.x = childRect.x;
-					child.y = childRect.y;
-					child.width = childRect.width;
-					child.height = childRect.height;
-				}
+				layoutChild.setLayoutRect(childRect);
+			} else {
+				child.x = childBounds.x;
+				child.y = childBounds.y;
+				child.width = childBounds.width;
+				child.height = childBounds.height;
 			}
 		}
 		
 		protected function updateChildBounds(child:DisplayObject, last:Boolean = false):void
 		{
+		}
+		
+		protected function layoutChildReady(layoutChild:ILayoutElement):Boolean
+		{
+			return !layoutChild.freeform;
 		}
 		
 		override protected function childReady(child:DisplayObject):Boolean
@@ -185,7 +188,7 @@ package stealth.layouts
 			
 			var layoutChild:ILayoutElement = getLayoutElement(child);
 			if (layoutChild) {
-				if (layoutChild.freeform) {
+				if (!layoutChildReady(layoutChild)) {
 					return false;
 				}
 				
@@ -217,18 +220,6 @@ package stealth.layouts
 			childBounds.setRect(childRect);
 			
 			return true;
-		}
-		
-		override protected function detach():void
-		{
-			super.detach();
-			Bounds.reset(target.measured);
-			for each (var child:DisplayObject in target.content) {
-				if (child is ILayoutElement) {
-					var layoutChild:ILayoutElement = ILayoutElement(child);
-					layoutChild.setLayoutRect( layoutChild.getLayoutRect() );
-				}
-			}
 		}
 		
 		protected function getLayoutElement(element:DisplayObject):ILayoutElement

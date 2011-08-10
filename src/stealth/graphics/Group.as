@@ -26,8 +26,10 @@ package stealth.graphics
 
 	import stealth.graphics.paint.Paint;
 	import stealth.graphics.shapes.Rect;
+	import stealth.layouts.BasicLayout;
 	import stealth.layouts.Box;
 	import stealth.layouts.BoxLayout;
+	import stealth.layouts.ILayoutElement;
 
 	[Event(name="validate", type="flight.events.InvalidationEvent")]
 
@@ -36,13 +38,6 @@ package stealth.graphics
 	{
 		public function Group(content:* = null, background:* = null)
 		{
-			if (background != null) {
-				this.background = background;
-			}
-			layoutElement.snapToPixel = true;
-			
-			addEventListener(Event.ADDED, onChildAdded, true, 10);
-			addEventListener(Event.REMOVED, onChildRemoved, true, 10);
 			
 			_content = new ArrayList();
 			for (var i:int = 0; i < numChildren; i++) {
@@ -52,6 +47,15 @@ package stealth.graphics
 			if (content) {
 				this.content = content;
 			}
+			
+			if (background != null) {
+				this.background = background;
+			}
+			
+			addEventListener(Event.ADDED, onChildAdded, true, 10);
+			addEventListener(Event.REMOVED, onChildRemoved, true, 10);
+			addEventListener(LifecycleEvent.CREATE, onCreate, false, -10);
+			layoutElement.snapToPixel = true;
 		}
 		
 		/**
@@ -263,6 +267,16 @@ package stealth.graphics
 				DataChange.queue(this, "layout", _layout, _layout = value);
 				if (_layout) {
 					_layout.target = this;
+				} else {
+					// reset content
+					for each (var child:DisplayObject in content) {
+						if (child is ILayoutElement) {
+							var layoutChild:ILayoutElement = ILayoutElement(child);
+							layoutChild.setLayoutRect( layoutChild.getLayoutRect() );
+							layoutChild.invalidate(LayoutEvent.MEASURE);
+							layoutChild.invalidate(LayoutEvent.LAYOUT);
+						}
+					}
 				}
 				DataChange.change();
 			}
@@ -323,12 +337,15 @@ package stealth.graphics
 		}
 		private var _clipped:Boolean = false;
 		
+		protected function getDefaultLayout():ILayout
+		{
+			return new BasicLayout();
+		}
+		
 		override protected function measure():void
 		{
 			if (!layout) {
 				super.measure();
-			} else {
-				measured.minWidth = measured.minHeight = 0;
 			}
 			if (!layoutElement.contained) {
 				scrollRectSize();
@@ -415,6 +432,13 @@ package stealth.graphics
 				
 				invalidate(LayoutEvent.MEASURE);
 				invalidate(LayoutEvent.LAYOUT);
+			}
+		}
+		
+		private function onCreate(event:LifecycleEvent):void
+		{
+			if (!layout) {
+				layout = getDefaultLayout();
 			}
 		}
 		

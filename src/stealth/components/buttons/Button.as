@@ -42,58 +42,7 @@ package stealth.components.buttons
 		public function Button()
 		{
 			ButtonEvent.initialize(this);
-			skinParts = { labelDisplay:DisplayObject, iconDisplay:DisplayObject };
 		}
-		
-		[SkinPart]
-		[Bindable("propertyChange")]
-		public function get labelDisplay():DisplayObject { return _labelDisplay; }
-		public function set labelDisplay(value:DisplayObject):void
-		{
-			if (value) {
-				if (_label != null) {
-					if ("label" in value) {
-						value["label"] = _label;
-					} else if ("text" in value) {
-						value["text"] = _label;
-					}
-				} else {
-					if ("label" in value) {
-						_label = value["label"];
-					} else if ("text" in value) {
-						_label = value["text"];
-					}
-				}
-			}
-			DataChange.change(this, "labelDisplay", _labelDisplay, _labelDisplay = value);
-		}
-		private var _labelDisplay:DisplayObject;
-		
-		[SkinPart]
-		[Bindable("propertyChange")]
-		public function get iconDisplay():DisplayObject { return _iconDisplay; }
-		public function set iconDisplay(value:DisplayObject):void
-		{
-			if (value) {
-				if (_icon) {
-					if ("source" in value) {
-						value["source"] = _icon;
-					} else if ("bitmapData" in value) {
-						value["bitmapData"] = _icon;
-					}
-				} else {
-					if ("source" in value) {
-						_icon = value["source"];
-					} else if ("bitmapData" in value) {
-						_icon = value["bitmapData"];
-					}
-				}
-			}
-			DataChange.change(this, "iconDisplay", _iconDisplay, _iconDisplay = value);
-		}
-		private var _iconDisplay:DisplayObject;
-		
-		
 		
 		[Bindable("propertyChange")]
 		public function get label():String { return _label; }

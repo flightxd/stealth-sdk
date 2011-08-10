@@ -16,6 +16,7 @@ package stealth.graphics
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
+	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.states.IStateful;
 	import flight.states.State;
@@ -37,16 +38,9 @@ package stealth.graphics
 			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
+			invalidate(LayoutEvent.MEASURE);
+			invalidate();
 			super();
-			
-			var bounds:DisplayObject = getChildByName("bounds");
-			if (bounds) {
-				defaultRect = bounds.getRect(this);
-				bounds.visible = false;
-			} else {
-				defaultRect = getRect(this);
-			}
-			measure();
 		}
 		
 		[Bindable("propertyChange")]
@@ -447,16 +441,15 @@ package stealth.graphics
 		
 		protected function measure():void
 		{
+			Bounds.reset(measured);
 			if (nativeSizing) {
-				measured.minWidth = measured.minHeight = 0;
-				measured.width = defaultRect.right * scaleX;
-				measured.height = defaultRect.bottom * scaleY;
+				measured.width = layoutElement.nativeRect.right * scaleX;
+				measured.height = layoutElement.nativeRect.bottom * scaleY;
 			} else {
-				measured.minWidth = defaultRect.right;
-				measured.minHeight = defaultRect.bottom;
+				measured.minWidth = layoutElement.nativeRect.right;
+				measured.minHeight = layoutElement.nativeRect.bottom;
 			}
 		}
-		protected var defaultRect:Rectangle;
 		
 		private function onMeasure(event:LayoutEvent):void
 		{

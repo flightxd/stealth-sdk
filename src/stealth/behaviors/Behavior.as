@@ -8,14 +8,14 @@ package stealth.behaviors
 {
 	import flash.display.InteractiveObject;
 	import flash.events.IEventDispatcher;
-
+	
 	import flight.data.DataBind;
 	import flight.data.DataChange;
 	import flight.utils.Extension;
 	import flight.utils.getClassName;
-
+	
 	import mx.events.PropertyChangeEvent;
-
+	
 	import stealth.skins.ISkinnable;
 
 	public class Behavior extends Extension implements IBehavior
@@ -24,12 +24,15 @@ package stealth.behaviors
 		
 		public static function getDefaultName(behavior:IBehavior):String
 		{
-			return getClassName(behavior).toLowerCase().replace("behavior", "");
+			return getClassName(behavior).replace("Behavior", "");
 		}
 		
-		public function Behavior()
+		public function Behavior(target:IEventDispatcher = null)
 		{
 			addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
+			if (target) {
+				this.target = target;
+			}
 		}
 		
 		[Bindable("propertyChange")]
@@ -45,15 +48,17 @@ package stealth.behaviors
 		public function set target(value:IEventDispatcher):void
 		{
 			var target:IEventDispatcher = getTarget();
-			if (target is ISkinnable) {
-				target.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinChange);
-			}
-			setTarget(target = value);
-			if (target is ISkinnable) {
-				target.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinChange);
-				skin = ISkinnable(target).skin || target;
-			} else {
-				skin = target;
+			if (target != value) {
+				if (target is ISkinnable) {
+					target.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinChange);
+				}
+				setTarget(target = value);
+				if (target is ISkinnable) {
+					target.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinChange);
+					partSource = ISkinnable(target).skin;
+				} else {
+					partSource = target;
+				}
 			}
 		}
 		
@@ -78,33 +83,37 @@ package stealth.behaviors
 		private function onSkinChange(event:PropertyChangeEvent):void
 		{
 			if (event.property == "skin") {
-				skin = IEventDispatcher(event.newValue) || target;
+				partSource = IEventDispatcher(event.newValue);
 			}
 		}
 		
 		[Bindable("propertyChange")]
-		protected function get skin():IEventDispatcher { return _skin; }
-		protected function set skin(value:IEventDispatcher):void
+		public function get partSource():IEventDispatcher { return _partSource; }
+		public function set partSource(value:IEventDispatcher):void
 		{
-			if (_skin != value) {
-				if (_skin) {
-					_skin.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPropertyChange);
+			if (!value) {
+				value = target;
+			}
+			if (_partSource != value) {
+				if (_partSource) {
+					_partSource.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPartChange);
 				}
-				DataChange.change(this, "skin", _skin, _skin = value);
-				if (_skin) {
-					_skin.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPropertyChange);
+				DataChange.queue(this, "partSource", _partSource, _partSource = value);
+				if (_partSource) {
+					_partSource.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPartChange);
 					for (var i:String in skinParts) {
-						this[i] = i in _skin ? _skin[i] : null;
+						this[i] = i in _partSource ? _partSource[i] : null;
 					}
 				}
+				DataChange.change();
 			}
 		}
-		private var _skin:IEventDispatcher;
+		private var _partSource:IEventDispatcher;
 		
-		private function onSkinPropertyChange(event:PropertyChangeEvent):void
+		private function onSkinPartChange(event:PropertyChangeEvent):void
 		{
 			if (event.property in skinParts) {
-				this[event.property] = _skin[event.property];
+				this[event.property] = _partSource[event.property];
 			}
 		}
 		

@@ -14,6 +14,7 @@ package stealth.graphics
 	import flight.collections.ArrayList;
 	import flight.data.DataChange;
 	import flight.display.Bitmap;
+	import flight.display.BitmapSource;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.IBounds;
@@ -30,14 +31,13 @@ package stealth.graphics
 	 */
 	public class GraphicBitmap extends Bitmap implements IGraphicElement, IStateful
 	{
-		public function GraphicBitmap(bitmapData:BitmapData = null, pixelSnapping:String = PixelSnapping.AUTO, smoothing:Boolean = false)
+		public function GraphicBitmap(source:* = null, pixelSnapping:String = PixelSnapping.AUTO, smoothing:Boolean = false)
 		{
 			layoutElement = new LayoutElement(this);
 			layoutElement.nativeSizing = true;
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
-			super(bitmapData, pixelSnapping, smoothing);
-			
-			measure();
+			invalidate(LayoutEvent.MEASURE);
+			super(source, pixelSnapping, smoothing);
 		}
 		
 		[Bindable("propertyChange")]
@@ -52,10 +52,19 @@ package stealth.graphics
 		[Bindable("propertyChange")]
 		override public function set bitmapData(value:BitmapData):void
 		{
-			DataChange.change(this, "bitmapData", super.bitmapData, super.bitmapData = value);
+			super.bitmapData = value;
 			measure();
 		}
-
+		
+		[Bindable("propertyChange")]
+		public function get source():Object { return _source; }
+		override public function set source(value:*):void
+		{
+			DataChange.queue(this, "source", _source, _source = value);
+			bitmapData = BitmapSource.getInstance(value);
+		}
+		private var _source:Object;
+		
 		
 		// ====== IStateful implementation ====== //
 		

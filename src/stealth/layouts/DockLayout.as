@@ -35,12 +35,19 @@ package stealth.layouts
 		
 		override public function measure():void
 		{
-			dockMeasured.width = dockMeasured.minWidth = padding.left + padding.right;
-			dockMeasured.height = dockMeasured.minHeight = padding.top + padding.bottom;
-			dockMeasured.maxWidth = dockMeasured.maxHeight = int.MAX_VALUE;
+			Bounds.reset(dockMeasured);
 			measuredWidth = measuredHeight = 0;
 			
 			super.measure();
+			
+			var space:Number = padding.left + padding.right;
+			dockMeasured.width += space;
+			dockMeasured.minWidth += space;
+			dockMeasured.maxWidth += space;
+			space = padding.top + padding.bottom;
+			dockMeasured.height += space;
+			dockMeasured.minHeight += space;
+			dockMeasured.maxHeight += space;
 			
 			var measured:IBounds = target.measured;
 			measured.minWidth = Bounds.constrainWidth(dockMeasured, measured.minWidth);

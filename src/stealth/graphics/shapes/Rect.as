@@ -171,6 +171,8 @@ package stealth.graphics.shapes
 				brRadiusY *= cornerRatio;
 			}
 			
+			var width:Number = pathBounds.width;
+			var height:Number = pathBounds.height;
 			
 			if (tlRadiusX && tlRadiusY) {
 				graphicsPath.moveTo(0, tlRadiusY);
@@ -180,24 +182,24 @@ package stealth.graphics.shapes
 			}
 			
 			if (trRadiusX && trRadiusY) {
-				graphicsPath.lineTo(pathBounds.width - trRadiusX, 0);
-				graphicsPath.curveTo(pathBounds.width, 0, pathBounds.width, trRadiusY);
+				graphicsPath.lineTo(width - trRadiusX, 0);
+				graphicsPath.curveTo(width, 0, width, trRadiusY);
 			} else {
-				graphicsPath.lineTo(pathBounds.width, 0);
+				graphicsPath.lineTo(width, 0);
 			}
 			
 			if (brRadiusX && brRadiusY) {
-				graphicsPath.lineTo(pathBounds.width, pathBounds.height - brRadiusY);
-				graphicsPath.curveTo(pathBounds.width, pathBounds.height, pathBounds.width - brRadiusX, pathBounds.height);
+				graphicsPath.lineTo(width, height - brRadiusY);
+				graphicsPath.curveTo(width, height, width - brRadiusX, height);
 			} else {
-				graphicsPath.lineTo(pathBounds.width, pathBounds.height);
+				graphicsPath.lineTo(width, height);
 			}
 			
 			if (blRadiusX && blRadiusY) {
-				graphicsPath.lineTo(blRadiusX, pathBounds.height);
-				graphicsPath.curveTo(0, pathBounds.height, 0, pathBounds.height - blRadiusY);
+				graphicsPath.lineTo(blRadiusX, height);
+				graphicsPath.curveTo(0, height, 0, height - blRadiusY);
 			} else {
-				graphicsPath.lineTo(0, pathBounds.height);
+				graphicsPath.lineTo(0, height);
 			}
 			
 			graphicsPath.lineTo(graphicsPath.data[0], graphicsPath.data[1]);

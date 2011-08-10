@@ -6,6 +6,8 @@
 
 package stealth.containers
 {
+	import flight.layouts.ILayout;
+
 	import stealth.graphics.Group;
 	import stealth.layouts.HorizontalLayout;
 
@@ -13,7 +15,12 @@ package stealth.containers
 	{
 		public function HGroup()
 		{
-			layout = new HorizontalLayout();
+			layout = getDefaultLayout();
+		}
+		
+		override protected function getDefaultLayout():ILayout
+		{
+			return new HorizontalLayout();
 		}
 	}
 }

@@ -6,17 +6,21 @@
 
 package stealth.containers
 {
+	import flight.layouts.ILayout;
+
 	import stealth.graphics.Group;
 	import stealth.layouts.DockLayout;
 
 	public class DockGroup extends Group
 	{
-		protected var dockLayout:DockLayout;
-		
 		public function DockGroup()
 		{
-			layout = dockLayout = new DockLayout();
+			layout = getDefaultLayout();
 		}
 		
+		override protected function getDefaultLayout():ILayout
+		{
+			return new DockLayout();
+		}
 	}
 }
