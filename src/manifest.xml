@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <componentPackage>
 	
+	<!--
+	======== STEALTH-SDK ========
+	-->
+	
 	<!-- graphics -->
 	<component id="GraphicElement"			class="stealth.graphics.GraphicElement"/>
 	<component id="GraphicShape"			class="stealth.graphics.GraphicShape"/>
@@ -42,5 +46,39 @@
 	<!-- skins -->
 	<component id="Skin"					class="stealth.skins.Skin"/>
 	<component id="TimelineSkin"			class="stealth.skins.TimelineSkin"/>
+	
+	
+	<!--
+	======== FLIGHT-STEALTH ========
+	-->
+	
+	<!-- data -->
+	<component id="ArrayList"				class="flight.collections.ArrayList"/>
+	<component id="Position"				class="flight.ranges.Position"/>
+	<component id="ListSelection"			class="flight.data.ListSelection"/>
+	<component id="MatrixData"				class="flight.geom.MatrixData"/>
+	<component id="State"					class="mx.states.State"/>
+	<component id="Change"					class="flight.states.Change"/>
+	
+	<!-- display -->
+	<component id="MovieClip"				class="flight.display.MovieClip"/>
+	<component id="Sprite"					class="flight.display.Sprite"/>
+	<component id="Shape"					class="flight.display.Shape"/>
+	<component id="Bitmap"					class="flight.display.Bitmap"/>
+	<component id="SimpleButton"			class="flight.display.SimpleButton"/>
+	<component id="Loader"					class="flight.display.Loader"/>
+	<component id="TextField"				class="flight.text.TextField"/>
+	<component id="Video"					class="flight.media.Video"/>
+	
+	<!-- filters -->
+	<component id="DropShadowFilter"		class="flight.filters.DropShadowFilter"/>
+	<component id="BlurFilter"				class="flight.filters.BlurFilter"/>
+	<component id="GlowFilter"				class="flight.filters.GlowFilter"/>
+	<component id="BevelFilter"				class="flight.filters.BevelFilter"/>
+	<component id="GradientGlowFilter"		class="flight.filters.GradientGlowFilter"/>
+	<component id="GradientBevelFilter"		class="flight.filters.GradientBevelFilter"/>
+	<component id="ColorMatrixFilter"		class="flight.filters.ColorMatrixFilter"/>
+	<component id="ConvolutionFilter"		class="flight.filters.ConvolutionFilter"/>
+	<component id="DisplacementMapFilter"	class="flight.filters.DisplacementMapFilter"/>
 	
 </componentPackage>
