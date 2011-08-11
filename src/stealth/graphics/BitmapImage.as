@@ -44,7 +44,7 @@ package stealth.graphics
 		private var _backgroundAlpha:Number = 0;
 		
 		[Bindable("propertyChange")]
-		public function get source():BitmapData { return _source; }
+		override public function get source():Object { return _source; }
 		override public function set source(value:*):void
 		{
 			DataChange.change(this, "source", _source, _source = BitmapSource.getInstance(value));

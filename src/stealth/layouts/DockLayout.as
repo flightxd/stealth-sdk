@@ -66,7 +66,10 @@ package stealth.layouts
 		
 		override protected function measureChild(child:DisplayObject, last:Boolean = false):void
 		{
-			var layoutChild:ILayoutElement = ILayoutElement(child);
+			var layoutChild:ILayoutElement = child as ILayoutElement;
+			if (!layoutChild) {
+				return;
+			}
 			
 			var dock:String = layoutChild.dock;
 			var tile:String = layoutChild.tile;
@@ -199,7 +202,10 @@ package stealth.layouts
 		
 		override protected function updateChildBounds(child:DisplayObject, last:Boolean = false):void
 		{
-			var layoutChild:ILayoutElement = ILayoutElement(child);
+			var layoutChild:ILayoutElement = child as ILayoutElement;
+			if (!layoutChild) {
+				return;
+			}
 			
 			var dock:String = layoutChild.dock;
 			var tile:String = layoutChild.tile;
