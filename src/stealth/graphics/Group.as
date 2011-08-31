@@ -38,7 +38,6 @@ package stealth.graphics
 	{
 		public function Group(content:* = null, background:* = null)
 		{
-			
 			_content = new ArrayList();
 			for (var i:int = 0; i < numChildren; i++) {
 				_content.add(getChildAt(i));
@@ -54,8 +53,8 @@ package stealth.graphics
 			
 			addEventListener(Event.ADDED, onChildAdded, true, 10);
 			addEventListener(Event.REMOVED, onChildRemoved, true, 10);
-			addEventListener(LifecycleEvent.CREATE, onCreate, false, -10);
 			layoutElement.snapToPixel = true;
+			layout = getDefaultLayout();
 		}
 		
 		/**
@@ -432,13 +431,6 @@ package stealth.graphics
 				
 				invalidate(LayoutEvent.MEASURE);
 				invalidate(LayoutEvent.LAYOUT);
-			}
-		}
-		
-		private function onCreate(event:LifecycleEvent):void
-		{
-			if (!layout) {
-				layout = getDefaultLayout();
 			}
 		}
 		

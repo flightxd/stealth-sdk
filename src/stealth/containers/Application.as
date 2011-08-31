@@ -9,7 +9,8 @@ package stealth.containers
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-
+	import flash.system.Capabilities;
+	
 	import flight.display.Invalidation;
 	import flight.events.LifecycleEvent;
 
@@ -22,6 +23,28 @@ package stealth.containers
 			if (this == root) {
 				addEventListener(LifecycleEvent.CREATE, onCreate, false, -10);
 			}
+		}
+		
+		
+		public function get applicationDPI():Number { return _applicationDPI; }
+		public function set applicationDPI(value:Number):void
+		{
+			_applicationDPI = classifyDPI(value);
+			scaleX = scaleY = runtimeDPI / _applicationDPI;
+		}
+		private var _applicationDPI:Number = runtimeDPI;
+		
+		
+		public function get runtimeDPI():Number
+		{
+			return _runtimeDPI ||= classifyDPI(Capabilities.screenDPI);
+		}
+		private var _runtimeDPI:Number;
+		
+		
+		protected function classifyDPI(dpi:Number):Number
+		{
+			return Math.round(dpi / 40) * 40;
 		}
 		
 		protected function initRoot():void
@@ -42,8 +65,8 @@ package stealth.containers
 		
 		private function onStageResize(event:Event):void
 		{
-			width = stage.stageWidth;
-			height = stage.stageHeight;
+			width = stage.stageWidth / scaleX;
+			height = stage.stageHeight / scaleY;
 		}
 	}
 }

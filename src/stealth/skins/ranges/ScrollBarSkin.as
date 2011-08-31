@@ -6,6 +6,7 @@
 
 package stealth.skins.ranges
 {
+	import stealth.components.buttons.Button;
 	import stealth.skins.Skin;
 	import stealth.skins.Theme;
 
@@ -13,8 +14,20 @@ package stealth.skins.ranges
 	{
 		Theme.registerSkin(ScrollBarSkin);
 		
+		public var backwardButton:Button;
+		public var forwardButton:Button;
+		
+		public var thumb:Button;
+		public var track:Button;
+		
 		public function ScrollBarSkin()
 		{
+		}
+		
+		
+		override protected function create():void
+		{
+			
 		}
 	}
 }

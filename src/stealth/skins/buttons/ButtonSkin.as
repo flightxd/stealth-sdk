@@ -65,6 +65,8 @@ package stealth.skins.buttons
 		}
 		private var _label:String;
 		
+		// TODO: add 'icon'
+		
 		[Bindable("propertyChange")]
 		public function get cornerRadius():Number { return _cornerRadius; }
 		public function set cornerRadius(value:Number):void
@@ -200,8 +202,8 @@ package stealth.skins.buttons
 				contents.dock = Align.FILL;
 				contents.margin.top = 1;
 				contents.margin.bottom = 0;
-				contents.margin.left = 6;
-				contents.margin.right = 6;
+				contents.margin.left = 12;
+				contents.margin.right = 12;
 				content.add(contents);
 			}
 			

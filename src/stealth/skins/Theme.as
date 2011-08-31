@@ -19,13 +19,16 @@ package stealth.skins
 	{
 		public static var dispatcher:IEventDispatcher = new EventDispatcher();
 		
+		public static function change():void
+		{
+			dispatcher.dispatchEvent(new ThemeEvent(ThemeEvent.THEME_CHANGE));
+		}
+		
 		public static function register(target:ISkinnable):void
 		{
-			registered = true;
 			dispatcher.addEventListener(ThemeEvent.THEME_CHANGE, target.dispatchEvent, false, -10, true);
 			target.addEventListener(ThemeEvent.THEME_CHANGE, onThemeChange, false, 10, true);
 		}
-		private static var registered:Boolean;
 		
 		public static function registerSkin(skin:Object, name:String = null):void
 		{
@@ -40,9 +43,6 @@ package stealth.skins
 			}
 			skins[name] = skinClass;
 			skinNames[skinClass] = name;
-			if (registered) {
-				callLater(themeChanged);
-			}
 		}
 		private static var skins:Object = new Object();
 		private static var skinNames:Dictionary = new Dictionary(true);
@@ -56,11 +56,6 @@ package stealth.skins
 		public static function getSkin(name:String):ISkin
 		{
 			return skins[name];
-		}
-		
-		private static function themeChanged():void
-		{
-			dispatcher.dispatchEvent(new ThemeEvent(ThemeEvent.THEME_CHANGE));
 		}
 		
 		private static function onThemeChange(event:Event):void
