@@ -136,9 +136,9 @@ package flight.display
 			
 			if (stage) {
 				if (!stages[stage]) {
-					stage.addEventListener(Event.RENDER, onRender, false, 10, true);							// listen to ALL stage render events, also a permanent listener since they only get
+					stage.addEventListener(Event.RENDER, onRender, false, -10, true);							// listen to ALL stage render events, also a permanent listener since they only get
 																												// dispatched with a stage.invalidate and add/remove listeners costs some in performance
-					stage.addEventListener(Event.RESIZE, onRender, false, 10, true);							// in many environments render and enterFrame events stop firing when stage is resized -
+					stage.addEventListener(Event.RESIZE, onRender, false, -10, true);							// in many environments render and enterFrame events stop firing when stage is resized -
 																												// listening to resize compensates for this shortcoming and continues to run validation
 					stages[stage] = true;																		// with each screen render
 				}

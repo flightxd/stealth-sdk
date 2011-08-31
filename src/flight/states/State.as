@@ -34,6 +34,8 @@ package flight.states
 						trace("Invalid change in state '" + name + "', " + change.target + "an invalid target");
 						continue;
 					}
+				} else if (!change.target) {
+					change.target = source;
 				}
 				change.execute();
 			}

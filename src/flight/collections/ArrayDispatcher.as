@@ -146,13 +146,13 @@ package flight.collections
 			}
 			var deleteValues:Array = super.AS3::splice.apply(this, args);
 			if (dispatcher) {
-				var deleteCount:Number = args[1];
-				var values:Array = args[2] as Array;
+				args.shift();
+				var deleteCount:Number = args.shift();
 				var max:int = isNaN(deleteCount) ? len-1-startIndex : deleteCount;
-				if (values && values.length-1 > max) {
-					max = values.length-1;
+				if (args && args.length-1 > max) {
+					max = args.length-1;
 				}
-				listChange(startIndex, startIndex+max, values, deleteValues);
+				listChange(startIndex, startIndex+max, args, deleteValues);
 			}
 			return deleteValues;
 		}
