@@ -8,6 +8,7 @@ package stealth.graphics.paint
 {
 	import flash.display.BitmapData;
 	import flash.display.GraphicsBitmapFill;
+	import flash.display.IGraphicsData;
 	import flash.geom.Matrix;
 
 	import flight.data.DataChange;
@@ -22,8 +23,8 @@ package stealth.graphics.paint
 		public function BitmapFill(source:* = null, fillMode:String = BitmapFillMode.SCALE)
 		{
 			_fillMode = fillMode;
+			paintData = bitmapFill = new GraphicsBitmapFill(null, null, _fillMode == BitmapFillMode.REPEAT);
 			this.source = source;
-			paintData = bitmapFill = new GraphicsBitmapFill(_source, null, _fillMode == BitmapFillMode.REPEAT);
 		}
 		
 		// TODO: implement matrix transformation of Bitmap
@@ -33,11 +34,12 @@ package stealth.graphics.paint
 		public function get source():BitmapData { return _source; }
 		public function set source(value:*):void
 		{
-			DataChange.change(this, "source", _source, _source = BitmapSource.getInstance(value));
+			DataChange.change(this, "source", _source, bitmapFill.bitmapData = _source = BitmapSource.getInstance(value));
 		}
 		private var _source:BitmapData;
 		
 		[Bindable("propertyChange")]
+		[Inspectable(enumeration="scale,repeat")]
 		public function get fillMode():String { return _fillMode; }
 		public function set fillMode(value:String):void
 		{
@@ -118,5 +120,12 @@ package stealth.graphics.paint
 			DataChange.change(this, "matrix", _matrix, _matrix = value);
 		}
 		private var _matrix:Matrix = new MatrixData();
+		
+		override public function paint(graphicsData:Vector.<IGraphicsData>):void
+		{
+			if (_source) {
+				super.paint(graphicsData);
+			}
+		}
 	}
 }
