@@ -31,7 +31,7 @@ package flight.states
 					if (source && source[change.target]) {
 						change.target = source[change.target];
 					} else {
-						trace("Invalid change in state '" + name + "', " + change.target + "an invalid target");
+						trace("Invalid change in state \"" + name + "\", '" + change.target + "' an invalid target.");
 						continue;
 					}
 				} else if (!change.target) {

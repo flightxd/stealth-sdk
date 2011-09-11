@@ -8,7 +8,7 @@ package flight.states
 		public var newValues:Object;
 		public var oldValues:Object;
 		
-		private var changed:Boolean;
+		protected var changed:Boolean;
 		
 		public function Change(target:Object = null, newValues:Object = null)
 		{

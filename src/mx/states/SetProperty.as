@@ -14,7 +14,13 @@ package mx.states
 		}
 		
 		public function get value():Object { return newValues[name]; }
-		public function set value(value:Object):void { newValues[name] = value; }
+		public function set value(value:Object):void
+		{
+			newValues[name] = value;
+			if (changed) {
+				target[name] = value;
+			}
+		}
 		
 		public function initializeFromObject(properties:Object):Object
 		{
