@@ -231,7 +231,11 @@ package stealth.layouts
 		 */
 		public function get preferredWidth():Number
 		{
-			return !isNaN(_explicit.width) ? Bounds.constrainWidth(_measured, _explicit.width) : _measured.width;
+			if (!isNaN(_explicit.width)) {
+				return _contained ? Bounds.constrainWidth(_measured, _explicit.width) : _explicit.width;
+			} else {
+				return _measured.width;
+			}
 		}
 		
 		/**
@@ -239,7 +243,11 @@ package stealth.layouts
 		 */
 		public function get preferredHeight():Number
 		{
-			return !isNaN(_explicit.height) ? Bounds.constrainHeight(_measured, _explicit.height) : _measured.height;
+			if (!isNaN(_explicit.height)) {
+				return _contained ? Bounds.constrainHeight(_measured, _explicit.height) : _explicit.width;
+			} else {
+				return _measured.height;
+			}
 		}
 		
 		[Bindable("propertyChange")]
