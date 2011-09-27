@@ -140,6 +140,9 @@ package stealth.graphics.shapes
 			var brRadiusX:Number = _bottomRightRadiusX;
 			var brRadiusY:Number = _bottomRightRadiusY;
 			
+			var width:Number = pathBounds.width;
+			var height:Number = pathBounds.height;
+			
 			if (_radiusX != 0 && _radiusY != 0) {
 				var topRatio:Number = _topLeftRadiusX + _topRightRadiusX;
 				topRatio = topRatio > width ? width / topRatio : 1;
@@ -170,9 +173,6 @@ package stealth.graphics.shapes
 				brRadiusX *= cornerRatio;
 				brRadiusY *= cornerRatio;
 			}
-			
-			var width:Number = pathBounds.width;
-			var height:Number = pathBounds.height;
 			
 			if (tlRadiusX && tlRadiusY) {
 				graphicsPath.moveTo(0, tlRadiusY);
