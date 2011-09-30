@@ -4,9 +4,9 @@ package flight.filters
 	import flash.filters.BevelFilter;
 	import flash.filters.BitmapFilter;
 	import flash.filters.BitmapFilterType;
-	
+
 	import flight.data.DataChange;
-	
+
 	public class BevelFilter extends EventDispatcher implements IBitmapFilter
 	{
 		public function BevelFilter(distance:Number = 4.0, angle:Number = 45, highlightColor:uint = 16777215, highlightAlpha:Number = 1.0, shadowColor:uint = 0, shadowAlpha:Number = 1.0,

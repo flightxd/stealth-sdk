@@ -6,14 +6,14 @@ package flight.display
 	import flash.events.IEventDispatcher;
 	import flash.filters.BitmapFilter;
 	import flash.utils.Dictionary;
-	
+
 	import flight.collections.ArrayDispatcher;
 	import flight.data.DataChange;
 	import flight.events.InvalidationEvent;
 	import flight.events.LifecycleEvent;
 	import flight.events.ListEvent;
 	import flight.filters.IBitmapFilter;
-	
+
 	import mx.core.IMXMLObject;
 
 	[Event(name="commit", type="flight.events.InvalidationEvent")]

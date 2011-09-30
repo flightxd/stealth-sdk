@@ -9,7 +9,7 @@ package flight.containers
 	import flight.collections.IList;
 	import flight.layouts.ILayout;
 	import flight.layouts.IMeasureable;
-	
+
 	[Event(name="measure", type="flight.events.LayoutEvent")]
 	[Event(name="layout", type="flight.events.LayoutEvent")]
 	

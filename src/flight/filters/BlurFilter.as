@@ -4,9 +4,9 @@ package flight.filters
 	import flash.filters.BitmapFilter;
 	import flash.filters.BitmapFilterQuality;
 	import flash.filters.BlurFilter;
-	
+
 	import flight.data.DataChange;
-	
+
 	public class BlurFilter extends EventDispatcher implements IBitmapFilter
 	{
 		public function BlurFilter(blurX:Number = 4.0, blurY:Number = 4.0, quality:int = BitmapFilterQuality.LOW)

@@ -16,8 +16,8 @@ package flight.events
 	import flash.utils.setTimeout;
 
 	/**
-	 * The ButtonEvent transforms InteractiveObjects into buttons by adding the common
-	 * mouse-related events that make up a buttons behavior. The ButtonEvent class is a
+	 * The ButtonEvent transforms InteractiveObjects into controls by adding the common
+	 * mouse-related events that make up a controls behavior. The ButtonEvent class is a
 	 * unique Event subclass because it is never instantiated and dispatched. Instances of
 	 * the ButtonEvent are unused in favor of the standard MouseEvent type in order to
 	 * maintain consistency with the native "rollOver" and "rollOut" events. All Button
@@ -233,7 +233,7 @@ package flight.events
 		}
 		
 		/**
-		 * mouseMove event listener. Triggers drag event for all pressed buttons
+		 * mouseMove event listener. Triggers drag event for all pressed controls
 		 */
 		private static function onMouseMove(event:MouseEvent):void
 		{
@@ -245,7 +245,7 @@ package flight.events
 		
 		/**
 		 * rollOver event listener. Triggers dragOver and stateDown events for
-		 * pressed buttons and a stateOver event if the mouse isn't pressed.
+		 * pressed controls and a stateOver event if the mouse isn't pressed.
 		 */
 		private static function onRollOver(event:MouseEvent):void
 		{
@@ -265,7 +265,7 @@ package flight.events
 		
 		/**
 		 * rollOut event listener. Triggers dragOut and stateOver events for
-		 * pressed buttons and a stateUp event if the mouse isn't pressed.
+		 * pressed controls and a stateUp event if the mouse isn't pressed.
 		 */
 		private static function onRollOut(event:MouseEvent):void
 		{
@@ -282,7 +282,7 @@ package flight.events
 		
 		/**
 		 * mouseUp event listener. Triggers rollOver and stateOver events for
-		 * buttons that were not previously being pressed.
+		 * controls that were not previously being pressed.
 		 */
 		private static function onMouseUp(event:MouseEvent):void
 		{
@@ -312,8 +312,8 @@ package flight.events
 		
 		/**
 		 * mouseUp event listener. Triggers release and stateOver events for
-		 * buttons that were just pressed and are still under the mouse, and
-		 * releaseOutside and stateUp events for buttons that were just pressed
+		 * controls that were just pressed and are still under the mouse, and
+		 * releaseOutside and stateUp events for controls that were just pressed
 		 * and are no longer under the mouse. Also removes stage listeners for
 		 * mouse move and release.
 		 */

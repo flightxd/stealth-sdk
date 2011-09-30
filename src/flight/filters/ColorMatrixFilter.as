@@ -3,9 +3,9 @@ package flight.filters
 	import flash.events.EventDispatcher;
 	import flash.filters.BitmapFilter;
 	import flash.filters.ColorMatrixFilter;
-	
+
 	import flight.data.DataChange;
-	
+
 	public class ColorMatrixFilter extends EventDispatcher implements IBitmapFilter
 	{
 		public function ColorMatrixFilter(matrix:Array = null)

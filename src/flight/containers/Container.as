@@ -2,7 +2,7 @@ package flight.containers
 {
 	import flash.display.DisplayObject;
 	import flash.events.Event;
-	
+
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.data.DataChange;

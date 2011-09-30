@@ -4,9 +4,9 @@ package flight.filters
 	import flash.filters.BitmapFilter;
 	import flash.filters.BitmapFilterQuality;
 	import flash.filters.GlowFilter;
-	
+
 	import flight.data.DataChange;
-	
+
 	public class GlowFilter extends EventDispatcher implements IBitmapFilter
 	{
 		public function GlowFilter(color:uint = 16711680, alpha:Number = 1.0, blurX:Number = 6.0, blurY:Number = 6.0,

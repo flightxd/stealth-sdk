@@ -9,14 +9,14 @@ package flight.utils
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
-	
+
 	import flight.data.DataChange;
 	import flight.display.DeferredListener;
 	import flight.display.IInvalidating;
 	import flight.display.ILifecycle;
 	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
-	
+
 	import mx.events.PropertyChangeEvent;
 
 	[Event(name="commit", type="flight.events.InvalidationEvent")]

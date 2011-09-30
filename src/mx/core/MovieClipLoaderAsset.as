@@ -8,7 +8,7 @@ package mx.core
 {
 	import flash.utils.ByteArray;
 
-	import stealth.graphics.GraphicElement;
+	import flight.graphics.GraphicElement;
 
 	public class MovieClipLoaderAsset extends GraphicElement implements IFlexAsset
 	{

@@ -6,9 +6,9 @@ package flight.filters
 	import flash.filters.DisplacementMapFilter;
 	import flash.filters.DisplacementMapFilterMode;
 	import flash.geom.Point;
-	
+
 	import flight.data.DataChange;
-	
+
 	public class DisplacementMapFilter extends EventDispatcher implements IBitmapFilter
 	{
 		public function DisplacementMapFilter(mapBitmap:BitmapData = null, mapPoint:Point = null, componentX:uint = 0, componentY:uint = 0,

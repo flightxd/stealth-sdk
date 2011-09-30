@@ -5,9 +5,9 @@ package flight.filters
 	import flash.filters.BitmapFilterQuality;
 	import flash.filters.BitmapFilterType;
 	import flash.filters.GradientBevelFilter;
-	
+
 	import flight.data.DataChange;
-	
+
 	public class GradientBevelFilter extends EventDispatcher implements IBitmapFilter
 	{
 		public function GradientBevelFilter(distance:Number = 4.0, angle:Number = 45, colors:Array = null, alphas:Array = null, ratios:Array = null,

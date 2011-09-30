@@ -6,7 +6,7 @@
 
 package mx.core
 {
-	import stealth.graphics.GraphicElement;
+	import flight.graphics.GraphicElement;
 
 	public class SpriteAsset extends GraphicElement implements IFlexAsset
 	{

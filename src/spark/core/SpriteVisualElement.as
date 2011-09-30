@@ -6,7 +6,7 @@
 
 package spark.core
 {
-	import stealth.graphics.Graphic;
+	import flight.graphics.Graphic;
 
 	public class SpriteVisualElement extends Graphic
 	{

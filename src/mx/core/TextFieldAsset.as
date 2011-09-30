@@ -6,7 +6,7 @@
 
 package mx.core
 {
-	import stealth.graphics.GraphicText;
+	import flight.graphics.GraphicText;
 
 	public class TextFieldAsset extends GraphicText implements IFlexAsset
 	{

@@ -3,9 +3,9 @@ package flight.filters
 	import flash.events.EventDispatcher;
 	import flash.filters.BitmapFilter;
 	import flash.filters.ConvolutionFilter;
-	
+
 	import flight.data.DataChange;
-	
+
 	public class ConvolutionFilter extends EventDispatcher implements IBitmapFilter
 	{
 		public function ConvolutionFilter(matrixX:Number = 0, matrixY:Number = 0, matrix:Array = null, divisor:Number = 1.0, bias:Number = 0.0,

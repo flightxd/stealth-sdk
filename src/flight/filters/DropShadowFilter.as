@@ -4,9 +4,9 @@ package flight.filters
 	import flash.filters.BitmapFilter;
 	import flash.filters.BitmapFilterQuality;
 	import flash.filters.DropShadowFilter;
-	
+
 	import flight.data.DataChange;
-	
+
 	public class DropShadowFilter extends EventDispatcher implements IBitmapFilter
 	{
 		public function DropShadowFilter(distance:Number = 4.0, angle:Number = 45, color:uint = 0, alpha:Number = 1.0, blurX:Number = 4.0, blurY:Number = 4.0,

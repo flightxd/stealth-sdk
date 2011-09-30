@@ -6,51 +6,44 @@
 	-->
 	
 	<!-- graphics -->
-	<component id="GraphicElement"			class="stealth.graphics.GraphicElement"/>
-	<component id="GraphicShape"			class="stealth.graphics.GraphicShape"/>
-	<component id="GraphicBitmap"			class="stealth.graphics.GraphicBitmap"/>
-	<component id="GraphicText"				class="stealth.graphics.GraphicText"/>
-	<component id="Path"					class="stealth.graphics.shapes.Path"/>
-	<component id="Rect"					class="stealth.graphics.shapes.Rect"/>
-	<component id="Ellipse"					class="stealth.graphics.shapes.Ellipse"/>
+	<component id="GraphicElement"			class="flight.graphics.GraphicElement"/>
+	<component id="GraphicShape"			class="flight.graphics.GraphicShape"/>
+	<component id="GraphicBitmap"			class="flight.graphics.GraphicBitmap"/>
+	<component id="GraphicText"				class="flight.graphics.GraphicText"/>
+	<component id="Rect"					class="flight.graphics.shapes.Rect"/>
+	<component id="Ellipse"					class="flight.graphics.shapes.Ellipse"/>
 	
 	<!-- paint -->
-	<component id="SolidColor"				class="stealth.graphics.paint.SolidColor"/>
-	<component id="GradientFill"			class="stealth.graphics.paint.GradientFill"/>
-	<component id="LinearGradient"			class="stealth.graphics.paint.LinearGradient"/>
-	<component id="RadialGradient"			class="stealth.graphics.paint.RadialGradient"/>
-	<component id="BitmapFill"				class="stealth.graphics.paint.BitmapFill"/>
-	<component id="SolidColorStroke"		class="stealth.graphics.paint.SolidColorStroke"/>
-	<component id="GradientStroke"			class="stealth.graphics.paint.GradientStroke"/>
-	<component id="LinearGradientStroke"	class="stealth.graphics.paint.LinearGradientStroke"/>
-	<component id="RadialGradientStroke"	class="stealth.graphics.paint.RadialGradientStroke"/>
-	<component id="BitmapStroke"			class="stealth.graphics.paint.BitmapStroke"/>
-	<component id="GradientEntry"			class="stealth.graphics.paint.GradientEntry"/>
+	<component id="SolidColor"				class="flight.graphics.paint.SolidColor"/>
+	<component id="GradientFill"			class="flight.graphics.paint.GradientFill"/>
+	<component id="LinearGradient"			class="flight.graphics.paint.LinearGradient"/>
+	<component id="RadialGradient"			class="flight.graphics.paint.RadialGradient"/>
+	<component id="BitmapFill"				class="flight.graphics.paint.BitmapFill"/>
+	<component id="SolidColorStroke"		class="flight.graphics.paint.SolidColorStroke"/>
+	<component id="GradientStroke"			class="flight.graphics.paint.GradientStroke"/>
+	<component id="LinearGradientStroke"	class="flight.graphics.paint.LinearGradientStroke"/>
+	<component id="RadialGradientStroke"	class="flight.graphics.paint.RadialGradientStroke"/>
+	<component id="BitmapStroke"			class="flight.graphics.paint.BitmapStroke"/>
+	<component id="GradientEntry"			class="flight.graphics.paint.GradientEntry"/>
 	
 	<!-- layouts -->
-	<component id="DockLayout"				class="stealth.layouts.DockLayout"/>
-	<component id="BasicLayout"				class="stealth.layouts.BasicLayout"/>
-	<component id="HorizontalLayout"		class="stealth.layouts.HorizontalLayout"/>
-	<component id="VerticalLayout"			class="stealth.layouts.VerticalLayout"/>
-	<component id="Box"						class="stealth.layouts.Box"/>
+	<component id="DockLayout"				class="flight.layouts.DockLayout"/>
+	<component id="BasicLayout"				class="flight.layouts.BasicLayout"/>
+	<component id="HorizontalLayout"		class="flight.layouts.HorizontalLayout"/>
+	<component id="VerticalLayout"			class="flight.layouts.VerticalLayout"/>
+	<component id="Box"						class="flight.layouts.Box"/>
 	
 	<!-- containers -->
-	<component id="Group"					class="stealth.graphics.Group"/>
-	<component id="HGroup"					class="stealth.containers.HGroup"/>
-	<component id="VGroup"					class="stealth.containers.VGroup"/>
-	<component id="DockGroup"				class="stealth.containers.DockGroup"/>
-	<component id="DataGroup"				class="stealth.containers.DataGroup"/>
-	<component id="Graphic"					class="stealth.graphics.Graphic"/>
-	<component id="Application"				class="stealth.containers.Application"/>
+	<component id="Group"					class="flight.graphics.Group"/>
+	<component id="HGroup"					class="flight.containers.HGroup"/>
+	<component id="VGroup"					class="flight.containers.VGroup"/>
+	<component id="DockGroup"				class="flight.containers.DockGroup"/>
+	<component id="Graphic"					class="flight.graphics.Graphic"/>
+	<component id="Application"				class="flight.containers.Application"/>
 	
 	<!-- skins -->
-	<component id="Skin"					class="stealth.skins.Skin"/>
-	<component id="TimelineSkin"			class="stealth.skins.TimelineSkin"/>
-	
-	
-	<!--
-	======== FLIGHT-STEALTH ========
-	-->
+	<component id="Skin"					class="flight.skins.Skin"/>
+	<component id="TimelineSkin"			class="flight.skins.TimelineSkin"/>
 	
 	<!-- data -->
 	<component id="ArrayList"				class="flight.collections.ArrayList"/>

@@ -1,8 +1,6 @@
 package mx.states
 {
 	import flight.states.Change;
-	
-	import mx.core.IMXMLObject;
 
 	public class SetProperty extends Change
 	{
