@@ -7,6 +7,7 @@
 
 package flight.display
 {
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.Graphics;
@@ -31,7 +32,6 @@ package flight.display
 			gridX[1] = scale9Grid.right = right;
 			gridX[2] = source.width;
 			
-			var gridY:Vector.<Number> = gridY;
 			gridY[0] = scale9Grid.top = top;
 			gridY[1] = scale9Grid.bottom = bottom;
 			gridY[2] = source.height;
@@ -52,8 +52,8 @@ package flight.display
 			
 			return scale9Grid;
 		}
-		private static var gridX:Vector.<Number> = new Vector.<Number>(3, true);
-		private static var gridY:Vector.<Number> = new Vector.<Number>(3, true);
+		private static const gridX:Vector.<Number> = new Vector.<Number>(3, true);
+		private static const gridY:Vector.<Number> = new Vector.<Number>(3, true);
 		
 		
 		public static function getInstance(value:*):BitmapData

@@ -22,7 +22,7 @@ package flight.layouts
 		}
 		
 		[Bindable("propertyChange")]
-		public function get top():Number { return _top }
+		public function get top():Number { return _top; }
 		public function set top(value:Number):void
 		{
 			DataChange.change(this, "top", _top, _top = value);
@@ -30,7 +30,7 @@ package flight.layouts
 		private var _top:Number;
 		
 		[Bindable("propertyChange")]
-		public function get right():Number { return _right }
+		public function get right():Number { return _right; }
 		public function set right(value:Number):void
 		{
 			DataChange.change(this, "right", _right, _right = value);
@@ -38,7 +38,7 @@ package flight.layouts
 		private var _right:Number;
 		
 		[Bindable("propertyChange")]
-		public function get bottom():Number { return _bottom }
+		public function get bottom():Number { return _bottom; }
 		public function set bottom(value:Number):void
 		{
 			DataChange.change(this, "bottom", _bottom, _bottom = value);
@@ -46,7 +46,7 @@ package flight.layouts
 		private var _bottom:Number;
 		
 		[Bindable("propertyChange")]
-		public function get left():Number { return _left }
+		public function get left():Number { return _left; }
 		public function set left(value:Number):void
 		{
 			DataChange.change(this, "left", _left, _left = value);
@@ -54,7 +54,7 @@ package flight.layouts
 		private var _left:Number;
 		
 		[Bindable("propertyChange")]
-		public function get vertical():Number { return _vertical }
+		public function get vertical():Number { return _vertical; }
 		public function set vertical(value:Number):void
 		{
 			DataChange.change(this, "vertical", _vertical, _vertical = value);
@@ -62,7 +62,7 @@ package flight.layouts
 		private var _vertical:Number = 0;
 		
 		[Bindable("propertyChange")]
-		public function get horizontal():Number { return _horizontal }
+		public function get horizontal():Number { return _horizontal; }
 		public function set horizontal(value:Number):void
 		{
 			DataChange.change(this, "horizontal", _horizontal, _horizontal = value);
@@ -169,7 +169,7 @@ package flight.layouts
 				}
 			} else if (value is Box) {
 				box.vertical = value._vertical;
-				box.horizontal = value._horizontal
+				box.horizontal = value._horizontal;
 			}
 			return box;
 		}

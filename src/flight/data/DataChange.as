@@ -99,7 +99,7 @@ package flight.data
 		
 		public var source:Object;
 		public var property:String;
-		public var oldValue:*
+		public var oldValue:*;
 		public var newValue:*;
 		
 		private var force:Boolean;

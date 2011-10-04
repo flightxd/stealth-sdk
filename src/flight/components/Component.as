@@ -125,6 +125,7 @@ package flight.components
 			}
 		}
 		
+		//TODO: never used
 		private function onPropertyChange(event:PropertyChangeEvent):void
 		{
 			if (event.property in skinParts) {

@@ -143,7 +143,7 @@ package flight.layouts
 			contentRect.x = padding.left;
 			contentRect.y = padding.top;
 			contentRect.width = target.contentWidth;
-			contentRect.height = target.contentHeight
+			contentRect.height = target.contentHeight;
 			var measuredWidth:Number = measured.minWidth + totalPercentWidth * contentRect.width;
 			var measuredHeight:Number = measured.minHeight + totalPercentHeight * contentRect.height;
 			totalWidth = measuredWidth < contentRect.width ? contentRect.width - measuredWidth : 0;

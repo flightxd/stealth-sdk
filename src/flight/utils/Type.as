@@ -9,6 +9,7 @@ package flight.utils
 {
 	import flash.net.registerClassAlias;
 	import flash.utils.Dictionary;
+	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 

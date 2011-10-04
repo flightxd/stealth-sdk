@@ -24,7 +24,7 @@ package flight.graphics.shapes
 		}
 		
 		[Bindable("propertyChange")]
-		public function get radiusX():Number { return _radiusX }
+		public function get radiusX():Number { return _radiusX; }
 		public function set radiusX(value:Number):void
 		{
 			DataChange.queue(this, "radiusX", _radiusX, _radiusX = value);
@@ -37,7 +37,7 @@ package flight.graphics.shapes
 		private var _radiusX:Number = 0;
 		
 		[Bindable("propertyChange")]
-		public function get radiusY():Number { return _radiusY }
+		public function get radiusY():Number { return _radiusY; }
 		public function set radiusY(value:Number):void
 		{
 			DataChange.queue(this, "radiusY", _radiusY, _radiusY = value);
@@ -50,7 +50,7 @@ package flight.graphics.shapes
 		private var _radiusY:Number = 0;
 		
 		[Bindable("propertyChange")]
-		public function get topLeftRadiusX():Number { return _topLeftRadiusX }
+		public function get topLeftRadiusX():Number { return _topLeftRadiusX; }
 		public function set topLeftRadiusX(value:Number):void
 		{
 			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
@@ -60,7 +60,7 @@ package flight.graphics.shapes
 		private var _topLeftRadiusX:Number = 0;
 		
 		[Bindable("propertyChange")]
-		public function get topLeftRadiusY():Number { return _topLeftRadiusY }
+		public function get topLeftRadiusY():Number { return _topLeftRadiusY; }
 		public function set topLeftRadiusY(value:Number):void
 		{
 			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
@@ -70,7 +70,7 @@ package flight.graphics.shapes
 		private var _topLeftRadiusY:Number = 0;
 		
 		[Bindable("propertyChange")]
-		public function get topRightRadiusX():Number { return _topRightRadiusX }
+		public function get topRightRadiusX():Number { return _topRightRadiusX; }
 		public function set topRightRadiusX(value:Number):void
 		{
 			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
@@ -80,7 +80,7 @@ package flight.graphics.shapes
 		private var _topRightRadiusX:Number = 0;
 		
 		[Bindable("propertyChange")]
-		public function get topRightRadiusY():Number { return _topRightRadiusY }
+		public function get topRightRadiusY():Number { return _topRightRadiusY; }
 		public function set topRightRadiusY(value:Number):void
 		{
 			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
@@ -90,7 +90,7 @@ package flight.graphics.shapes
 		private var _topRightRadiusY:Number = 0;
 		
 		[Bindable("propertyChange")]
-		public function get bottomLeftRadiusX():Number { return _bottomLeftRadiusX }
+		public function get bottomLeftRadiusX():Number { return _bottomLeftRadiusX; }
 		public function set bottomLeftRadiusX(value:Number):void
 		{
 			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
@@ -100,7 +100,7 @@ package flight.graphics.shapes
 		private var _bottomLeftRadiusX:Number = 0;
 		
 		[Bindable("propertyChange")]
-		public function get bottomLeftRadiusY():Number { return _bottomLeftRadiusY }
+		public function get bottomLeftRadiusY():Number { return _bottomLeftRadiusY; }
 		public function set bottomLeftRadiusY(value:Number):void
 		{
 			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
@@ -110,7 +110,7 @@ package flight.graphics.shapes
 		private var _bottomLeftRadiusY:Number = 0;
 		
 		[Bindable("propertyChange")]
-		public function get bottomRightRadiusX():Number { return _bottomRightRadiusX }
+		public function get bottomRightRadiusX():Number { return _bottomRightRadiusX; }
 		public function set bottomRightRadiusX(value:Number):void
 		{
 			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
@@ -120,7 +120,7 @@ package flight.graphics.shapes
 		private var _bottomRightRadiusX:Number = 0;
 		
 		[Bindable("propertyChange")]
-		public function get bottomRightRadiusY():Number { return _bottomRightRadiusY }
+		public function get bottomRightRadiusY():Number { return _bottomRightRadiusY; }
 		public function set bottomRightRadiusY(value:Number):void
 		{
 			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
