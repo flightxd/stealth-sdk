@@ -4,8 +4,8 @@
 Stealth is a Software Development Kit, a set of code and tools to help
 programmers build beautifully functional applications in Flash. Reflecting the
 strengths of the Flash Platform this devkit was designed to be small, fast,
-graphic-rich, and work everywhere. So it’s perfect for mobile apps and games.
-And it works in everyone’s favorite tools, like Flash Professional or
+graphic-rich, and work everywhere. So it's perfect for mobile apps and games.
+And it works in everyone's favorite tools, like Flash Professional or
 Flash Builder, using ActionScript 3 or even MXML!
 
 ## License
