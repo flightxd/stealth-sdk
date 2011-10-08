@@ -7,27 +7,33 @@
 
 package flight.utils
 {
+	import flash.events.TimerEvent;
+
 	public function callLater(method:Function, args:Array = null):void
 	{
 		calls[method] = args;
-		if (!timer.running) {
-			timer.start();
+		
+		if (!enabled) {
+			enabled = true;
+			Interval.timer.addEventListener(TimerEvent.TIMER, onTimer);
 		}
 	}
 }
 
 import flash.events.TimerEvent;
 import flash.utils.Dictionary;
-import flash.utils.Timer;
 
+import flight.utils.Interval;
+
+internal var enabled:Boolean;
 internal var calls:Dictionary = new Dictionary();
 internal var callsEmpty:Dictionary = new Dictionary();
-internal var timer:Timer = new Timer(1, 1);
-timer.addEventListener(TimerEvent.TIMER, onTimer);
 
 internal function onTimer(event:TimerEvent):void
 {
-	timer.reset();
+	enabled = false;
+	Interval.timer.removeEventListener(TimerEvent.TIMER, onTimer);
+	
 	var callsNow:Dictionary = calls;
 	calls = callsEmpty;
 	callsEmpty = callsNow;

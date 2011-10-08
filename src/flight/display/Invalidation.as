@@ -1,6 +1,5 @@
 /*
- * From the Stealth SDK, a UI framework for the Flash Developer.
- *   Copyright (c) 2011 Tyler Wright - Flight XD.
+ * Copyright (c) 2010 the original author or authors.
  * Permission is hereby granted to use, modify, and distribute this file
  * in accordance with the terms of the license agreement accompanying it.
  */
@@ -8,52 +7,47 @@
 package flight.display
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Stage;
 	import flash.events.Event;
-	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
 
-	import flight.utils.callLater;
 	import flight.utils.getClassName;
 
 	/**
 	 * The Invalidation utility allows potentially expensive processes, such as
-	 * layout, to delay their execution and runs these processes just once each
-	 * time the screen is rendered. In the case of layout this delayed execution
-	 * is essential, because size and position of parents affect the size and
-	 * position of their children and vice versa, through all levels of the
-	 * display-list. Invalidation runs in ordered execution by level and
-	 * supports any number of custom phases (it is recommended to maintain a
-	 * small set of known phases for performance and approachability).
+	 * layout, to delay their execution and run just once before the screen is
+	 * rendered. In the case of layout this delayed execution is a performance
+	 * necessity, because the size and position of display objects can directly
+	 * effect each other, through all levels of the display-list. Invalidation
+	 * runs in ordered execution by level and depth and supports any number of
+	 * custom phases (it is recommended to maintain a small set of known phases
+	 * for performance and predictability).
 	 */
 	public class Invalidation
 	{
 		/**
-		 * Flag indicating whether stages have been invalidated since last
-		 * validation.
+		 * Internal weak-reference registry of all display objects initialized
+		 * by Invalidation.
 		 */
-		private static var invalidated:Boolean;
+		private static var initialized:Dictionary = new Dictionary(true);
 		
 		/**
-		 * Represents the current phase being rendered or validated. Used only
-		 * when invalidation is currently running under a "render" event
-		 * dispatched from Stage.
+		 * Internal weak-referenced registry of invalid stages. 
 		 */
-		private static var renderIndex:int = int.MAX_VALUE;
-
+		private static var invalidStages:Dictionary = new Dictionary(true);
+		
 		/**
-		 * Internal weak-referenced registry of all stages that have touched
-		 * invalidation, to allow one-time setup on each of these stages.
+		 * An Array of registered phases ordered by priority from highest to
+		 * lowest.
 		 */
-		private static var stages:Dictionary = new Dictionary(true);
-
+		private static var phases:Array = [];
+		
 		/**
-		 * Internal weak-referenced registry of the levels (depth in hierarchy
-		 * from the stage down, with stage being 1, root 2, etc) of all display
-		 * objects currently invalidated.
+		 * Phase lookup by phase name, for convenience.
 		 */
-		private static var displayLevels:Dictionary = new Dictionary(true);
-
+		private static var lookup:Object = {};
+		
 		/**
 		 * Phases of invalidation such as "measure", "layout" and "draw" allow
 		 * different systems to register their own pass over the display-list
@@ -91,9 +85,20 @@ package flight.display
 		 * 						for the first time, or re-registered with new
 		 * 						priority/ascending settings.
 		 */
-		public static function registerPhase(phaseName:String, eventType:Class = null, priority:int = 0, ascending:Boolean = true):Boolean
+		public static function registerPhase(phaseName:String, eventType:Class = null, priority:int = 0, ascending:Boolean = false):Boolean
 		{
-			return InvalidationPhase.registerPhase(phaseName, eventType, priority, ascending);
+			var phase:Invalidation = lookup[phaseName];
+			if (!phase) {
+				phase = new Invalidation(phaseName, eventType, ascending);
+				phases.push(phase);													// keep track of phases in both ordered phases and the lookup
+				lookup[phase._name] = phase;
+			} else if (phase.priority == priority) {
+				return false;
+			}
+			
+			phase.priority = priority;
+			phases.sortOn("priority", Array.DESCENDING | Array.NUMERIC);			// always maintain order - phases shouldn't be registered often
+			return true;
 		}
 
 		/**
@@ -103,63 +108,51 @@ package flight.display
 		 * event of type phaseName dispatched from the target, and can be
 		 * listened to by anyone.
 		 * 
-		 * @param target		The IEventDispatcher or display object to be
+		 * @param target		The DisplayObject or display object to be
 		 * 						invalidated.
 		 * @param phaseName		The phase to be invalidated by, and the event
 		 * 						type dispatched on resolution.
-		 * @param level			Optional level supplied for IEventDispatchers.
-		 * 						Display objects' level is calculated internally.
 		 * @return				Returns true if the target was invalidated for
 		 * 						the first time this render cycle.
 		 */
-		public static function invalidate(target:IEventDispatcher, phaseName:String, stage:Stage = null, level:int = 1):Boolean
+		public static function invalidate(target:DisplayObject, phaseName:String):Boolean
 		{
-			var phaseIndex:int = InvalidationPhase.phaseIndices[phaseName];
-			var invalidationPhase:InvalidationPhase = InvalidationPhase.phaseList[phaseIndex];
-			
-			if (!target) {
-				return false;
-			} else if (!invalidationPhase) {
+			var phase:Invalidation = lookup[phaseName];
+			if (!phase) {
 				throw new Error(getClassName(target) + " cannot be invalidated by unknown phase '" + phaseName + "'.");
 			}
 			
-			if (target is DisplayObject) {
-				if (invalidationPhase.contains(target)) {
-					return false;
-				} else if (!displayLevels[target]) {																	// setup listeners only once on a display object
-					target.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage, false, 20, true);				// watch for level changes - this is a permanent listener since these changes happen
-					target.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage, false, 20, true);		// less frequently than invalidation and so require fewer level calculations
+			if (phase.invalidate(target)) {
+				var stage:Stage = target.stage;
+				if (stage && !invalidStages[stage]) {
+					stage.invalidate();
+					invalidStages[stage] = true;
 				}
-				
-				stage = DisplayObject(target).stage;
-				level = displayLevels[target] || getDisplayLevel(DisplayObject(target));						// retrieve level (depth in hierarchy) for proper ordering
+				return true;
 			}
-			
-			if (stage) {
-				if (!stages[stage]) {
-					stage.addEventListener(Event.RENDER, onRender, false, -10, true);							// listen to ALL stage render events, also a permanent listener since they only get
-																												// dispatched with a stage.invalidate and add/remove listeners costs some in performance
-					stage.addEventListener(Event.RESIZE, onRender, false, -10, true);							// in many environments render and enterFrame events stop firing when stage is resized -
-																												// listening to resize compensates for this shortcoming and continues to run validation
-					stages[stage] = true;																		// with each screen render
-				}
+			return false;
+		}
+		
+		public static function initialize(target:DisplayObject):void
+		{
+			if (!initialized[target]) {														// setup listeners only once on each unique target
+				initialized[target] = true;
 				
-				var added:Boolean = invalidationPhase.add(target, level);
-				if (!invalidated && phaseIndex <= renderIndex && invalidationPhase.invalidated) {
-					
-					invalidated = true;
-					if (renderIndex == int.MAX_VALUE) {								// renderIndex reflects the current phase being invalidated, or MAX_VALUE
-						stage.invalidate();
-					} else {														// stage.invalidate can't be called in the middle of a render cycle -
-						callLater(stage.invalidate);								// it just doesn't work. Note that this delayed stage invalidation
-																					// isn't always utilized because phases are smart enough to include
-																					// targets of yet un-executed levels in the current render cycle.
+				if (target is Stage) {
+					target.addEventListener(Event.RENDER, onRender, false, -10, true);		// listen to ALL stage render events, also a permanent listener since they only get
+																							// dispatched with a stage.invalidate and add/remove listeners costs some in performance
+					target.addEventListener(Event.RESIZE, onRender, false, -10, true);		// in many environments render and enterFrame events stop firing when stage is resized -
+																							// listening to resize compensates for this shortcoming and continues to run validation
+					invalidStages[target] = false;													// with each screen render
+				} else {
+					target.addEventListener(Event.ADDED, onAdded, false, 20, true);				// watch for level changes - this is a permanent listener since these changes happen
+																								// less frequently than invalidation and so require fewer level calculations
+					if (target.stage) {
+						initialize(target.stage);
+					} else {
+						target.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 					}
 				}
-				return added;
-			} else {
-				return invalidationPhase.add(target, -1);							// keep a reference to invalidated targets on the phase, but stored at
-																					// a level that won't be executed until display is addedToStage
 			}
 		}
 
@@ -174,41 +167,19 @@ package flight.display
 		 * @param phaseName		Optional invalidation phase to run. If null, all
 		 * 						phases will be run in order of priority.
 		 */
-		public static function validateNow(target:IEventDispatcher = null, phaseName:String = null):void
+		public static function validateNow(target:DisplayObject = null, phaseName:String = null):void
 		{
-			var invalidationPhase:InvalidationPhase;
-			if (phaseName && InvalidationPhase.phaseIndices[phaseName] == null) {
-				throw new Error(getClassName(target) + " cannot be validated by unknown phase '" + phaseName + "'.");
-			} else if (phaseName) {
-				invalidationPhase = InvalidationPhase.phaseList[InvalidationPhase.phaseIndices[phaseName]];
-				invalidationPhase.validate(target);
+			if (phaseName) {
+				var phase:Invalidation = lookup[phaseName];
+				if (!phase) {
+					throw new Error(getClassName(target) + " cannot be validated by unknown phase '" + phaseName + "'.");
+				}
+				phase.validateNow(target);
 			} else {
-				for each (invalidationPhase in InvalidationPhase.phaseList) {
-					invalidationPhase.validate(target);
+				for each (phase in phases) {
+					phase.validateNow(target);
 				}
 			}
-		}
-
-		/**
-		 * Calculates the level in display-list hierarchy of target display
-		 * object, where stage is level 1, children of stage are level 2, their
-		 * children are level 3 and so on.
-		 * 
-		 * @param target		Display object residing in the display-list.
-		 * @return				Hierarchical level as an integer.
-		 */
-		private static function getDisplayLevel(target:DisplayObject):int
-		{
-			var level:int = 1;														// start with level 1, stage, which has no parent
-			var display:DisplayObject = target;
-			while ((display = display.parent)) {
-				if (displayLevels[display]) {										// shortcut when parent level is already defined - used often
-					level += displayLevels[display];								// because addedToStage resolves for parents before children
-					break;
-				}
-				++level;
-			}
-			return displayLevels[target] = level;									// assign in a global index and return
 		}
 
 		/**
@@ -216,12 +187,10 @@ package flight.display
 		 */
 		private static function onRender(event:Event):void
 		{
-			if (invalidated) {
-				invalidated = false;
-				for (renderIndex = 0; renderIndex < InvalidationPhase.phaseList.length; renderIndex++) {
-					InvalidationPhase.phaseList[renderIndex].validate();
-				}
-				renderIndex = int.MAX_VALUE;
+			var stage:Stage = Stage(event.currentTarget);
+			if (invalidStages[stage]) {
+				validateNow(stage);
+				invalidStages[stage] = false;
 			}
 		}
 
@@ -230,37 +199,193 @@ package flight.display
 		 * being added to the display-list, calculating their level (depth
 		 * in display-list hierarchy).
 		 */
+		private static function onAdded(event:Event):void
+		{
+			if (event.target == event.currentTarget) {
+				var target:DisplayObject = DisplayObject(event.currentTarget);
+				var invalid:Boolean = false;
+																					// correctly invalidate newly added display object on all phases
+				for each (var phase:Invalidation in phases) {					// where it was invalidated while off of the display-list (and set at level -1)
+					if (phase.invalid[target]) {
+						phase.invalid[target] = false;
+						phase.invalidate(target);
+						invalid = true;
+					}
+				}
+				if (invalid) {
+					var stage:Stage = target.stage;
+					if (stage && !invalidStages[stage]) {
+						stage.invalidate();
+						invalidStages[stage] = true;
+					}
+				}
+			}
+		}
+		
 		private static function onAddedToStage(event:Event):void
 		{
 			var target:DisplayObject = DisplayObject(event.target);
-			var level:int = getDisplayLevel(target);
-			
-			var phaseList:Array = InvalidationPhase.phaseList;						// correctly invalidate newly added display object on all phases
-			for each (var renderPhase:InvalidationPhase in phaseList) {				// where it was invalidated while off of the display-list (and set at level -1)
-				if (renderPhase.contains(target)) {
-					renderPhase.remove(target);
-					invalidate(target, renderPhase.name, target.stage, level);
-				}
-			}
+			target.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			initialize(target.stage);
 		}
-
+		
 		/**
-		 * Listener responding to any previously invalidated display objects
-		 * being removed from the display-list, deleting their level (depth
-		 * in display-list hierarchy).
+		 * The priority of this phase relating to other invalidation phases.
 		 */
-		private static function onRemovedFromStage(event:Event):void
+		public var priority:int = 0;
+		
+		/**
+		 * The event class instantiated for dispatch from invalidation targets.
+		 */
+		public var eventType:Class;
+		
+		public var ascending:Boolean;
+		
+		/**
+		 * Quick reference with invalidated targets as key and value as level.
+		 */
+		private var invalid:Dictionary = new Dictionary(true);
+		
+		/**
+		 */
+		private var invalidContent:Dictionary = new Dictionary(true);
+		
+		private var indices:Dictionary = new Dictionary(true);
+		
+		/**
+		 * Constructor requiring phase name also used as event type, and
+		 * optionally the class used for event instantiation.
+		 * 
+		 * @param name			Phase name, also the event type.
+		 * @param eventType		Event class used when dispatching from
+		 * 						invalidation targets.
+		 */
+		public function Invalidation(name:String, eventType:Class = null, ascending:Boolean = false)
 		{
-			var target:DisplayObject = DisplayObject(event.target);
-			displayLevels[target] = -1;
+			_name = name;
+			this.eventType = eventType || Event;
+			this.ascending = ascending;
+		}
+		
+		/**
+		 * Phase name, also used as the event type.
+		 */
+		public function get name():String { return _name; }
+		private var _name:String;
+		
+		
+		/**
+		 * Effectively invalidates target with this phase.
+		 * 
+		 * @param target		Target to be invalidated.
+		 * @return				Returns true the first time target is
+		 * 						invalidated.
+		 */
+		public function invalidate(target:DisplayObject):Boolean
+		{
+			if (!target || invalid[target]) {
+				return false;
+			}
 			
-			var phaseList:Array = InvalidationPhase.phaseList;						// remove display object from proper invalidation and add it at level -1
-			for each (var renderPhase:InvalidationPhase in phaseList) {				// where it won't be executed until added to display-list again
-				if (renderPhase.contains(target)) {
-					renderPhase.remove(target);
-					renderPhase.add(target, -1);
+			invalid[target] = true;
+			
+			var parent:DisplayObjectContainer = target.parent;
+			while (parent && !invalidContent[parent]) {
+				invalidContent[parent] = true;
+				parent = parent.parent;
+			}
+			
+			return true;
+		}
+		
+		/**
+		 * Execution of the phase by dispatching an event from each target, in order
+		 * ascending or descending by level. Event type and class correlate with
+		 * phase name and eventType respectively.
+		 * 
+		 * @param target		Optional target may be specified for isolated
+		 * 						validation. If null, full validation is run on
+		 * 						all targets in proper level order.
+		 */
+		public function validateNow(target:DisplayObject):void
+		{
+			if (ascending) {
+				return validateAscending(target);
+			} else {
+				return validateDescending(target);
+			}
+		}
+		
+		private function validateDescending(target:DisplayObject):void
+		{
+			if (invalid[target]) {
+				delete invalid[target];
+				target.dispatchEvent(new eventType(_name));
+			}
+			
+			if (invalidContent[target]) {
+				delete invalidContent[target];
+				
+				var current:DisplayObjectContainer = DisplayObjectContainer(target);
+				indices[current] = 0;
+				
+				while (current) {
+					
+					var next:DisplayObject = indices[current] < current.numChildren ? current.getChildAt(indices[current]++) : null;
+					if (next) {
+						
+						if (invalid[next]) {
+							delete invalid[next];
+							next.dispatchEvent(new eventType(_name));
+						}
+						
+						if (invalidContent[next]) {
+							delete invalidContent[next];
+							
+							current = DisplayObjectContainer(next);
+							indices[current] = 0;
+						}
+					} else {
+						delete indices[current];
+						current = current != target ? current.parent : null;
+					}
 				}
 			}
 		}
+		
+		private function validateAscending(target:DisplayObject):void
+		{
+			if (invalidContent[target]) {
+				
+				var current:DisplayObjectContainer = DisplayObjectContainer(target);
+				indices[current] = 0;
+				
+				while (current) {
+					
+					var next:DisplayObject = indices[current] < current.numChildren ? current.getChildAt(indices[current]++) : null;
+					if (next) {
+						if (invalidContent[next]) {
+							delete invalidContent[next];
+							
+							current = DisplayObjectContainer(next);
+							indices[current] = 0;
+						} else if (invalid[next]) {
+							delete invalid[next];
+							next.dispatchEvent(new eventType(_name));
+						}
+					} else {
+						if (invalid[current]) {
+							delete invalid[current];
+							current.dispatchEvent(new eventType(_name));
+						}
+						delete indices[current];
+						current = current != target ? current.parent : null;
+					}
+				}
+				
+				delete invalidContent[target];
+			}
+		}
+		
 	}
 }

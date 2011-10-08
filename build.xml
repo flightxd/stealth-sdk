@@ -19,17 +19,12 @@
 		<antcall target="init" />
 		<antcall target="clean" />
 		<antcall target="compile" />
-		<!--<antcall target="test-reports" />-->
 		<antcall target="docs" />
 	</target>
 	
 	<target name="init">
 		<mkdir dir="${bin.dir}"/>
 		<mkdir dir="${docs.dir}"/>
-		<!--
-		<mkdir dir="${tests.dir}"/>
-		<mkdir dir="${reports.dir}"/>
-		-->
 	</target>
 	
 	<target name="clean">
@@ -40,11 +35,6 @@
 			<fileset dir="${docs.dir}" defaultexcludes="false">
 				<include name="**/*"/>
 			</fileset>
-			<!--
-			<fileset dir="${tests.dir}" defaultexcludes="false">
-				<include name="**/*"/>
-			</fileset>
-			-->
 		</delete>
 	</target>
 	
@@ -54,8 +44,9 @@
 	<target name="compile">
 		<compc output="${bin.dir}/${library.name}.swc" link-report="${link-report.dir}/link-report.xml">
 			<source-path path-element="${src.dir}"/>
-			<namespace uri="http://rx.flight.io/2010" manifest="${src.dir}/manifest.xml" />
-			<include-namespaces>http://rx.flight.io/2010</include-namespaces>
+			<namespace uri="http://xd.flightxd.com/2011" manifest="${src.dir}/manifest.xml" />
+			<include-namespaces>http://xd.flightxd.com/2011</include-namespaces>
+			<include-file name="design.xml" path="${src.dir}/design.xml"/>
 			<strict>true</strict>
 			<optimize>true</optimize>
 			<warnings>true</warnings>
@@ -77,11 +68,12 @@
 	-->
 	<target name="docs">
 		<asdoc output="${docs.dir}" templates-path="${docs.templates}">
-			<doc-namespaces uri="http://flight.io/2010" />
-			<namespace uri="http://flight.io/2010" manifest="${basedir}/src/manifest.xml" />
+			<doc-namespaces uri="http://xd.flightxd.com/2011" />
+			<namespace uri="http://xd.flightxd.com/2011" manifest="${src.dir}/manifest.xml" />
 			<source-path path-element="${src.dir}" />
 			<library-path dir="${flex-sdk.dir}/frameworks/libs" includes="*.swc" append="true" />
 			<library-path dir="${basedir}/libs" includes="*.swc" append="true" />
+			<examples-path dir="${basedir}/examples" />
 		</asdoc>
 	</target>
 	

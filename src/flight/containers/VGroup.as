@@ -13,11 +13,6 @@ package flight.containers
 
 	public class VGroup extends Group
 	{
-		public function VGroup()
-		{
-			layout = getDefaultLayout();
-		}
-		
 		override protected function getDefaultLayout():ILayout
 		{
 			return new VerticalLayout();

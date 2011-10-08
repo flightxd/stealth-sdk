@@ -13,11 +13,6 @@ package flight.containers
 
 	public class DockGroup extends Group
 	{
-		public function DockGroup()
-		{
-			layout = getDefaultLayout();
-		}
-		
 		override protected function getDefaultLayout():ILayout
 		{
 			return new DockLayout();

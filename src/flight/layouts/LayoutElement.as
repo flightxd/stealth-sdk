@@ -28,6 +28,7 @@ package flight.layouts
 		public function LayoutElement(target:DisplayObject)
 		{
 			this.target = target;
+			Invalidation.initialize(target);
 			target.addEventListener(LayoutEvent.MEASURE, onMeasure, false, 20);
 			_measured.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMeasuredChange);
 		}

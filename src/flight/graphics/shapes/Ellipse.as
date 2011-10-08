@@ -18,6 +18,10 @@ package flight.graphics.shapes
 		
 		public function Ellipse(width:Number = 0, height:Number = 0, fill:* = null, stroke:* = null)
 		{
+			this.width = width;
+			this.height = height;
+			this.fill = fill;
+			this.stroke = stroke;
 		}
 		
 		override protected function updatePath(graphicsPath:GraphicsPath, pathBounds:Rectangle):void

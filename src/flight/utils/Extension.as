@@ -7,6 +7,7 @@
 
 package flight.utils
 {
+	import flash.display.DisplayObject;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
@@ -48,6 +49,9 @@ package flight.utils
 					this["host"] = _target;
 				}
 				if (_target) {
+					if (_target is DisplayObject) {
+						Invalidation.initialize(DisplayObject(_target));
+					}
 					for (var property:String in bindings) {
 						bindings[property] = property in _target;
 						if (bindings[property]) {
@@ -114,15 +118,17 @@ package flight.utils
 		{
 			if (_target is IInvalidating) {
 				IInvalidating(_target).invalidate(phase);
-			} else if (_target) {
-				Invalidation.invalidate(_target, phase || InvalidationEvent.VALIDATE);
+			} else if (_target is DisplayObject) {
+				Invalidation.invalidate(DisplayObject(_target), phase || InvalidationEvent.VALIDATE);
 			}
 		}
 		
 		public function validateNow(phase:String = null):void
 		{
-			if (_target) {
-				Invalidation.validateNow(_target, phase);
+			if (_target is IInvalidating) {
+				IInvalidating(_target).validateNow(phase);
+			} else if (_target is DisplayObject) {
+				Invalidation.validateNow(DisplayObject(_target), phase);
 			}
 		}
 		

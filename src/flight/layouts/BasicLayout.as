@@ -25,6 +25,9 @@ package flight.layouts
 		
 		override protected function measureChild(child:DisplayObject, last:Boolean = false):void
 		{
+			if (!(child is ILayoutElement)) {
+				return;
+			}
 			var layoutChild:ILayoutElement = ILayoutElement(child);
 			
 			var hOffset:Number = !isNaN(layoutChild.hOffset) ? layoutChild.hOffset : 0;
@@ -111,6 +114,9 @@ package flight.layouts
 		
 		override protected function updateChildBounds(child:DisplayObject, last:Boolean = false):void
 		{
+			if (!(child is ILayoutElement)) {
+				return;
+			}
 			var layoutChild:ILayoutElement = ILayoutElement(child);
 			
 			var hOffset:Number = !isNaN(layoutChild.hOffset) ? layoutChild.hOffset : 0;
@@ -139,6 +145,8 @@ package flight.layouts
 				}
 				
 				childBounds.x = layoutChild.hPercent * (target.contentWidth - childBounds.width) + hOffset;
+			} else if (!isNaN(childPercentWidth)) {
+				childBounds.width = childPercentWidth * target.contentWidth;
 			}
 			
 			
@@ -166,6 +174,8 @@ package flight.layouts
 				}
 				
 				childBounds.y = layoutChild.vPercent * (target.contentHeight - childBounds.height) + vOffset;
+			} else if (!isNaN(childPercentHeight)) {
+				childBounds.height = childPercentHeight * target.contentHeight;
 			}
 		}
 	}

@@ -13,11 +13,6 @@ package flight.containers
 
 	public class HGroup extends Group
 	{
-		public function HGroup()
-		{
-			layout = getDefaultLayout();
-		}
-		
 		override protected function getDefaultLayout():ILayout
 		{
 			return new HorizontalLayout();
