@@ -14,7 +14,7 @@ package flight.media
 	import flash.media.Video;
 	import flash.utils.Dictionary;
 
-	import flight.collections.ArrayDispatcher;
+	import flight.collections.ArrayList;
 	import flight.data.DataChange;
 	import flight.display.DeferredListener;
 	import flight.display.ILifecycle;
@@ -38,7 +38,7 @@ package flight.media
 		public function Video()
 		{
 			_id = name;
-			_filters = new ArrayDispatcher(bitmapFilters = super.filters);
+			_filters = new ArrayList(bitmapFilters = super.filters);
 			_filters.addEventListener(ListEvent.LIST_CHANGE, refreshFilters);
 			_filters.addEventListener(ListEvent.ITEM_CHANGE, refreshFilters);
 			
@@ -127,7 +127,7 @@ package flight.media
 			_filters.push.apply(_filters, value);
 			_filters.queueChanges = false;
 		}
-		private var _filters:ArrayDispatcher;
+		private var _filters:ArrayList;
 		private var bitmapFilters:Array;
 		
 		private function refreshFilters(event:ListEvent):void

@@ -14,7 +14,7 @@ package flight.display
 	import flash.filters.BitmapFilter;
 	import flash.utils.Dictionary;
 
-	import flight.collections.ArrayDispatcher;
+	import flight.collections.ArrayList;
 	import flight.data.DataChange;
 	import flight.events.InvalidationEvent;
 	import flight.events.LifecycleEvent;
@@ -36,7 +36,7 @@ package flight.display
 		public function SimpleButton()
 		{
 			_id = name;
-			_filters = new ArrayDispatcher(bitmapFilters = super.filters);
+			_filters = new ArrayList(bitmapFilters = super.filters);
 			_filters.addEventListener(ListEvent.LIST_CHANGE, refreshFilters);
 			_filters.addEventListener(ListEvent.ITEM_CHANGE, refreshFilters);
 			
@@ -125,7 +125,7 @@ package flight.display
 			_filters.push.apply(_filters, value);
 			_filters.queueChanges = false;
 		}
-		private var _filters:ArrayDispatcher;
+		private var _filters:ArrayList;
 		private var bitmapFilters:Array;
 		
 		private function refreshFilters(event:ListEvent):void

@@ -250,9 +250,9 @@ package flight.components
 				if (_contents) {
 					if (explicitContent) {
 						_contents.content.clear();
-						_contents.content.add(_content.get());
+						_contents.content.add(_content.getAt(0, uint.MAX_VALUE));
 					} else if (_contents.content.length) {
-						_content.add(_contents.content.get());
+						_content.add(_contents.content.getAt(0, uint.MAX_VALUE));
 					}
 					if (explicitLayout) {
 						_contents.layout = _layout;

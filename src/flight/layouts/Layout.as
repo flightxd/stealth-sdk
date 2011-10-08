@@ -39,7 +39,7 @@ package flight.layouts
 		{
 			var len:int = target.content.length;
 			for (var i:int = 0; i < len; i++) {
-				var child:DisplayObject = DisplayObject(target.content.get(i, 0));
+				var child:DisplayObject = DisplayObject(target.content.getAt(i));
 				if (childReady(child)) {
 					measureChild(child, i == len - 1);
 				}
@@ -51,7 +51,7 @@ package flight.layouts
 			updating = true;
 			var len:int = target.content.length;
 			for (var i:int = 0; i < len; i++) {
-				var child:DisplayObject = DisplayObject(target.content.get(i, 0));
+				var child:DisplayObject = DisplayObject(target.content.getAt(i));
 				if (childReady(child)) {
 					updateChild(child, i == len - 1);
 				}

@@ -172,7 +172,7 @@ package flight.skins
 		override protected function attach():void
 		{
 			for (var i:int = 0; i < _content.length; i++) {
-				target.addChildAt(DisplayObject(_content.get(i, 0)), i);
+				target.addChildAt(DisplayObject(_content.getAt(i)), i);
 			}
 			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
 			target.addEventListener(LayoutEvent.MEASURE, dispatchEvent, false, -10);
@@ -187,7 +187,7 @@ package flight.skins
 			target.removeEventListener(LayoutEvent.MEASURE, onMeasure);
 			_content.removeEventListener(ListEvent.LIST_CHANGE, onContentChange);
 			for (var i:int; i < _content.length; i++) {
-				target.removeChild(DisplayObject(_content.get(i, 0)));
+				target.removeChild(DisplayObject(_content.getAt(i)));
 			}
 		}
 		

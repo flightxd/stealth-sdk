@@ -54,7 +54,7 @@ package flight.data
 			value = value < -1 ? -1 : (value > list.length - 1 ? list.length - 1 : value);
 			if (_index != value) {
 				DataChange.queue(this, "index", _index, _index = value);
-				DataChange.queue(this, "item", _item, _item = _index != -1 ? list.get(_index, 0) : null);
+				DataChange.queue(this, "item", _item, _item = _index != -1 ? list.getAt(_index) : null);
 				
 				if (_items) {
 					_items.queueChanges = updating = true;
@@ -162,8 +162,8 @@ package flight.data
 			for each (item in _items) {
 				_indices.add(_list.getIndex(item));
 			}
-			DataChange.queue(this, "item", _item, _item = _items.length ? _items.get(-1, 0) : null);
-			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.get(-1, 0) : -1);
+			DataChange.queue(this, "item", _item, _item = _items.length ? _items.getAt(-1) : null);
+			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.getAt(-1) : -1);
 			_indices.queueChanges = updating = false;
 		}
 
@@ -177,10 +177,10 @@ package flight.data
 			_items.queueChanges = updating = true;
 			_items.clear();
 			for each (index in _items) {
-				_items.add(_list.get(index, 0));
+				_items.add(_list.getAt(index));
 			}
-			DataChange.queue(this, "item", _item, _item = _items.length ? _items.get(-1, 0) : null);
-			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.get(-1, 0) : -1);
+			DataChange.queue(this, "item", _item, _item = _items.length ? _items.getAt(-1) : null);
+			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.getAt(-1) : -1);
 			_items.queueChanges = updating = false;
 		}
 	}
