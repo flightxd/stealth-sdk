@@ -649,7 +649,7 @@ package flight.layouts
 				if (_nativeSizing) {
 					target.scaleX = _nativeRect.width ? value / _nativeRect.width : 1;
 				}
-				invalidate(LayoutEvent.RESIZE);
+				invalidate();
 				if (_contained) {
 					DataChange.queue(target, "contentWidth", _width, value);
 				}
@@ -668,7 +668,7 @@ package flight.layouts
 				if (_nativeSizing) {
 					target.scaleY = _nativeRect.height ? value / _nativeRect.height : 1;
 				}
-				invalidate(LayoutEvent.RESIZE);
+				invalidate();
 				if (_contained) {
 					DataChange.queue(target, "contentHeight", _height, value);
 				}

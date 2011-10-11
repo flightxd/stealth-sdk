@@ -7,8 +7,9 @@ package flight.display
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
-
+	
 	import flight.events.InvalidationEvent;
+	import flight.utils.callLater;
 
 	public class DisplayDebugger
 	{
@@ -19,17 +20,20 @@ package flight.display
 		{
 			this.root = root;
 			root.addEventListener(InvalidationEvent.VALIDATE, onValidate, false, -10, true);
-			root.addEventListener(InvalidationEvent.VALIDATE, onValidate, true, 0, true);
+			//root.addEventListener(InvalidationEvent.VALIDATE, onValidate, true, 0, true);
 			drawing = new Shape();
+			callLater(Invalidation.invalidate, [root, InvalidationEvent.VALIDATE]);
 		}
 		
 		private function onValidate(event:InvalidationEvent):void
 		{
-			if (event.target != root) {
-				Invalidation.invalidate(root, InvalidationEvent.VALIDATE);
-			} else {
+//			if (event.target != root) {
+//				Invalidation.invalidate(root, InvalidationEvent.VALIDATE);
+//			} else {
 				redraw();
-			}
+//			}
+				
+				callLater(Invalidation.invalidate, [root, InvalidationEvent.VALIDATE]);
 		}
 		
 		private var indices:Dictionary = new Dictionary(true);

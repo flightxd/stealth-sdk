@@ -153,7 +153,7 @@ package flight.containers
 				contentChanging = false;
 				
 				invalidate(LayoutEvent.MEASURE);
-				invalidate(LayoutEvent.LAYOUT);
+				invalidate(LayoutEvent.UPDATE);
 			}
 		}
 		
@@ -166,7 +166,7 @@ package flight.containers
 				contentChanging = false;
 				
 				invalidate(LayoutEvent.MEASURE);
-				invalidate(LayoutEvent.LAYOUT);
+				invalidate(LayoutEvent.UPDATE);
 			}
 		}
 		
@@ -184,7 +184,7 @@ package flight.containers
 				contentChanging = false;
 				
 				invalidate(LayoutEvent.MEASURE);
-				invalidate(LayoutEvent.LAYOUT);
+				invalidate(LayoutEvent.UPDATE);
 			}
 		}
 		private var contentChanging:Boolean;

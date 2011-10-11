@@ -42,7 +42,6 @@ package flight.skins
 	{
 		public function Skin()
 		{
-			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
 			_measured.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10);
@@ -176,10 +175,10 @@ package flight.skins
 			}
 			_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
 			target.addEventListener(LayoutEvent.MEASURE, dispatchEvent, false, -10);
-			target.addEventListener(LayoutEvent.LAYOUT, dispatchEvent, false, -10);
-			target.addEventListener(LayoutEvent.RESIZE, dispatchEvent, false, -10);
+			target.addEventListener(LayoutEvent.UPDATE, dispatchEvent, false, -10);
+			target.addEventListener(InvalidationEvent.VALIDATE, dispatchEvent, false, -10);
 			invalidate(LayoutEvent.MEASURE);
-			invalidate(LayoutEvent.LAYOUT);
+			invalidate(LayoutEvent.UPDATE);
 		}
 		
 		override protected function detach():void
@@ -232,7 +231,7 @@ package flight.skins
 		{
 			DataChange.queue(this, "contentWidth", _width, value);
 			DataChange.change(this, "width", _width, _width = value);
-			invalidate(LayoutEvent.RESIZE);
+			invalidate();
 		}
 		private var _width:Number = 0;
 		
@@ -242,7 +241,7 @@ package flight.skins
 		{
 			DataChange.queue(this, "contentHeight", _height, value);
 			DataChange.change(this, "height", _height, _height = value);
-			invalidate(LayoutEvent.RESIZE);
+			invalidate();
 		}
 		private var _height:Number = 0;
 		
@@ -316,10 +315,6 @@ package flight.skins
 		{
 		}
 		
-		protected function resize():void
-		{
-		}
-		
 		protected function measure():void
 		{
 			if (!layout) {
@@ -332,12 +327,6 @@ package flight.skins
 		private function onMeasure(event:LayoutEvent):void
 		{
 			measure();
-		}
-		
-		private function onResize(event:LayoutEvent):void
-		{
-			resize();
-			invalidate();
 		}
 		
 		private function onRender(event:InvalidationEvent):void
@@ -363,7 +352,7 @@ package flight.skins
 			contentChanging = false;
 			
 			invalidate(LayoutEvent.MEASURE);
-			invalidate(LayoutEvent.LAYOUT);
+			invalidate(LayoutEvent.UPDATE);
 		}
 		private var contentChanging:Boolean;
 	}

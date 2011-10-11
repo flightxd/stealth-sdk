@@ -11,14 +11,11 @@ package flight.events
 
 	public class LayoutEvent extends InvalidationEvent
 	{
-		public static const RESIZE:String = "resize";
-		Invalidation.registerPhase(RESIZE, LayoutEvent, 80);
-		
-		public static const LAYOUT:String = "layout";
-		Invalidation.registerPhase(LAYOUT, LayoutEvent, 90, false);
+		public static const UPDATE:String = "update";
+		Invalidation.registerPhase(UPDATE, LayoutEvent, 100, false);
 		
 		public static const MEASURE:String = "measure";
-		Invalidation.registerPhase(MEASURE, LayoutEvent, 100);
+		Invalidation.registerPhase(MEASURE, LayoutEvent, 110);
 		
 		public function LayoutEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false)
 		{

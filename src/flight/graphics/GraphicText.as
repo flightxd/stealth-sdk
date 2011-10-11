@@ -14,6 +14,7 @@ package flight.graphics
 
 	import flight.collections.ArrayList;
 	import flight.data.DataChange;
+	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.layouts.Box;
@@ -33,7 +34,7 @@ package flight.graphics
 		public function GraphicText()
 		{
 			layoutElement = new LayoutElement(this);
-			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
+			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			addEventListener(Event.CHANGE, onTextChange, false, 10);
 			invalidate(LayoutEvent.MEASURE);
@@ -438,7 +439,7 @@ package flight.graphics
 			measure();
 		}
 		
-		private function onResize(event:LayoutEvent):void
+		private function onRender(event:InvalidationEvent):void
 		{
 			super.width = width;
 			super.height = height;

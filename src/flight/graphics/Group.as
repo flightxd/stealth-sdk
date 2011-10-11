@@ -16,6 +16,7 @@ package flight.graphics
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
 	import flight.display.Bitmap;
+	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.graphics.paint.Paint;
@@ -196,6 +197,8 @@ package flight.graphics
 			
 			graphics.clear();
 			if (_background) {
+				_background.width = width;
+				_background.height = height;
 				_background.update();
 				_background.draw(graphics);
 			}
@@ -228,14 +231,6 @@ package flight.graphics
 				}
 				addChild(image);
 				contentChanging = false;
-			}
-		}
-		
-		override protected function resize():void
-		{
-			if (_background) {
-				_background.width = width;
-				_background.height = height;
 			}
 		}
 		
@@ -272,7 +267,7 @@ package flight.graphics
 							var layoutChild:ILayoutElement = ILayoutElement(child);
 							layoutChild.setLayoutRect( layoutChild.getLayoutRect() );
 							layoutChild.invalidate(LayoutEvent.MEASURE);
-							layoutChild.invalidate(LayoutEvent.LAYOUT);
+							layoutChild.invalidate(LayoutEvent.UPDATE);
 						}
 					}
 				}
@@ -323,11 +318,11 @@ package flight.graphics
 		{
 			if (_clipped != value) {
 				if (value) {
-					addEventListener(LayoutEvent.RESIZE, onClippedResize);
-					invalidate(LayoutEvent.RESIZE);
+					addEventListener(InvalidationEvent.VALIDATE, onClippedResize);
+					invalidate();
 					layoutElement.contained = false;
 				} else {
-					removeEventListener(LayoutEvent.RESIZE, onClippedResize);
+					removeEventListener(InvalidationEvent.VALIDATE, onClippedResize);
 					layoutElement.contained = true;
 				}
 				DataChange.change(this, "clipped", _clipped, _clipped = value);
@@ -416,7 +411,7 @@ package flight.graphics
 				contentChanging = false;
 				
 				invalidate(LayoutEvent.MEASURE);
-				invalidate(LayoutEvent.LAYOUT);
+				invalidate(LayoutEvent.UPDATE);
 			}
 		}
 		
@@ -429,7 +424,7 @@ package flight.graphics
 				contentChanging = false;
 				
 				invalidate(LayoutEvent.MEASURE);
-				invalidate(LayoutEvent.LAYOUT);
+				invalidate(LayoutEvent.UPDATE);
 			}
 		}
 		
@@ -456,7 +451,7 @@ package flight.graphics
 				}
 				
 				invalidate(LayoutEvent.MEASURE);
-				invalidate(LayoutEvent.LAYOUT);
+				invalidate(LayoutEvent.UPDATE);
 			}
 		}
 		private var contentChanging:Boolean;

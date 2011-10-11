@@ -45,7 +45,6 @@ package flight.graphics
 		{
 			layoutElement = new LayoutElement(this);
 			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
-			addEventListener(LayoutEvent.RESIZE, onResize, false, 10);
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			invalidate(LayoutEvent.MEASURE);
 			invalidate();
@@ -590,11 +589,6 @@ package flight.graphics
 		private function onMeasure(event:LayoutEvent):void
 		{
 			measure();
-		}
-		
-		private function onResize(event:LayoutEvent):void
-		{
-			invalidate();
 		}
 		
 		private function onRender(event:InvalidationEvent):void

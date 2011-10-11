@@ -75,23 +75,23 @@ package flight.layouts
 		override protected function attach():void
 		{
 			target.addEventListener(LayoutEvent.MEASURE, onMeasure, false, 20, true);
-			target.addEventListener(LayoutEvent.LAYOUT, onLayout, false, 20, true);
+			target.addEventListener(LayoutEvent.UPDATE, onLayout, false, 20, true);
 			target.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange, false, 0, true);
 			target.content.addEventListener(ListEvent.LIST_CHANGE, onContentChange, false, 0, true);
 			target.content.addEventListener(ListEvent.ITEM_CHANGE, onItemChange, false, 0, true);
 			target.invalidate(LayoutEvent.MEASURE);
-			target.invalidate(LayoutEvent.LAYOUT);
+			target.invalidate(LayoutEvent.UPDATE);
 		}
 		
 		override protected function detach():void
 		{
 			target.removeEventListener(LayoutEvent.MEASURE, onMeasure);
-			target.removeEventListener(LayoutEvent.LAYOUT, onLayout);
+			target.removeEventListener(LayoutEvent.UPDATE, onLayout);
 			target.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
 			target.content.removeEventListener(ListEvent.LIST_CHANGE, onContentChange);
 			target.content.removeEventListener(ListEvent.ITEM_CHANGE, onItemChange);
 			target.invalidate(LayoutEvent.MEASURE);
-			target.invalidate(LayoutEvent.LAYOUT);
+			target.invalidate(LayoutEvent.UPDATE);
 		}
 		
 		protected function watchTarget(property:String):void
@@ -110,14 +110,14 @@ package flight.layouts
 		{
 			switch (targetWatch[event.property]) {
 				case null: break;
-				case true: target.invalidate(LayoutEvent.LAYOUT);						// only invalidate layout
+				case true: target.invalidate(LayoutEvent.UPDATE);						// only invalidate layout
 			}
 		}
 		
 		private function onContentChange(event:ListEvent):void
 		{
 			target.invalidate(LayoutEvent.MEASURE);
-			target.invalidate(LayoutEvent.LAYOUT);
+			target.invalidate(LayoutEvent.UPDATE);
 		}
 		
 		private function onItemChange(event:ListEvent):void
@@ -126,7 +126,7 @@ package flight.layouts
 				for each (var propertyChange:PropertyChangeEvent in event.items) {
 					switch (contentWatch[propertyChange.property]) {
 						case null: break;
-						case false: target.invalidate(LayoutEvent.LAYOUT);				// break purposely excluded
+						case false: target.invalidate(LayoutEvent.UPDATE);				// break purposely excluded
 						case true: target.invalidate(LayoutEvent.MEASURE);				// always invalidate measure
 					}
 				}

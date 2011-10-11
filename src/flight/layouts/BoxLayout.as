@@ -74,7 +74,7 @@ package flight.layouts
 					_padding.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
 				}
 				DataChange.change(this, "padding", _padding, _padding = value);
-				invalidate(LayoutEvent.LAYOUT);
+				invalidate(LayoutEvent.UPDATE);
 				if (_padding) {
 					_padding.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
 				}
@@ -93,7 +93,7 @@ package flight.layouts
 		
 		private function onPaddingChange(event:PropertyChangeEvent):void
 		{
-			invalidate(LayoutEvent.LAYOUT);
+			invalidate(LayoutEvent.UPDATE);
 		}
 		
 		[Bindable("propertyChange")]
@@ -102,7 +102,7 @@ package flight.layouts
 		public function set hAlign(value:String):void
 		{
 			DataChange.change(this, "hAlign", _hAlign, _hAlign = value);
-			invalidate(LayoutEvent.LAYOUT);
+			invalidate(LayoutEvent.UPDATE);
 		}
 		private var _hAlign:String = Align.LEFT;
 		
@@ -112,7 +112,7 @@ package flight.layouts
 		public function set vAlign(value:String):void
 		{
 			DataChange.change(this, "vAlign", _vAlign, _vAlign = value);
-			invalidate(LayoutEvent.LAYOUT);
+			invalidate(LayoutEvent.UPDATE);
 		}
 		private var _vAlign:String = Align.TOP;
 		
