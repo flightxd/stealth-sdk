@@ -15,7 +15,6 @@ package flight.utils
 	import flight.data.DataChange;
 	import flight.display.DeferredListener;
 	import flight.display.IInvalidating;
-	import flight.display.ILifecycle;
 	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
 
@@ -24,7 +23,7 @@ package flight.utils
 	[Event(name="commit", type="flight.events.InvalidationEvent")]
 	[Event(name="validate", type="flight.events.InvalidationEvent")]
 	
-	public class Extension extends EventDispatcher implements ILifecycle
+	public class Extension extends EventDispatcher implements IInvalidating
 	{
 		public function Extension(target:IEventDispatcher = null)
 		{

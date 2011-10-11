@@ -17,23 +17,19 @@ package flight.text
 	import flight.collections.ArrayList;
 	import flight.data.DataChange;
 	import flight.display.DeferredListener;
-	import flight.display.ILifecycle;
+	import flight.display.IInvalidating;
 	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
-	import flight.events.LifecycleEvent;
 	import flight.events.ListEvent;
 	import flight.filters.IBitmapFilter;
 
 	import mx.core.IMXMLObject;
 
 	[Event(name="commit", type="flight.events.InvalidationEvent")]
-	[Event(name="invalidate", type="flight.events.InvalidationEvent")]
+	[Event(name="validate", type="flight.events.InvalidationEvent")]
+	[Event(name="ready", type="flight.events.InvalidationEvent")]
 	
-	[Event(name="ready", type="flight.events.LifecycleEvent")]
-	[Event(name="create", type="flight.events.LifecycleEvent")]
-	[Event(name="destroy", type="flight.events.LifecycleEvent")]
-	
-	public class TextField extends flash.text.TextField implements ILifecycle, IMXMLObject
+	public class TextField extends flash.text.TextField implements IInvalidating, IMXMLObject
 	{
 		public function TextField()
 		{
@@ -43,11 +39,10 @@ package flight.text
 			_filters.addEventListener(ListEvent.ITEM_CHANGE, refreshFilters);
 			
 			Invalidation.initialize(this);
-			addEventListener(Event.ADDED, onFirstAdded, false, 10);
-			addEventListener(LifecycleEvent.CREATE, onCreate, false, 10);
-			addEventListener(LifecycleEvent.DESTROY, onDestroy, false, 10);
-			invalidate(LifecycleEvent.CREATE);
-			invalidate(LifecycleEvent.READY);
+			addEventListener(Event.ADDED, onCreate, false, 10);
+			addEventListener(InvalidationEvent.COMMIT, onCreate, false, 10);
+			invalidate(InvalidationEvent.COMMIT);
+			invalidate(InvalidationEvent.READY);
 			
 			init();
 		}
@@ -97,6 +92,20 @@ package flight.text
 			var oldText:String = super.text;
 			DataChange.queue(this, "htmlText", super.htmlText, super.htmlText = value || "");
 			DataChange.change(this, "text", oldText, super.text);
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		override public function appendText(newText:String):void
+		{
+			if (newText) {
+				var oldText:String = super.text;
+				var oldHtmlText:String = super.htmlText;
+				super.appendText(newText);
+				DataChange.change(this, "text", oldText, super.text);
+				DataChange.change(this, "htmlText", oldHtmlText, super.htmlText);
+			}
 		}
 		
 		/**
@@ -329,17 +338,11 @@ package flight.text
 		}
 		private var deferredListeners:Dictionary;
 		
-		
-		// ====== ILifecycle implementation ====== //
-		
 		protected function get created():Boolean { return _created; }
 		private var _created:Boolean;
 		
-		public final function kill():void
+		final public function kill():void
 		{
-			removeEventListener(Event.ADDED, onFirstAdded);
-			removeEventListener(LifecycleEvent.CREATE, onCreate);
-			removeEventListener(LifecycleEvent.DESTROY, onDestroy);
 			if (_created) {
 				destroy();
 				if (parent) {
@@ -361,25 +364,17 @@ package flight.text
 		{
 		}
 		
-		private function onFirstAdded(event:Event):void
+		private function onCreate(event:Event):void
 		{
 			if (event.target == this) {
-				removeEventListener(Event.ADDED, onFirstAdded);
-				validateNow(LifecycleEvent.CREATE);
+				removeEventListener(Event.ADDED, onCreate);
+				removeEventListener(InvalidationEvent.COMMIT, onCreate);
+				
+				if (!_created) {
+					_created = true;
+					create();
+				}
 			}
-		}
-		
-		private function onCreate(event:LifecycleEvent):void
-		{
-			if (!_created) {
-				_created = true;
-				create();
-			}
-		}
-		
-		private function onDestroy(event:LifecycleEvent):void
-		{
-			kill();
 		}
 		
 		override public function toString():String

@@ -16,7 +16,6 @@ package flight.components
 	import flight.containers.IContainer;
 	import flight.data.DataChange;
 	import flight.events.LayoutEvent;
-	import flight.events.LifecycleEvent;
 	import flight.events.ListEvent;
 	import flight.graphics.GraphicElement;
 	import flight.layouts.ILayout;
@@ -33,7 +32,6 @@ package flight.components
 		{
 			_behaviors = new ArrayList();
 			_behaviors.addEventListener(ListEvent.LIST_CHANGE, onBehaviorsChange);
-			addEventListener(LifecycleEvent.CREATE, onCreate, false, 5);
 			minWidth = minHeight = 2;
 			snapToPixel = true;
 			
@@ -140,7 +138,7 @@ package flight.components
 			}
 		}
 		
-		private function onCreate(event:LifecycleEvent):void
+		override protected function create():void
 		{
 			if (_skin) {
 				if (Theme.getSkinName(_skin)) {

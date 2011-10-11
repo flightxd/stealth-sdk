@@ -9,7 +9,9 @@ package flight.display
 {
 	import flash.events.IEventDispatcher;
 
+	[Event(name="commit", type="flight.events.InvalidationEvent")]
 	[Event(name="validate", type="flight.events.InvalidationEvent")]
+	[Event(name="ready", type="flight.events.InvalidationEvent")]
 
 	public interface IInvalidating extends IEventDispatcher
 	{

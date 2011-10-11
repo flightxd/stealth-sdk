@@ -12,6 +12,7 @@ package flight.display
 	import flash.events.Event;
 	import flash.utils.Dictionary;
 
+	import flight.utils.callLater;
 	import flight.utils.getClassName;
 
 	/**
@@ -19,21 +20,35 @@ package flight.display
 	 * layout, to delay their execution and run just once before the screen is
 	 * rendered. In the case of layout this delayed execution is a performance
 	 * necessity, because the size and position of display objects can directly
-	 * effect each other, through all levels of the display-list. Invalidation
-	 * runs in ordered execution by level and depth and supports any number of
-	 * custom phases (it is recommended to maintain a small set of known phases
-	 * for performance and predictability).
+	 * effect each other, through all levels of the display-list.
+	 * 
+	 * Invalidation runs in ordered execution by level and depth and supports
+	 * any number of custom phases. For example, the "commit" phase will run
+	 * through the entire display list, starting with the stage and moving down
+	 * to each invalidated child, dispatching an <code>InvalidationEvent</code>
+	 * of type "commit". Later, in its own pass, the "layout" phase will run
+	 * through the display list dispatching a <code>LayoutEvent</code> from
+	 * display objects that have been invalidated by this phase. All
+	 * invalidation happens via these custom phases which must be registered
+	 * before use. A small set of known phases should be documented and
+	 * maintained on their related <code>Event</code> class.
+	 * 
+	 * Invalidation is tied to the display list and supports multiple stages.
+	 * Processes unrelated to rendering can be deferred via the package-level
+	 * method <code>callLater()</code>.
+	 * 
+	 * @see flight.utils#callLater()
 	 */
 	public class Invalidation
 	{
 		/**
 		 * Internal weak-reference registry of all display objects initialized
-		 * by Invalidation.
+		 * by Invalidation, including stages.
 		 */
 		private static var initialized:Dictionary = new Dictionary(true);
 		
 		/**
-		 * Internal weak-referenced registry of invalid stages. 
+		 * Internal weak-referenced registry of invalidated stages.
 		 */
 		private static var invalidStages:Dictionary = new Dictionary(true);
 		
@@ -123,11 +138,7 @@ package flight.display
 			}
 			
 			if (phase.invalidate(target)) {
-				var stage:Stage = target.stage;
-				if (stage && !invalidStages[stage]) {
-					stage.invalidate();
-					invalidStages[stage] = true;
-				}
+				invalidateStage(target.stage);
 				return true;
 			}
 			return false;
@@ -143,10 +154,10 @@ package flight.display
 																							// dispatched with a stage.invalidate and add/remove listeners costs some in performance
 					target.addEventListener(Event.RESIZE, onRender, false, -10, true);		// in many environments render and enterFrame events stop firing when stage is resized -
 																							// listening to resize compensates for this shortcoming and continues to run validation
-					invalidStages[target] = false;													// with each screen render
+					invalidStages[target] = false;											// with each screen render
 				} else {
-					target.addEventListener(Event.ADDED, onAdded, false, 20, true);				// watch for level changes - this is a permanent listener since these changes happen
-																								// less frequently than invalidation and so require fewer level calculations
+					target.addEventListener(Event.ADDED, onAdded, false, 20, true);			// watch for level changes - this is a permanent listener since these changes happen
+																							// less frequently than invalidation and so require fewer level calculations
 					if (target.stage) {
 						initialize(target.stage);
 					} else {
@@ -189,8 +200,9 @@ package flight.display
 		{
 			var stage:Stage = Stage(event.currentTarget);
 			if (invalidStages[stage]) {
-				validateNow(stage);
 				invalidStages[stage] = false;
+				validateNow(stage);
+				delete invalidStages[stage];
 			}
 		}
 
@@ -205,7 +217,7 @@ package flight.display
 				var target:DisplayObject = DisplayObject(event.currentTarget);
 				var invalid:Boolean = false;
 																					// correctly invalidate newly added display object on all phases
-				for each (var phase:Invalidation in phases) {					// where it was invalidated while off of the display-list (and set at level -1)
+				for each (var phase:Invalidation in phases) {						// where it was invalidated while off of the display-list (and set at level -1)
 					if (phase.invalid[target]) {
 						phase.invalid[target] = false;
 						phase.invalidate(target);
@@ -213,11 +225,19 @@ package flight.display
 					}
 				}
 				if (invalid) {
-					var stage:Stage = target.stage;
-					if (stage && !invalidStages[stage]) {
-						stage.invalidate();
-						invalidStages[stage] = true;
-					}
+					invalidateStage(target.stage);
+				}
+			}
+		}
+		
+		private static function invalidateStage(stage:Stage):void
+		{
+			if (stage) {
+				if (!invalidStages[stage]) {
+					stage.invalidate();
+					invalidStages[stage] = true;
+				} else if (invalidStages[stage] != null) {
+					callLater(invalidateStage, arguments);
 				}
 			}
 		}
@@ -309,83 +329,81 @@ package flight.display
 		 */
 		public function validateNow(target:DisplayObject):void
 		{
-			if (ascending) {
-				return validateAscending(target);
-			} else {
-				return validateDescending(target);
-			}
-		}
-		
-		private function validateDescending(target:DisplayObject):void
-		{
-			if (invalid[target]) {
-				delete invalid[target];
-				target.dispatchEvent(new eventType(_name));
-			}
+			var current:DisplayObjectContainer;
+			var next:DisplayObject;
 			
-			if (invalidContent[target]) {
-				delete invalidContent[target];
+			// flattened recursive process to maintain a shallow stack
+			if (ascending) {
 				
-				var current:DisplayObjectContainer = DisplayObjectContainer(target);
-				indices[current] = 0;
-				
-				while (current) {
+				if (invalidContent[target]) {
+					current = DisplayObjectContainer(target);
+					indices[current] = 0;
 					
-					var next:DisplayObject = indices[current] < current.numChildren ? current.getChildAt(indices[current]++) : null;
-					if (next) {
+					while (current) {
 						
-						if (invalid[next]) {
-							delete invalid[next];
-							next.dispatchEvent(new eventType(_name));
+						next = indices[current] < current.numChildren ? current.getChildAt(indices[current]++) : null;
+						if (next) {
+							if (invalidContent[next]) {
+								delete invalidContent[next];
+								
+								current = DisplayObjectContainer(next);
+								indices[current] = 0;
+							} else if (invalid[next]) {
+								delete invalid[next];
+								next.dispatchEvent(new eventType(_name));
+							}
+						} else {
+							if (invalid[current]) {
+								delete invalid[current];
+								current.dispatchEvent(new eventType(_name));
+							}
+							delete indices[current];
+							current = current != target ? current.parent : null;
 						}
-						
-						if (invalidContent[next]) {
-							delete invalidContent[next];
-							
-							current = DisplayObjectContainer(next);
-							indices[current] = 0;
-						}
-					} else {
-						delete indices[current];
-						current = current != target ? current.parent : null;
 					}
-				}
-			}
-		}
-		
-		private function validateAscending(target:DisplayObject):void
-		{
-			if (invalidContent[target]) {
-				
-				var current:DisplayObjectContainer = DisplayObjectContainer(target);
-				indices[current] = 0;
-				
-				while (current) {
 					
-					var next:DisplayObject = indices[current] < current.numChildren ? current.getChildAt(indices[current]++) : null;
-					if (next) {
-						if (invalidContent[next]) {
-							delete invalidContent[next];
-							
-							current = DisplayObjectContainer(next);
-							indices[current] = 0;
-						} else if (invalid[next]) {
-							delete invalid[next];
-							next.dispatchEvent(new eventType(_name));
-						}
-					} else {
-						if (invalid[current]) {
-							delete invalid[current];
-							current.dispatchEvent(new eventType(_name));
-						}
-						delete indices[current];
-						current = current != target ? current.parent : null;
-					}
+					delete invalidContent[target];
+				} else if (invalid[target]) {
+					delete invalid[target];
+					target.dispatchEvent(new eventType(_name));
 				}
 				
-				delete invalidContent[target];
+			} else {
+				
+				if (invalid[target]) {
+					delete invalid[target];
+					target.dispatchEvent(new eventType(_name));
+				}
+				
+				if (invalidContent[target]) {
+					current = DisplayObjectContainer(target);
+					indices[current] = 0;
+					delete invalidContent[current];
+					
+					while (current) {
+						
+						next = indices[current] < current.numChildren ? current.getChildAt(indices[current]++) : null;
+						if (next) {
+							
+							if (invalid[next]) {
+								delete invalid[next];
+								next.dispatchEvent(new eventType(_name));
+							}
+							
+							if (invalidContent[next]) {
+								delete invalidContent[next];
+								
+								current = DisplayObjectContainer(next);
+								indices[current] = 0;
+							}
+						} else {
+							delete indices[current];
+							current = current != target ? current.parent : null;
+						}
+					}
+				}
+				
 			}
 		}
-		
 	}
 }

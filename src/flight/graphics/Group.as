@@ -17,7 +17,6 @@ package flight.graphics
 	import flight.data.DataChange;
 	import flight.display.Bitmap;
 	import flight.events.LayoutEvent;
-	import flight.events.LifecycleEvent;
 	import flight.events.ListEvent;
 	import flight.graphics.paint.Paint;
 	import flight.graphics.shapes.Rect;
@@ -126,6 +125,7 @@ package flight.graphics
 				}
 				DataChange.change(this, "background", _background, _background = value as IGraphicShape);
 				if (_background) {
+					_background.validateNow();
 					_background.width = width;
 					_background.height = height;
 					_background.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onShapeChange, false, 10);
@@ -196,7 +196,6 @@ package flight.graphics
 			
 			graphics.clear();
 			if (_background) {
-				_background.validateNow(LifecycleEvent.CREATE);
 				_background.update();
 				_background.draw(graphics);
 			}
@@ -210,7 +209,7 @@ package flight.graphics
 				}
 				for each (child in _content) {
 					if (child is IGraphicShape) {
-						IGraphicShape(child).validateNow(LifecycleEvent.CREATE);
+						IGraphicShape(child).validateNow();
 						IGraphicShape(child).update(child.transform.matrix);
 						IGraphicShape(child).draw(graphics);
 					}
