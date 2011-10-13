@@ -36,7 +36,6 @@ package flight.display
 			_filters.addEventListener(ListEvent.LIST_CHANGE, refreshFilters);
 			_filters.addEventListener(ListEvent.ITEM_CHANGE, refreshFilters);
 			
-			Invalidation.initialize(this);
 			addEventListener(Event.ADDED, onCreate, false, 10);
 			addEventListener(InvalidationEvent.COMMIT, onCreate, false, 10);
 			invalidate(InvalidationEvent.COMMIT);

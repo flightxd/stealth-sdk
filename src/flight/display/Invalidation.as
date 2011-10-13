@@ -46,11 +46,13 @@ package flight.display
 		 * by Invalidation, including stages.
 		 */
 		private static var initialized:Dictionary = new Dictionary(true);
+		initialized[null] = true;
 		
 		/**
 		 * Internal weak-referenced registry of invalidated stages.
 		 */
 		private static var invalidStages:Dictionary = new Dictionary(true);
+		invalidStages[null] = true;
 		
 		/**
 		 * An Array of registered phases ordered by priority from highest to
@@ -138,33 +140,13 @@ package flight.display
 			}
 			
 			if (phase.invalidate(target)) {
+				if (!initialized[target]) {
+					initialize(target);
+				}
 				invalidateStage(target.stage);
 				return true;
 			}
 			return false;
-		}
-		
-		public static function initialize(target:DisplayObject):void
-		{
-			if (!initialized[target]) {														// setup listeners only once on each unique target
-				initialized[target] = true;
-				
-				if (target is Stage) {
-					target.addEventListener(Event.RENDER, onRender, false, -10, true);		// listen to ALL stage render events, also a permanent listener since they only get
-																							// dispatched with a stage.invalidate and add/remove listeners costs some in performance
-					target.addEventListener(Event.RESIZE, onRender, false, -10, true);		// in many environments render and enterFrame events stop firing when stage is resized -
-																							// listening to resize compensates for this shortcoming and continues to run validation
-					invalidStages[target] = false;											// with each screen render
-				} else {
-					target.addEventListener(Event.ADDED, onAdded, false, 20, true);			// watch for level changes - this is a permanent listener since these changes happen
-																							// less frequently than invalidation and so require fewer level calculations
-					if (target.stage) {
-						initialize(target.stage);
-					} else {
-						target.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-					}
-				}
-			}
 		}
 
 		/**
@@ -192,6 +174,28 @@ package flight.display
 				}
 			}
 		}
+		
+		private static function initialize(target:DisplayObject):void
+		{
+			if (!initialized[target]) {
+				initialized[target] = true;
+				
+				if (target is Stage) {
+					target.addEventListener(Event.RENDER, onRender, false, -10, true);		// listen to ALL stage render events, also a permanent listener since they only get
+					// dispatched with a stage.invalidate and add/remove listeners costs some in performance
+					target.addEventListener(Event.RESIZE, onRender, false, -10, true);		// in many environments render and enterFrame events stop firing when stage is resized -
+					// listening to resize compensates for this shortcoming and continues to run validation
+				} else {
+					target.addEventListener(Event.ADDED, onAdded, false, 20, true);			// watch for level changes - this is a permanent listener since these changes happen
+					// less frequently than invalidation and so require fewer level calculations
+					if (target.stage) {
+						initialize(target.stage);
+					} else {
+						target.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+					}
+				}
+			}
+		}
 
 		/**
 		 * Listener responding to both render and stage resize events.
@@ -214,29 +218,25 @@ package flight.display
 		private static function onAdded(event:Event):void
 		{
 			if (event.target == event.currentTarget) {
-				var target:DisplayObject = DisplayObject(event.currentTarget);
-				var invalid:Boolean = false;
+				var target:DisplayObject = DisplayObject(event.target);
 																					// correctly invalidate newly added display object on all phases
 				for each (var phase:Invalidation in phases) {						// where it was invalidated while off of the display-list (and set at level -1)
 					if (phase.invalid[target]) {
 						phase.invalid[target] = false;
 						phase.invalidate(target);
-						invalid = true;
 					}
 				}
-				if (invalid) {
-					invalidateStage(target.stage);
-				}
+				invalidateStage(target.stage);
 			}
 		}
 		
 		private static function invalidateStage(stage:Stage):void
 		{
-			if (stage) {
-				if (!invalidStages[stage]) {
-					stage.invalidate();
+			if (!invalidStages[stage]) {
+				if (invalidStages[stage] == null) {
 					invalidStages[stage] = true;
-				} else if (invalidStages[stage] != null) {
+					stage.invalidate();
+				} else {
 					callLater(invalidateStage, arguments);
 				}
 			}
@@ -331,17 +331,20 @@ package flight.display
 		{
 			var current:DisplayObjectContainer;
 			var next:DisplayObject;
+			var i:int;
 			
 			// flattened recursive process to maintain a shallow stack
 			if (ascending) {
 				
 				if (invalidContent[target]) {
+					delete invalidContent[target];
 					current = DisplayObjectContainer(target);
 					indices[current] = 0;
 					
 					while (current) {
 						
-						next = indices[current] < current.numChildren ? current.getChildAt(indices[current]++) : null;
+						i = indices[current]++;
+						next = i < current.numChildren ? current.getChildAt(i) : null;
 						if (next) {
 							if (invalidContent[next]) {
 								delete invalidContent[next];
@@ -362,7 +365,6 @@ package flight.display
 						}
 					}
 					
-					delete invalidContent[target];
 				} else if (invalid[target]) {
 					delete invalid[target];
 					target.dispatchEvent(new eventType(_name));
@@ -376,13 +378,14 @@ package flight.display
 				}
 				
 				if (invalidContent[target]) {
+					delete invalidContent[target];
 					current = DisplayObjectContainer(target);
 					indices[current] = 0;
-					delete invalidContent[current];
 					
 					while (current) {
 						
-						next = indices[current] < current.numChildren ? current.getChildAt(indices[current]++) : null;
+						i = indices[current]++;
+						next = i < current.numChildren ? current.getChildAt(i) : null;
 						if (next) {
 							
 							if (invalid[next]) {

@@ -48,9 +48,6 @@ package flight.utils
 					this["host"] = _target;
 				}
 				if (_target) {
-					if (_target is DisplayObject) {
-						Invalidation.initialize(DisplayObject(_target));
-					}
 					for (var property:String in bindings) {
 						bindings[property] = property in _target;
 						if (bindings[property]) {

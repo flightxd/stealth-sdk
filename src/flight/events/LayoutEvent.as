@@ -15,7 +15,7 @@ package flight.events
 		Invalidation.registerPhase(UPDATE, LayoutEvent, 100, false);
 		
 		public static const MEASURE:String = "measure";
-		Invalidation.registerPhase(MEASURE, LayoutEvent, 110);
+		Invalidation.registerPhase(MEASURE, LayoutEvent, 110, true);
 		
 		public function LayoutEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false)
 		{

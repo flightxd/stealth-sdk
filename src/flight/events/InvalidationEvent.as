@@ -14,13 +14,13 @@ package flight.events
 	public class InvalidationEvent extends Event
 	{
 		public static const COMMIT:String = "commit";
-		Invalidation.registerPhase(COMMIT, InvalidationEvent, 200);
+		Invalidation.registerPhase(COMMIT, InvalidationEvent, 200, false);
 		
 		public static const VALIDATE:String = "validate";
 		Invalidation.registerPhase(VALIDATE, InvalidationEvent, 0, true);
 		
 		public static const READY:String = "ready";
-		Invalidation.registerPhase(READY, InvalidationEvent, -10);
+		Invalidation.registerPhase(READY, InvalidationEvent, -10, true);
 		
 		public function InvalidationEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false)
 		{
