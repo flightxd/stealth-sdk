@@ -29,7 +29,7 @@ package flight.events
 		
 		override public function clone():Event
 		{
-			var constructor:Class = Object(this).constructor;
+			var constructor:Class = this["constructor"];
 			return new constructor(type, bubbles, cancelable);
 		}
 	}

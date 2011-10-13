@@ -52,7 +52,7 @@ package flight.events
 			}
 			
 			if (_from > from) {
-				_from = from
+				_from = from;
 			}
 			if (_to < to) {
 				_to = to;
