@@ -9,8 +9,8 @@ package flight.ranges
 {
 	import flash.events.EventDispatcher;
 
-	import flight.data.DataChange;
 	import flight.events.PositionEvent;
+	import flight.events.PropertyEvent;
 
 	[Event(name="progressChange", type="flash.events.Event")]
 	
@@ -26,7 +26,7 @@ package flight.ranges
 		public function set precision(value:Number):void
 		{
 			if (_precision != value) {
-				DataChange.queue(this, "precision", _precision, _precision = value);
+				PropertyEvent.queue(this, "precision", _precision, _precision = value);
 				this.current = _value;
 			}
 		}
@@ -41,10 +41,10 @@ package flight.ranges
 				var p:Number = 1 / _precision;
 				value = Math.round(value * p) / p;
 			}
-			DataChange.queue(this, "current", _value, _value = value);
+			PropertyEvent.queue(this, "current", _value, _value = value);
 			
 			value = !_length ? 0 : (_value - _begin) / _length;
-			DataChange.change(this, "percent", _percent, _percent = value);
+			PropertyEvent.change(this, "percent", _percent, _percent = value);
 			
 			if (hasEventListener(PositionEvent.POSITION_CHANGE)) {
 				dispatchEvent(new PositionEvent(PositionEvent.POSITION_CHANGE));
@@ -77,8 +77,8 @@ package flight.ranges
 		public function set begin(value:Number):void
 		{
 			if (_begin != value) {
-				DataChange.queue(this, "begin", _begin, _begin = value);
-				DataChange.queue(this, "end", _end, _end = _begin + _length);
+				PropertyEvent.queue(this, "begin", _begin, _begin = value);
+				PropertyEvent.queue(this, "end", _end, _end = _begin + _length);
 				this.current = _value;
 			}
 		}
@@ -89,11 +89,11 @@ package flight.ranges
 		public function set end(value:Number):void
 		{
 			if (_end != value) {
-				DataChange.queue(this, "end", _end, _end = value);
+				PropertyEvent.queue(this, "end", _end, _end = value);
 				if (_begin > _end) {
-					DataChange.queue(this, "begin", _begin, _begin = _end);
+					PropertyEvent.queue(this, "begin", _begin, _begin = _end);
 				}
-				DataChange.queue(this, "length", _length, _length = _end - _begin);
+				PropertyEvent.queue(this, "length", _length, _length = _end - _begin);
 				this.current = _value;
 			}
 		}

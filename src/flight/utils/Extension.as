@@ -12,13 +12,11 @@ package flight.utils
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
 
-	import flight.data.DataChange;
 	import flight.display.DeferredListener;
 	import flight.display.IInvalidating;
 	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
-
-	import mx.events.PropertyChangeEvent;
+	import flight.events.PropertyEvent;
 
 	[Event(name="commit", type="flight.events.InvalidationEvent")]
 	[Event(name="validate", type="flight.events.InvalidationEvent")]
@@ -37,13 +35,13 @@ package flight.utils
 			if (_target != value) {
 				
 				if (_target) {
-					removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
-					_target.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
+					removeEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange);
+					_target.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange);
 					_target.removeEventListener(InvalidationEvent.VALIDATE, dispatchEvent);
 					_target.removeEventListener(InvalidationEvent.COMMIT, dispatchEvent);
 					detach();
 				}
-				DataChange.queue(this ,"target", _target, _target = value);
+				PropertyEvent.queue(this ,"target", _target, _target = value);
 				if ("host" in this) {
 					this["host"] = _target;
 				}
@@ -54,8 +52,8 @@ package flight.utils
 							this[property] = _target[property];
 						}
 					}
-					addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange, false, -10);
-					_target.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange, false, -10);
+					addEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange, false, -10);
+					_target.addEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange, false, -10);
 					_target.addEventListener(InvalidationEvent.VALIDATE, dispatchEvent, false, -10);
 					_target.addEventListener(InvalidationEvent.COMMIT, dispatchEvent, false, -10);
 					invalidate(InvalidationEvent.VALIDATE);
@@ -66,7 +64,7 @@ package flight.utils
 					}
 					attach();
 				}
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _target:IEventDispatcher;
@@ -92,7 +90,7 @@ package flight.utils
 		}
 		private var bindings:Object = {};
 		
-		private function onPropertyChange(event:PropertyChangeEvent):void
+		private function onPropertyChange(event:PropertyEvent):void
 		{
 			var property:String = String(event.property);
 			if (bindings[property]) {

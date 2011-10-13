@@ -7,6 +7,7 @@
 
 package flight.data
 {
+	import flash.events.Event;
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
 
@@ -313,9 +314,8 @@ package flight.data
 			if (source is IEventDispatcher) {
 				var changeEvents:Array = getBindableEvents(source, sourceData.property);
 				if (changeEvents.length) {
-					var dispatcher:IEventDispatcher = IEventDispatcher(source);
 					for each (var changeEvent:String in changeEvents) {
-						dispatcher.addEventListener(changeEvent, onDataChange, false, 0xFF, true);
+						source.addEventListener(changeEvent, onDataChange, false, 5, true);
 					}
 					sourceData.event = changeEvent;
 				}
@@ -381,12 +381,11 @@ package flight.data
 		}
 		
 		protected static var bindPaths:Dictionary = new Dictionary(true);
-		DataChange.staticCallbacks.push(onDataChange);
-		// dataChange may be a DataChange object, a PropertyChangeEvent or any other Event
-		private static function onDataChange(dataChange:Object):void
+		
+		private static function onDataChange(changeEvent:Event):void
 		{
-			var source:Object = "source" in dataChange ? dataChange.source : dataChange.target;
-			var property:String = "property" in dataChange ? dataChange.property : dataChange.type;
+			var source:Object = "source" in changeEvent ? changeEvent["source"] : changeEvent.target;
+			var property:String = "property" in changeEvent ? changeEvent["property"] : changeEvent.type;
 			var bindPath:Array = bindPaths[source];
 			
 			while (bindPath != null) {

@@ -12,10 +12,10 @@ package flight.containers
 
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
-	import flight.data.DataChange;
 	import flight.display.MovieClip;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
+	import flight.events.PropertyEvent;
 	import flight.layouts.Bounds;
 	import flight.layouts.IBounds;
 	import flight.layouts.ILayout;
@@ -58,7 +58,7 @@ package flight.containers
 					state.undo();
 					state = newState;
 					state.execute();
-					DataChange.change(this, "currentState", _currentState, _currentState = state.name);
+					PropertyEvent.change(this, "currentState", _currentState, _currentState = state.name);
 				}
 			}
 		}
@@ -108,11 +108,11 @@ package flight.containers
 				if (_layout) {
 					_layout.target = null;
 				}
-				DataChange.queue(this, "layout", _layout, _layout = value);
+				PropertyEvent.queue(this, "layout", _layout, _layout = value);
 				if (_layout) {
 					_layout.target = this;
 				}
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _layout:ILayout;
@@ -122,7 +122,7 @@ package flight.containers
 		override public function set width(value:Number):void
 		{
 			_measured.width = value;
-			DataChange.change(this, "width", _width, _width = value);
+			PropertyEvent.change(this, "width", _width, _width = value);
 		}
 		private var _width:Number = 0;
 		
@@ -131,7 +131,7 @@ package flight.containers
 		override public function set height(value:Number):void
 		{
 			_measured.height = value;
-			DataChange.change(this, "height", _height, _height = value);
+			PropertyEvent.change(this, "height", _height, _height = value);
 		}
 		private var _height:Number = 0;
 		

@@ -11,7 +11,7 @@ package flight.filters
 	import flash.filters.BitmapFilter;
 	import flash.filters.ColorMatrixFilter;
 
-	import flight.data.DataChange;
+	import flight.events.PropertyEvent;
 
 	public class ColorMatrixFilter extends EventDispatcher implements IBitmapFilter
 	{
@@ -25,7 +25,7 @@ package flight.filters
 		public function get enabled():Boolean { return _enabled; }
 		public function set enabled(value:Boolean):void
 		{
-			DataChange.change(this, "enabled", _enabled, _enabled = value);
+			PropertyEvent.change(this, "enabled", _enabled, _enabled = value);
 		}
 		private var _enabled:Boolean = true;
 		
@@ -41,7 +41,7 @@ package flight.filters
 		public function get matrix():Array { return _bitmapFilter.matrix; }
 		public function set matrix(value:Array):void
 		{
-			DataChange.change(this, "matrix", _bitmapFilter.matrix, _bitmapFilter.matrix = value);
+			PropertyEvent.change(this, "matrix", _bitmapFilter.matrix, _bitmapFilter.matrix = value);
 		}
 	}
 }

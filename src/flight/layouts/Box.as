@@ -9,7 +9,7 @@ package flight.layouts
 {
 	import flash.events.EventDispatcher;
 
-	import flight.data.DataChange;
+	import flight.events.PropertyEvent;
 
 	public class Box extends EventDispatcher
 	{
@@ -25,7 +25,7 @@ package flight.layouts
 		public function get top():Number { return _top }
 		public function set top(value:Number):void
 		{
-			DataChange.change(this, "top", _top, _top = value);
+			PropertyEvent.change(this, "top", _top, _top = value);
 		}
 		private var _top:Number;
 		
@@ -33,7 +33,7 @@ package flight.layouts
 		public function get right():Number { return _right }
 		public function set right(value:Number):void
 		{
-			DataChange.change(this, "right", _right, _right = value);
+			PropertyEvent.change(this, "right", _right, _right = value);
 		}
 		private var _right:Number;
 		
@@ -41,7 +41,7 @@ package flight.layouts
 		public function get bottom():Number { return _bottom }
 		public function set bottom(value:Number):void
 		{
-			DataChange.change(this, "bottom", _bottom, _bottom = value);
+			PropertyEvent.change(this, "bottom", _bottom, _bottom = value);
 		}
 		private var _bottom:Number;
 		
@@ -49,7 +49,7 @@ package flight.layouts
 		public function get left():Number { return _left }
 		public function set left(value:Number):void
 		{
-			DataChange.change(this, "left", _left, _left = value);
+			PropertyEvent.change(this, "left", _left, _left = value);
 		}
 		private var _left:Number;
 		
@@ -57,7 +57,7 @@ package flight.layouts
 		public function get vertical():Number { return _vertical }
 		public function set vertical(value:Number):void
 		{
-			DataChange.change(this, "vertical", _vertical, _vertical = value);
+			PropertyEvent.change(this, "vertical", _vertical, _vertical = value);
 		}
 		private var _vertical:Number = 0;
 		
@@ -65,7 +65,7 @@ package flight.layouts
 		public function get horizontal():Number { return _horizontal }
 		public function set horizontal(value:Number):void
 		{
-			DataChange.change(this, "horizontal", _horizontal, _horizontal = value);
+			PropertyEvent.change(this, "horizontal", _horizontal, _horizontal = value);
 		}
 		private var _horizontal:Number = 0;
 		

@@ -5,13 +5,14 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.data
+package flight.selection
 {
 	import flash.events.EventDispatcher;
 
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.events.ListEvent;
+	import flight.events.PropertyEvent;
 
 	public class ListSelection extends EventDispatcher implements IListSelection
 	{
@@ -30,7 +31,7 @@ package flight.data
 				_list.removeEventListener(ListEvent.LIST_CHANGE, onListChange);
 			}
 			index = -1;
-			DataChange.change(this, "list", _list, _list = value);
+			PropertyEvent.change(this, "list", _list, _list = value);
 			if (_list) {
 				_list.addEventListener(ListEvent.LIST_CHANGE, onListChange, false, 10);
 			}
@@ -53,8 +54,8 @@ package flight.data
 			// restrict value within -1 (deselect) and highest possible index
 			value = value < -1 ? -1 : (value > list.length - 1 ? list.length - 1 : value);
 			if (_index != value) {
-				DataChange.queue(this, "index", _index, _index = value);
-				DataChange.queue(this, "item", _item, _item = _index != -1 ? list.getAt(_index) : null);
+				PropertyEvent.queue(this, "index", _index, _index = value);
+				PropertyEvent.queue(this, "item", _item, _item = _index != -1 ? list.getAt(_index) : null);
 				
 				if (_items) {
 					_items.queueChanges = updating = true;
@@ -70,7 +71,7 @@ package flight.data
 					_indices.queueChanges = updating = false;
 				}
 				
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _index:int = -1;
@@ -162,8 +163,8 @@ package flight.data
 			for each (item in _items) {
 				_indices.add(_list.getIndex(item));
 			}
-			DataChange.queue(this, "item", _item, _item = _items.length ? _items.getAt(-1) : null);
-			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.getAt(-1) : -1);
+			PropertyEvent.queue(this, "item", _item, _item = _items.length ? _items.getAt(-1) : null);
+			PropertyEvent.change(this, "index", _index, _index = _indices.length ? _indices.getAt(-1) : -1);
 			_indices.queueChanges = updating = false;
 		}
 
@@ -179,8 +180,8 @@ package flight.data
 			for each (index in _items) {
 				_items.add(_list.getAt(index));
 			}
-			DataChange.queue(this, "item", _item, _item = _items.length ? _items.getAt(-1) : null);
-			DataChange.change(this, "index", _index, _index = _indices.length ? _indices.getAt(-1) : -1);
+			PropertyEvent.queue(this, "item", _item, _item = _items.length ? _items.getAt(-1) : null);
+			PropertyEvent.change(this, "index", _index, _index = _indices.length ? _indices.getAt(-1) : -1);
 			_items.queueChanges = updating = false;
 		}
 	}

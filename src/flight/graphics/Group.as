@@ -14,11 +14,11 @@ package flight.graphics
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.containers.IContainer;
-	import flight.data.DataChange;
 	import flight.display.Bitmap;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
+	import flight.events.PropertyEvent;
 	import flight.graphics.paint.Paint;
 	import flight.graphics.shapes.Rect;
 	import flight.layouts.BasicLayout;
@@ -28,8 +28,6 @@ package flight.graphics
 	import flight.layouts.ILayoutElement;
 	import flight.ranges.IPosition;
 	import flight.ranges.Position;
-
-	import mx.events.PropertyChangeEvent;
 
 	[Event(name="validate", type="flight.events.InvalidationEvent")]
 
@@ -122,14 +120,14 @@ package flight.graphics
 			
 			if (_background != value) {
 				if (_background) {
-					_background.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onShapeChange);
+					_background.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onShapeChange);
 				}
-				DataChange.change(this, "background", _background, _background = value as IGraphicShape);
+				PropertyEvent.change(this, "background", _background, _background = value as IGraphicShape);
 				if (_background) {
 					_background.validateNow();
 					_background.width = width;
 					_background.height = height;
-					_background.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onShapeChange, false, 10);
+					_background.addEventListener(PropertyEvent.PROPERTY_CHANGE, onShapeChange, false, 10);
 					invalidate();
 				}
 			}
@@ -141,7 +139,7 @@ package flight.graphics
 		public function set flattened(value:Boolean):void
 		{
 			if (_flattened != value) {
-				DataChange.queue(this, "flattened", _flattened, _flattened = value);
+				PropertyEvent.queue(this, "flattened", _flattened, _flattened = value);
 				contentChanging = true;
 				if (_flattened) {
 					invalidate();
@@ -154,7 +152,7 @@ package flight.graphics
 					}
 					contentChanging = false;
 				}
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _flattened:Boolean;
@@ -169,7 +167,7 @@ package flight.graphics
 		public function set rasterized(value:Boolean):void
 		{
 			if (_rasterized != value) {
-				DataChange.change(this, "rasterized", _rasterized, _rasterized = value);
+				PropertyEvent.change(this, "rasterized", _rasterized, _rasterized = value);
 				if (_rasterized) {
 					invalidate();
 				} else {
@@ -257,7 +255,7 @@ package flight.graphics
 				if (_layout) {
 					_layout.target = null;
 				}
-				DataChange.queue(this, "layout", _layout, _layout = value);
+				PropertyEvent.queue(this, "layout", _layout, _layout = value);
 				if (_layout) {
 					_layout.target = this;
 				} else {
@@ -271,7 +269,7 @@ package flight.graphics
 						}
 					}
 				}
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _layout:ILayout;
@@ -291,7 +289,7 @@ package flight.graphics
 			if (_hPosition) {
 				_hPosition.removeEventListener(Event.CHANGE, onPositionChange);
 			}
-			DataChange.change(this, "hPosition", _hPosition, _hPosition = value);
+			PropertyEvent.change(this, "hPosition", _hPosition, _hPosition = value);
 			if (_hPosition) {
 				_hPosition.addEventListener(Event.CHANGE, onPositionChange);
 			}
@@ -305,7 +303,7 @@ package flight.graphics
 			if (_vPosition) {
 				_vPosition.removeEventListener(Event.CHANGE, onPositionChange);
 			}
-			DataChange.change(this, "vPosition", _vPosition, _vPosition = value);
+			PropertyEvent.change(this, "vPosition", _vPosition, _vPosition = value);
 			if (_vPosition) {
 				_vPosition.addEventListener(Event.CHANGE, onPositionChange);
 			}
@@ -325,7 +323,7 @@ package flight.graphics
 					removeEventListener(InvalidationEvent.VALIDATE, onClippedResize);
 					layoutElement.contained = true;
 				}
-				DataChange.change(this, "clipped", _clipped, _clipped = value);
+				PropertyEvent.change(this, "clipped", _clipped, _clipped = value);
 			}
 		}
 		private var _clipped:Boolean = false;

@@ -12,8 +12,8 @@ package flight.graphics.paint
 	import flash.display.IGraphicsData;
 	import flash.geom.Matrix;
 
-	import flight.data.DataChange;
 	import flight.display.BitmapSource;
+	import flight.events.PropertyEvent;
 	import flight.geom.MatrixData;
 
 	[DefaultProperty("source")]
@@ -35,7 +35,7 @@ package flight.graphics.paint
 		public function get source():BitmapData { return _source; }
 		public function set source(value:*):void
 		{
-			DataChange.change(this, "source", _source, bitmapFill.bitmapData = _source = BitmapSource.getInstance(value));
+			PropertyEvent.change(this, "source", _source, bitmapFill.bitmapData = _source = BitmapSource.getInstance(value));
 		}
 		private var _source:BitmapData;
 		
@@ -45,7 +45,7 @@ package flight.graphics.paint
 		public function set fillMode(value:String):void
 		{
 			bitmapFill.repeat = value == BitmapFillMode.REPEAT;
-			DataChange.change(this, "fillMode", _fillMode, _fillMode = value);
+			PropertyEvent.change(this, "fillMode", _fillMode, _fillMode = value);
 		}
 		private var _fillMode:String;
 		
@@ -54,7 +54,7 @@ package flight.graphics.paint
 		public function set smooth(value:Boolean):void
 		{
 			bitmapFill.smooth = value;
-			DataChange.change(this, "smooth", _smooth, _smooth = value);
+			PropertyEvent.change(this, "smooth", _smooth, _smooth = value);
 		}
 		private var _smooth:Boolean = false;
 		
@@ -62,7 +62,7 @@ package flight.graphics.paint
 		public function get x():Number { return _x; }
 		public function set x(value:Number):void
 		{
-			DataChange.change(this, "x", _x, _x = value);
+			PropertyEvent.change(this, "x", _x, _x = value);
 		}
 		private var _x:Number;
 		
@@ -70,7 +70,7 @@ package flight.graphics.paint
 		public function get y():Number { return _y; }
 		public function set y(value:Number):void
 		{
-			DataChange.change(this, "y", _y, _y = value);
+			PropertyEvent.change(this, "y", _y, _y = value);
 		}
 		private var _y:Number;
 		
@@ -78,7 +78,7 @@ package flight.graphics.paint
 		public function get scaleX():Number { return _scaleX; }
 		public function set scaleX(value:Number):void
 		{
-			DataChange.change(this, "scaleX", _scaleX, _scaleX = value);
+			PropertyEvent.change(this, "scaleX", _scaleX, _scaleX = value);
 		}
 		private var _scaleX:Number;
 		
@@ -86,7 +86,7 @@ package flight.graphics.paint
 		public function get scaleY():Number { return _scaleY; }
 		public function set scaleY(value:Number):void
 		{
-			DataChange.change(this, "scaleY", _scaleY, _scaleY = value);
+			PropertyEvent.change(this, "scaleY", _scaleY, _scaleY = value);
 		}
 		private var _scaleY:Number;
 		
@@ -94,7 +94,7 @@ package flight.graphics.paint
 		public function get rotation():Number { return _rotation; }
 		public function set rotation(value:Number):void
 		{
-			DataChange.change(this, "rotation", _rotation, _rotation = value);
+			PropertyEvent.change(this, "rotation", _rotation, _rotation = value);
 		}
 		private var _rotation:Number;
 		
@@ -102,7 +102,7 @@ package flight.graphics.paint
 		public function get transformX():Number { return _transformX; }
 		public function set transformX(value:Number):void
 		{
-			DataChange.change(this, "transformX", _transformX, _transformX = value);
+			PropertyEvent.change(this, "transformX", _transformX, _transformX = value);
 		}
 		private var _transformX:Number = 0;
 		
@@ -110,7 +110,7 @@ package flight.graphics.paint
 		public function get transformY():Number { return _transformY; }
 		public function set transformY(value:Number):void
 		{
-			DataChange.change(this, "transformY", _transformY, _transformY = value);
+			PropertyEvent.change(this, "transformY", _transformY, _transformY = value);
 		}
 		private var _transformY:Number = 0;
 		
@@ -118,7 +118,7 @@ package flight.graphics.paint
 		public function get matrix():Matrix { return _matrix; }
 		public function set matrix(value:Matrix):void
 		{
-			DataChange.change(this, "matrix", _matrix, _matrix = value);
+			PropertyEvent.change(this, "matrix", _matrix, _matrix = value);
 		}
 		private var _matrix:Matrix = new MatrixData();
 		

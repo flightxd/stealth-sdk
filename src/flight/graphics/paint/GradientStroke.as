@@ -13,7 +13,7 @@ package flight.graphics.paint
 	import flash.display.JointStyle;
 	import flash.display.LineScaleMode;
 
-	import flight.data.DataChange;
+	import flight.events.PropertyEvent;
 
 	public class GradientStroke extends GradientFill implements IStroke
 	{
@@ -32,7 +32,7 @@ package flight.graphics.paint
 		public function set weight(value:Number):void
 		{
 			stroke.thickness = value;
-			DataChange.change(this, "weight", _weight, _weight = value);
+			PropertyEvent.change(this, "weight", _weight, _weight = value);
 		}
 		private var _weight:Number;
 		
@@ -41,7 +41,7 @@ package flight.graphics.paint
 		public function set pixelHinting(value:Boolean):void
 		{
 			stroke.pixelHinting = value;
-			DataChange.change(this, "pixelHinting", _pixelHinting, _pixelHinting = value);
+			PropertyEvent.change(this, "pixelHinting", _pixelHinting, _pixelHinting = value);
 		}
 		private var _pixelHinting:Boolean = false;
 		
@@ -51,7 +51,7 @@ package flight.graphics.paint
 		public function set scaleMode(value:String):void
 		{
 			stroke.scaleMode = value;
-			DataChange.change(this, "scaleMode", _scaleMode, _scaleMode = value);
+			PropertyEvent.change(this, "scaleMode", _scaleMode, _scaleMode = value);
 		}
 		private var _scaleMode:String = LineScaleMode.NORMAL;
 		
@@ -61,7 +61,7 @@ package flight.graphics.paint
 		public function set caps(value:String):void
 		{
 			stroke.caps = value;
-			DataChange.change(this, "caps", _caps, _caps = value);
+			PropertyEvent.change(this, "caps", _caps, _caps = value);
 		}
 		private var _caps:String = CapsStyle.ROUND;
 		
@@ -71,7 +71,7 @@ package flight.graphics.paint
 		public function set joints(value:String):void
 		{
 			stroke.joints = value;
-			DataChange.change(this, "joints", _joints, _joints = value);
+			PropertyEvent.change(this, "joints", _joints, _joints = value);
 		}
 		private var _joints:String = JointStyle.ROUND;
 		
@@ -80,7 +80,7 @@ package flight.graphics.paint
 		public function set miterLimit(value:Number):void
 		{
 			stroke.miterLimit = value;
-			DataChange.change(this, "miterLimit", _miterLimit, _miterLimit = value);
+			PropertyEvent.change(this, "miterLimit", _miterLimit, _miterLimit = value);
 		}
 		private var _miterLimit:Number = 3;
 	}

@@ -10,7 +10,7 @@ package flight.graphics.shapes
 	import flash.display.GraphicsPath;
 	import flash.geom.Rectangle;
 
-	import flight.data.DataChange;
+	import flight.events.PropertyEvent;
 	import flight.graphics.GraphicShape;
 
 	public class Rect extends GraphicShape
@@ -27,11 +27,11 @@ package flight.graphics.shapes
 		public function get radiusX():Number { return _radiusX }
 		public function set radiusX(value:Number):void
 		{
-			DataChange.queue(this, "radiusX", _radiusX, _radiusX = value);
-			DataChange.queue(this, "topLeftRadiusX", _topLeftRadiusX, _topLeftRadiusX = value);
-			DataChange.queue(this, "topRightRadiusX", _topRightRadiusX, _topRightRadiusX = value);
-			DataChange.queue(this, "bottomLeftRadiusX", _bottomLeftRadiusX, _bottomLeftRadiusX = value);
-			DataChange.change(this, "bottomRightRadiusX", _bottomRightRadiusX, _bottomRightRadiusX = value);
+			PropertyEvent.queue(this, "radiusX", _radiusX, _radiusX = value);
+			PropertyEvent.queue(this, "topLeftRadiusX", _topLeftRadiusX, _topLeftRadiusX = value);
+			PropertyEvent.queue(this, "topRightRadiusX", _topRightRadiusX, _topRightRadiusX = value);
+			PropertyEvent.queue(this, "bottomLeftRadiusX", _bottomLeftRadiusX, _bottomLeftRadiusX = value);
+			PropertyEvent.change(this, "bottomRightRadiusX", _bottomRightRadiusX, _bottomRightRadiusX = value);
 			invalidate();
 		}
 		private var _radiusX:Number = 0;
@@ -40,11 +40,11 @@ package flight.graphics.shapes
 		public function get radiusY():Number { return _radiusY }
 		public function set radiusY(value:Number):void
 		{
-			DataChange.queue(this, "radiusY", _radiusY, _radiusY = value);
-			DataChange.queue(this, "topLeftRadiusY", _topLeftRadiusY, _topLeftRadiusY = value);
-			DataChange.queue(this, "topRightRadiusY", _topRightRadiusY, _topRightRadiusY = value);
-			DataChange.queue(this, "bottomLeftRadiusY", _bottomLeftRadiusY, _bottomLeftRadiusY = value);
-			DataChange.change(this, "bottomRightRadiusY", _bottomRightRadiusY, _bottomRightRadiusY = value);
+			PropertyEvent.queue(this, "radiusY", _radiusY, _radiusY = value);
+			PropertyEvent.queue(this, "topLeftRadiusY", _topLeftRadiusY, _topLeftRadiusY = value);
+			PropertyEvent.queue(this, "topRightRadiusY", _topRightRadiusY, _topRightRadiusY = value);
+			PropertyEvent.queue(this, "bottomLeftRadiusY", _bottomLeftRadiusY, _bottomLeftRadiusY = value);
+			PropertyEvent.change(this, "bottomRightRadiusY", _bottomRightRadiusY, _bottomRightRadiusY = value);
 			invalidate();
 		}
 		private var _radiusY:Number = 0;
@@ -53,8 +53,8 @@ package flight.graphics.shapes
 		public function get topLeftRadiusX():Number { return _topLeftRadiusX }
 		public function set topLeftRadiusX(value:Number):void
 		{
-			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
-			DataChange.change(this, "topLeftRadiusX", _topLeftRadiusX, _topLeftRadiusX = value);
+			PropertyEvent.queue(this, "radiusX", _radiusX, _radiusX = NaN);
+			PropertyEvent.change(this, "topLeftRadiusX", _topLeftRadiusX, _topLeftRadiusX = value);
 			invalidate();
 		}
 		private var _topLeftRadiusX:Number = 0;
@@ -63,8 +63,8 @@ package flight.graphics.shapes
 		public function get topLeftRadiusY():Number { return _topLeftRadiusY }
 		public function set topLeftRadiusY(value:Number):void
 		{
-			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
-			DataChange.change(this, "topLeftRadiusY", _topLeftRadiusY, _topLeftRadiusY = value);
+			PropertyEvent.queue(this, "radiusY", _radiusY, _radiusY = NaN);
+			PropertyEvent.change(this, "topLeftRadiusY", _topLeftRadiusY, _topLeftRadiusY = value);
 			invalidate();
 		}
 		private var _topLeftRadiusY:Number = 0;
@@ -73,8 +73,8 @@ package flight.graphics.shapes
 		public function get topRightRadiusX():Number { return _topRightRadiusX }
 		public function set topRightRadiusX(value:Number):void
 		{
-			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
-			DataChange.change(this, "topRightRadiusX", _topRightRadiusX, _topRightRadiusX = value);
+			PropertyEvent.queue(this, "radiusX", _radiusX, _radiusX = NaN);
+			PropertyEvent.change(this, "topRightRadiusX", _topRightRadiusX, _topRightRadiusX = value);
 			invalidate();
 		}
 		private var _topRightRadiusX:Number = 0;
@@ -83,8 +83,8 @@ package flight.graphics.shapes
 		public function get topRightRadiusY():Number { return _topRightRadiusY }
 		public function set topRightRadiusY(value:Number):void
 		{
-			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
-			DataChange.change(this, "topRightRadiusY", _topRightRadiusY, _topRightRadiusY = value);
+			PropertyEvent.queue(this, "radiusY", _radiusY, _radiusY = NaN);
+			PropertyEvent.change(this, "topRightRadiusY", _topRightRadiusY, _topRightRadiusY = value);
 			invalidate();
 		}
 		private var _topRightRadiusY:Number = 0;
@@ -93,8 +93,8 @@ package flight.graphics.shapes
 		public function get bottomLeftRadiusX():Number { return _bottomLeftRadiusX }
 		public function set bottomLeftRadiusX(value:Number):void
 		{
-			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
-			DataChange.change(this, "bottomLeftRadiusX", _bottomLeftRadiusX, _bottomLeftRadiusX = value);
+			PropertyEvent.queue(this, "radiusX", _radiusX, _radiusX = NaN);
+			PropertyEvent.change(this, "bottomLeftRadiusX", _bottomLeftRadiusX, _bottomLeftRadiusX = value);
 			invalidate();
 		}
 		private var _bottomLeftRadiusX:Number = 0;
@@ -103,8 +103,8 @@ package flight.graphics.shapes
 		public function get bottomLeftRadiusY():Number { return _bottomLeftRadiusY }
 		public function set bottomLeftRadiusY(value:Number):void
 		{
-			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
-			DataChange.change(this, "bottomLeftRadiusY", _bottomLeftRadiusY, _bottomLeftRadiusY = value);
+			PropertyEvent.queue(this, "radiusY", _radiusY, _radiusY = NaN);
+			PropertyEvent.change(this, "bottomLeftRadiusY", _bottomLeftRadiusY, _bottomLeftRadiusY = value);
 			invalidate();
 		}
 		private var _bottomLeftRadiusY:Number = 0;
@@ -113,8 +113,8 @@ package flight.graphics.shapes
 		public function get bottomRightRadiusX():Number { return _bottomRightRadiusX }
 		public function set bottomRightRadiusX(value:Number):void
 		{
-			DataChange.queue(this, "radiusX", _radiusX, _radiusX = NaN);
-			DataChange.change(this, "bottomRightRadiusX", _bottomRightRadiusX, _bottomRightRadiusX = value);
+			PropertyEvent.queue(this, "radiusX", _radiusX, _radiusX = NaN);
+			PropertyEvent.change(this, "bottomRightRadiusX", _bottomRightRadiusX, _bottomRightRadiusX = value);
 			invalidate();
 		}
 		private var _bottomRightRadiusX:Number = 0;
@@ -123,8 +123,8 @@ package flight.graphics.shapes
 		public function get bottomRightRadiusY():Number { return _bottomRightRadiusY }
 		public function set bottomRightRadiusY(value:Number):void
 		{
-			DataChange.queue(this, "radiusY", _radiusY, _radiusY = NaN);
-			DataChange.change(this, "bottomRightRadiusY", _bottomRightRadiusY, _bottomRightRadiusY = value);
+			PropertyEvent.queue(this, "radiusY", _radiusY, _radiusY = NaN);
+			PropertyEvent.change(this, "bottomRightRadiusY", _bottomRightRadiusY, _bottomRightRadiusY = value);
 			invalidate();
 		}
 		private var _bottomRightRadiusY:Number = 0;

@@ -9,7 +9,7 @@ package flight.graphics.paint
 {
 	import flash.display.GraphicsSolidFill;
 
-	import flight.data.DataChange;
+	import flight.events.PropertyEvent;
 
 	public class SolidFill extends Paint implements IFill
 	{
@@ -27,7 +27,7 @@ package flight.graphics.paint
 		public function set color(value:uint):void
 		{
 			solidFill.color = value;
-			DataChange.change(this, "color", _color, _color = value);
+			PropertyEvent.change(this, "color", _color, _color = value);
 		}
 		private var _color:uint;
 		
@@ -36,7 +36,7 @@ package flight.graphics.paint
 		public function set alpha(value:Number):void
 		{
 			solidFill.alpha = value;
-			DataChange.change(this, "alpha", _alpha, _alpha = value);
+			PropertyEvent.change(this, "alpha", _alpha, _alpha = value);
 		}
 		private var _alpha:Number;
 	}

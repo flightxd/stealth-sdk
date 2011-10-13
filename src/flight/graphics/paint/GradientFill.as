@@ -18,8 +18,8 @@ package flight.graphics.paint
 
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
-	import flight.data.DataChange;
 	import flight.events.ListEvent;
+	import flight.events.PropertyEvent;
 	import flight.geom.MatrixData;
 
 	[DefaultProperty("entries")]
@@ -50,7 +50,7 @@ package flight.graphics.paint
 		public function set type(value:String):void
 		{
 			gradientFill.type = value;
-			DataChange.change(this, "type", _type, _type = value);
+			PropertyEvent.change(this, "type", _type, _type = value);
 		}
 		private var _type:String;
 		
@@ -69,7 +69,7 @@ package flight.graphics.paint
 		public function set spreadMethod(value:String):void
 		{
 			gradientFill.spreadMethod = value;
-			DataChange.change(this, "spreadMethod", _spreadMethod, _spreadMethod = value);
+			PropertyEvent.change(this, "spreadMethod", _spreadMethod, _spreadMethod = value);
 		}
 		private var _spreadMethod:String = SpreadMethod.PAD;
 		
@@ -79,7 +79,7 @@ package flight.graphics.paint
 		public function set interpolationMethod(value:String):void
 		{
 			gradientFill.interpolationMethod = value;
-			DataChange.change(this, "interpolationMethod", _interpolationMethod, _interpolationMethod = value);
+			PropertyEvent.change(this, "interpolationMethod", _interpolationMethod, _interpolationMethod = value);
 		}
 		private var _interpolationMethod:String = InterpolationMethod.RGB;
 		
@@ -88,7 +88,7 @@ package flight.graphics.paint
 		public function set focalPointRatio(value:Number):void
 		{
 			gradientFill.focalPointRatio = value;
-			DataChange.change(this, "focalPointRatio", _focalPointRatio, _focalPointRatio = value);
+			PropertyEvent.change(this, "focalPointRatio", _focalPointRatio, _focalPointRatio = value);
 		}
 		private var _focalPointRatio:Number = 0;
 		
@@ -97,7 +97,7 @@ package flight.graphics.paint
 		public function set x(value:Number):void
 		{
 			_matrix.x = isNaN(value) ? 0 : value;
-			DataChange.change(this, "x", _x, _x = value);
+			PropertyEvent.change(this, "x", _x, _x = value);
 		}
 		private var _x:Number;
 		
@@ -106,7 +106,7 @@ package flight.graphics.paint
 		public function set y(value:Number):void
 		{
 			_matrix.y = isNaN(value) ? 0 : value;
-			DataChange.change(this, "y", _y, _y = value);
+			PropertyEvent.change(this, "y", _y, _y = value);
 		}
 		private var _y:Number;
 		
@@ -118,7 +118,7 @@ package flight.graphics.paint
 				value = 1;
 			}
 			_matrix.scaleX = value;
-			DataChange.change(this, "scaleX", _scaleX, _scaleX = value);
+			PropertyEvent.change(this, "scaleX", _scaleX, _scaleX = value);
 		}
 		private var _scaleX:Number = 1;
 		
@@ -130,7 +130,7 @@ package flight.graphics.paint
 				value = 1;
 			}
 			_matrix.scaleY = value;
-			DataChange.change(this, "scaleY", _scaleY, _scaleY = value);
+			PropertyEvent.change(this, "scaleY", _scaleY, _scaleY = value);
 		}
 		private var _scaleY:Number = 1;
 		
@@ -142,7 +142,7 @@ package flight.graphics.paint
 				value = 0;
 			}
 			_matrix.rotation = value * (Math.PI/180);
-			DataChange.change(this, "rotation", _rotation, _rotation = value);
+			PropertyEvent.change(this, "rotation", _rotation, _rotation = value);
 		}
 		private var _rotation:Number = 0;
 		
@@ -150,13 +150,13 @@ package flight.graphics.paint
 		public function get matrix():Matrix { return _matrix; }
 		public function set matrix(value:Matrix):void
 		{
-			DataChange.queue(this, "matrix", _matrix.matrix, _matrix.matrix = value);
+			PropertyEvent.queue(this, "matrix", _matrix.matrix, _matrix.matrix = value);
 			if (value) {
-				DataChange.queue(this, "x", _x, _x = _matrix.x);
-				DataChange.queue(this, "y", _y, _y = _matrix.y);
-				DataChange.queue(this, "scaleX", _scaleX, _scaleX = _matrix.scaleX);
-				DataChange.queue(this, "scaleY", _scaleY, _scaleY = _matrix.scaleY);
-				DataChange.change(this, "rotation", _rotation, _rotation = _matrix.rotation * (180/Math.PI));
+				PropertyEvent.queue(this, "x", _x, _x = _matrix.x);
+				PropertyEvent.queue(this, "y", _y, _y = _matrix.y);
+				PropertyEvent.queue(this, "scaleX", _scaleX, _scaleX = _matrix.scaleX);
+				PropertyEvent.queue(this, "scaleY", _scaleY, _scaleY = _matrix.scaleY);
+				PropertyEvent.change(this, "rotation", _rotation, _rotation = _matrix.rotation * (180/Math.PI));
 			} else {
 				_matrix.rotation = _rotation * (Math.PI/180);
 				_matrix.scaleX = _scaleX;
@@ -185,7 +185,7 @@ package flight.graphics.paint
 				--ratios.nan;
 				addRatio(0xFF, ratios);
 			}
-			DataChange.change(this, "entries", _entries, _entries, true);
+			PropertyEvent.change(this, "entries", _entries, _entries, true);
 		}
 		
 		private function addRatio(ratio:Number, ratios:Array):void

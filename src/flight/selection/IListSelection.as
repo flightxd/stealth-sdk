@@ -5,18 +5,17 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.data
+package flight.selection
 {
 	import flight.collections.IList;
 
-	public interface ISelection
+	public interface IListSelection extends ISelection
 	{
-		function get item():Object;
-		function set item(value:Object):void;
+		function get index():int;
+		function set index(value:int):void;
 		
-		function get items():IList;
+		function get indices():IList;
 		
-		function select(items:*):*;
-		
+		function selectAt(indices:*):*;
 	}
 }

@@ -14,17 +14,15 @@ package flight.components
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.containers.IContainer;
-	import flight.data.DataChange;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
+	import flight.events.PropertyEvent;
 	import flight.graphics.GraphicElement;
 	import flight.layouts.ILayout;
 	import flight.skins.ISkin;
 	import flight.skins.ISkinnable;
 	import flight.skins.Theme;
 	import flight.utils.Factory;
-
-	import mx.events.PropertyChangeEvent;
 
 	public class Component extends GraphicElement implements ISkinnable, IContainer
 	{
@@ -44,7 +42,7 @@ package flight.components
 		public function set disabled(value:Boolean):void
 		{
 			mouseEnabled = mouseChildren = !value;
-			DataChange.change(this, "disabled", _disabled, _disabled = value);
+			PropertyEvent.change(this, "disabled", _disabled, _disabled = value);
 		}
 		private var _disabled:Boolean = true;
 
@@ -79,7 +77,7 @@ package flight.components
 		public function get data():Object { return _data; }
 		public function set data(value:Object):void
 		{
-			DataChange.change(this, "data", _data, _data = value);
+			PropertyEvent.change(this, "data", _data, _data = value);
 		}
 		private var _data:Object;
 		
@@ -91,19 +89,19 @@ package flight.components
 				_skin = value;
 			} else if (_skin != value) {
 				if (_skin) {
-					_skin.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPartChange);
+					_skin.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinPartChange);
 					_skin.target = null;
 				}
-				DataChange.queue(this, "skin", _skin, _skin = value);
+				PropertyEvent.queue(this, "skin", _skin, _skin = value);
 				invalidate(LayoutEvent.MEASURE);
 				if (_skin) {
 					_skin.target = this;
-					_skin.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPartChange);
+					_skin.addEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinPartChange);
 					for (var i:String in skinParts) {
 						this[i] = i in _skin ? _skin[i] : null;
 					}
 				}
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _skin:ISkin;
@@ -116,14 +114,14 @@ package flight.components
 		{
 		}
 		
-		private function onSkinPartChange(event:PropertyChangeEvent):void
+		private function onSkinPartChange(event:PropertyEvent):void
 		{
 			if (event.property in skinParts) {
 				this[event.property] = _skin[event.property];
 			}
 		}
 		
-		private function onPropertyChange(event:PropertyChangeEvent):void
+		private function onPropertyChange(event:PropertyEvent):void
 		{
 			if (event.property in skinParts) {
 				partRemoved(String(event.property), InteractiveObject(event.oldValue));
@@ -213,11 +211,11 @@ package flight.components
 		{
 			explicitLayout = true;
 			if (_layout != value) {
-				DataChange.queue(this, "layout", _layout, _layout = value);
+				PropertyEvent.queue(this, "layout", _layout, _layout = value);
 				if (_contents) {
 					_contents.layout = _layout;
 				}
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _layout:ILayout;
@@ -244,7 +242,7 @@ package flight.components
 						_contents.content.clear();
 					}
 				}
-				DataChange.queue(this, "contents", _contents, _contents = value);
+				PropertyEvent.queue(this, "contents", _contents, _contents = value);
 				if (_contents) {
 					if (explicitContent) {
 						_contents.content.clear();
@@ -259,7 +257,7 @@ package flight.components
 					}
 					_content.addEventListener(ListEvent.LIST_CHANGE, onContentChange);
 				}
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _contents:IContainer;

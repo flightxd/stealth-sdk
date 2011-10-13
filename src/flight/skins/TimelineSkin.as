@@ -18,7 +18,7 @@ package flight.skins
 	import flash.utils.Dictionary;
 
 	import flight.containers.IContainer;
-	import flight.data.DataChange;
+	import flight.events.PropertyEvent;
 	import flight.graphics.Group;
 	import flight.layouts.Align;
 	import flight.layouts.Box;
@@ -28,8 +28,6 @@ package flight.skins
 	import flight.layouts.IMeasureable;
 	import flight.utils.Type;
 	import flight.utils.getClassName;
-
-	import mx.events.PropertyChangeEvent;
 
 	public class TimelineSkin extends Group implements ISkin, IContainer
 	{
@@ -41,7 +39,7 @@ package flight.skins
 		{
 			bindTarget("width");
 			bindTarget("height");
-			IEventDispatcher(measured).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10);
+			IEventDispatcher(measured).addEventListener(PropertyEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10);
 		}
 		
 		// ====== ISkin implementation ====== //
@@ -53,11 +51,11 @@ package flight.skins
 			if (_target != value) {
 				
 				if (_target) {
-					_target.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
-					removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
+					_target.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange);
+					removeEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange);
 					detach();
 				}
-				DataChange.queue(this ,"target", _target, _target = value);
+				PropertyEvent.queue(this ,"target", _target, _target = value);
 				if ("host" in this) {
 					this["host"] = _target;
 				}
@@ -68,11 +66,11 @@ package flight.skins
 							this[property] = _target[property];
 						}
 					}
-					_target.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange, false, -10, true);
-					addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange, false, -10);
+					_target.addEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange, false, -10, true);
+					addEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange, false, -10);
 					attach();
 				}
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _target:Sprite;
@@ -201,7 +199,7 @@ package flight.skins
 			}
 		}
 		
-		private function onMeasuredChange(event:PropertyChangeEvent):void
+		private function onMeasuredChange(event:PropertyEvent):void
 		{
 			if (target is IMeasureable) {
 				var targetMeasured:IBounds = IMeasureable(target).measured;
@@ -260,7 +258,7 @@ package flight.skins
 		private var bindings:Object = {};
 		
 		
-		private function onPropertyChange(event:PropertyChangeEvent):void
+		private function onPropertyChange(event:PropertyEvent):void
 		{
 			var property:String = String(event.property);
 			if (bindings[property]) {

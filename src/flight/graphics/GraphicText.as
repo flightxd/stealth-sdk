@@ -13,10 +13,10 @@ package flight.graphics
 	import flash.text.TextLineMetrics;
 
 	import flight.collections.ArrayList;
-	import flight.data.DataChange;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
+	import flight.events.PropertyEvent;
 	import flight.layouts.Box;
 	import flight.layouts.IBounds;
 	import flight.layouts.LayoutElement;
@@ -58,7 +58,7 @@ package flight.graphics
 		public function get maskType():String { return _maskType; }
 		public function set maskType(value:String):void
 		{
-			DataChange.change(this, "maskType", _maskType, _maskType = value);
+			PropertyEvent.change(this, "maskType", _maskType, _maskType = value);
 		}
 		private var _maskType:String = MaskType.CLIP;
 		
@@ -84,7 +84,7 @@ package flight.graphics
 					state = newState;
 					state.source = this;
 					state.execute();
-					DataChange.change(this, "currentState", _currentState, _currentState = state.name);
+					PropertyEvent.change(this, "currentState", _currentState, _currentState = state.name);
 				}
 			}
 		}
@@ -134,7 +134,7 @@ package flight.graphics
 		public function get transformX():Number { return _transformX; }
 		public function set transformX(value:Number):void
 		{
-			DataChange.change(this, "transformX", _transformX, _transformX = value);
+			PropertyEvent.change(this, "transformX", _transformX, _transformX = value);
 		}
 		private var _transformX:Number = 0;
 		
@@ -145,7 +145,7 @@ package flight.graphics
 		public function get transformY():Number { return _transformY; }
 		public function set transformY(value:Number):void
 		{
-			DataChange.change(this, "transformY", _transformY, _transformY = value);
+			PropertyEvent.change(this, "transformY", _transformY, _transformY = value);
 		}
 		private var _transformY:Number = 0;
 		
@@ -201,10 +201,10 @@ package flight.graphics
 			transform.matrix = matrix;
 			if (_transformX || _transformY) {
 				var oldMatrix:Matrix = transform.matrix;
-				DataChange.queue(this, "rotation", oldValue, super.rotation);
+				PropertyEvent.queue(this, "rotation", oldValue, super.rotation);
 				updateTransform(oldMatrix);
 			} else {
-				DataChange.change(this, "rotation", oldValue, super.rotation);
+				PropertyEvent.change(this, "rotation", oldValue, super.rotation);
 			}
 		}
 		
@@ -227,10 +227,10 @@ package flight.graphics
 			transform.matrix = matrix;
 			if (_transformX || _transformY) {
 				var oldMatrix:Matrix = transform.matrix;
-				DataChange.queue(this, "rotation", oldValue, super.rotation);
+				PropertyEvent.queue(this, "rotation", oldValue, super.rotation);
 				updateTransform(oldMatrix);
 			} else {
-				DataChange.change(this, "rotation", oldValue, super.rotation);
+				PropertyEvent.change(this, "rotation", oldValue, super.rotation);
 			}
 		}
 		
@@ -268,8 +268,8 @@ package flight.graphics
 			anchorX -= newMatrix.a * _transformX + newMatrix.c * _transformY + newMatrix.tx;
 			anchorY -= newMatrix.d * _transformY + newMatrix.b * _transformX + newMatrix.ty;
 			
-			DataChange.queue(this, "x", super.x, super.x += anchorX);
-			DataChange.change(this, "y", super.y, super.y += anchorY);
+			PropertyEvent.queue(this, "x", super.x, super.x += anchorX);
+			PropertyEvent.change(this, "y", super.y, super.y += anchorY);
 		}
 		
 		

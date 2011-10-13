@@ -15,12 +15,12 @@ package flight.media
 	import flash.utils.Dictionary;
 
 	import flight.collections.ArrayList;
-	import flight.data.DataChange;
 	import flight.display.DeferredListener;
 	import flight.display.IInvalidating;
 	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
 	import flight.events.ListEvent;
+	import flight.events.PropertyEvent;
 	import flight.filters.IBitmapFilter;
 
 	import mx.core.IMXMLObject;
@@ -53,7 +53,7 @@ package flight.media
 		public function get tag():Object { return _tag; }
 		public function set tag(value:Object):void
 		{
-			DataChange.change(this, "tag", _tag, _tag = value);
+			PropertyEvent.change(this, "tag", _tag, _tag = value);
 		}
 		private var _tag:Object;
 		
@@ -62,7 +62,7 @@ package flight.media
 		public function get id():String { return _id; }
 		public function set id(value:String):void
 		{
-			DataChange.change(this, "id", _id, super.name = _id = value);
+			PropertyEvent.change(this, "id", _id, super.name = _id = value);
 		}
 		private var _id:String;
 		
@@ -77,7 +77,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set visible(value:Boolean):void
 		{
-			DataChange.change(this, "visible", super.visible, super.visible = value);
+			PropertyEvent.change(this, "visible", super.visible, super.visible = value);
 		}
 		
 		/**
@@ -86,7 +86,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set alpha(value:Number):void
 		{
-			DataChange.change(this, "alpha", super.alpha, super.alpha = value);
+			PropertyEvent.change(this, "alpha", super.alpha, super.alpha = value);
 		}
 		
 		/**
@@ -95,7 +95,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set mask(value:DisplayObject):void
 		{
-			DataChange.change(this, "mask", super.mask, super.mask = value);
+			PropertyEvent.change(this, "mask", super.mask, super.mask = value);
 		}
 		
 		/**
@@ -104,7 +104,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set blendMode(value:String):void
 		{
-			DataChange.change(this, "blendMode", super.blendMode, super.blendMode = value);
+			PropertyEvent.change(this, "blendMode", super.blendMode, super.blendMode = value);
 		}
 		
 		/**
@@ -145,7 +145,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set x(value:Number):void
 		{
-			DataChange.change(this, "x", super.x, super.x = value);
+			PropertyEvent.change(this, "x", super.x, super.x = value);
 		}
 		
 		/**
@@ -154,7 +154,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set y(value:Number):void
 		{
-			DataChange.change(this, "y", super.y, super.y = value);
+			PropertyEvent.change(this, "y", super.y, super.y = value);
 		}
 		
 		/**
@@ -163,7 +163,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set z(value:Number):void
 		{
-			DataChange.change(this, "z", super.z, super.z = value);
+			PropertyEvent.change(this, "z", super.z, super.z = value);
 		}
 		
 		/**
@@ -172,7 +172,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set scaleX(value:Number):void
 		{
-			DataChange.change(this, "scaleX", super.scaleX, super.scaleX = value);
+			PropertyEvent.change(this, "scaleX", super.scaleX, super.scaleX = value);
 		}
 		
 		/**
@@ -181,7 +181,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set scaleY(value:Number):void
 		{
-			DataChange.change(this, "scaleY", super.scaleY, super.scaleY = value);
+			PropertyEvent.change(this, "scaleY", super.scaleY, super.scaleY = value);
 		}
 		
 		/**
@@ -190,7 +190,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set scaleZ(value:Number):void
 		{
-			DataChange.change(this, "scaleZ", super.scaleZ, super.scaleZ = value);
+			PropertyEvent.change(this, "scaleZ", super.scaleZ, super.scaleZ = value);
 		}
 		
 		/**
@@ -199,7 +199,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set rotation(value:Number):void
 		{
-			DataChange.change(this, "rotation", super.rotation, super.rotation = value);
+			PropertyEvent.change(this, "rotation", super.rotation, super.rotation = value);
 		}
 		
 		/**
@@ -208,7 +208,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set rotationX(value:Number):void
 		{
-			DataChange.change(this, "rotationX", super.rotationX, super.rotationX = value);
+			PropertyEvent.change(this, "rotationX", super.rotationX, super.rotationX = value);
 		}
 		
 		/**
@@ -217,7 +217,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set rotationY(value:Number):void
 		{
-			DataChange.change(this, "rotationY", super.rotationY, super.rotationY = value);
+			PropertyEvent.change(this, "rotationY", super.rotationY, super.rotationY = value);
 		}
 		
 		/**
@@ -226,7 +226,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set rotationZ(value:Number):void
 		{
-			DataChange.change(this, "rotationZ", super.rotationZ, super.rotationZ = value);
+			PropertyEvent.change(this, "rotationZ", super.rotationZ, super.rotationZ = value);
 		}
 		
 		/**
@@ -235,7 +235,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set width(value:Number):void
 		{
-			DataChange.change(this, "width", super.width, super.width = value);
+			PropertyEvent.change(this, "width", super.width, super.width = value);
 		}
 		
 		/**
@@ -244,7 +244,7 @@ package flight.media
 		[Bindable("propertyChange")]
 		override public function set height(value:Number):void
 		{
-			DataChange.change(this, "height", super.height, super.height = value);
+			PropertyEvent.change(this, "height", super.height, super.height = value);
 		}
 		
 		

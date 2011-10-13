@@ -12,7 +12,7 @@ package flight.filters
 	import flash.filters.BitmapFilter;
 	import flash.filters.BitmapFilterType;
 
-	import flight.data.DataChange;
+	import flight.events.PropertyEvent;
 
 	public class BevelFilter extends EventDispatcher implements IBitmapFilter
 	{
@@ -27,7 +27,7 @@ package flight.filters
 		public function get enabled():Boolean { return _enabled; }
 		public function set enabled(value:Boolean):void
 		{
-			DataChange.change(this, "enabled", _enabled, _enabled = value);
+			PropertyEvent.change(this, "enabled", _enabled, _enabled = value);
 		}
 		private var _enabled:Boolean = true;
 		
@@ -43,70 +43,70 @@ package flight.filters
 		public function get distance():Number { return _bitmapFilter.distance; }
 		public function set distance(value:Number):void
 		{
-			DataChange.change(this, "distance", _bitmapFilter.distance, _bitmapFilter.distance = value);
+			PropertyEvent.change(this, "distance", _bitmapFilter.distance, _bitmapFilter.distance = value);
 		}
 		
 		[Bindable("propertyChange")]
 		public function get angle():Number { return _bitmapFilter.angle; }
 		public function set angle(value:Number):void
 		{
-			DataChange.change(this, "angle", _bitmapFilter.angle, _bitmapFilter.angle = value);
+			PropertyEvent.change(this, "angle", _bitmapFilter.angle, _bitmapFilter.angle = value);
 		}
 		
 		[Bindable("propertyChange")]
 		public function get highlightColor():Number { return _bitmapFilter.highlightColor; }
 		public function set highlightColor(value:Number):void
 		{
-			DataChange.change(this, "highlightColor", _bitmapFilter.highlightColor, _bitmapFilter.highlightColor = value);
+			PropertyEvent.change(this, "highlightColor", _bitmapFilter.highlightColor, _bitmapFilter.highlightColor = value);
 		}
 		
 		[Bindable("propertyChange")]
 		public function get highlightAlpha():Number { return _bitmapFilter.highlightAlpha; }
 		public function set highlightAlpha(value:Number):void
 		{
-			DataChange.change(this, "highlightAlpha", _bitmapFilter.highlightAlpha, _bitmapFilter.highlightAlpha = value);
+			PropertyEvent.change(this, "highlightAlpha", _bitmapFilter.highlightAlpha, _bitmapFilter.highlightAlpha = value);
 		}
 		
 		[Bindable("propertyChange")]
 		public function get shadowColor():Number { return _bitmapFilter.shadowColor; }
 		public function set shadowColor(value:Number):void
 		{
-			DataChange.change(this, "shadowColor", _bitmapFilter.shadowColor, _bitmapFilter.shadowColor = value);
+			PropertyEvent.change(this, "shadowColor", _bitmapFilter.shadowColor, _bitmapFilter.shadowColor = value);
 		}
 		
 		[Bindable("propertyChange")]
 		public function get shadowAlpha():Number { return _bitmapFilter.shadowAlpha; }
 		public function set shadowAlpha(value:Number):void
 		{
-			DataChange.change(this, "shadowAlpha", _bitmapFilter.shadowAlpha, _bitmapFilter.shadowAlpha = value);
+			PropertyEvent.change(this, "shadowAlpha", _bitmapFilter.shadowAlpha, _bitmapFilter.shadowAlpha = value);
 		}
 		
 		[Bindable("propertyChange")]
 		public function get blurX():Number { return _bitmapFilter.blurX; }
 		public function set blurX(value:Number):void
 		{
-			DataChange.change(this, "blurX", _bitmapFilter.blurX, _bitmapFilter.blurX = value);
+			PropertyEvent.change(this, "blurX", _bitmapFilter.blurX, _bitmapFilter.blurX = value);
 		}
 		
 		[Bindable("propertyChange")]
 		public function get blurY():Number { return _bitmapFilter.blurY; }
 		public function set blurY(value:Number):void
 		{
-			DataChange.change(this, "blurY", _bitmapFilter.blurY, _bitmapFilter.blurY = value);
+			PropertyEvent.change(this, "blurY", _bitmapFilter.blurY, _bitmapFilter.blurY = value);
 		}
 		
 		[Bindable("propertyChange")]
 		public function get strength():Number { return _bitmapFilter.strength; }
 		public function set strength(value:Number):void
 		{
-			DataChange.change(this, "strength", _bitmapFilter.strength, _bitmapFilter.strength = value);
+			PropertyEvent.change(this, "strength", _bitmapFilter.strength, _bitmapFilter.strength = value);
 		}
 		
 		[Bindable("propertyChange")]
 		public function get quality():Number { return _bitmapFilter.quality; }
 		public function set quality(value:Number):void
 		{
-			DataChange.change(this, "quality", _bitmapFilter.quality, _bitmapFilter.quality = value);
+			PropertyEvent.change(this, "quality", _bitmapFilter.quality, _bitmapFilter.quality = value);
 		}
 		
 		[Inspectable(enumeration="inner,outer,full")]
@@ -114,14 +114,14 @@ package flight.filters
 		public function get type():String { return _bitmapFilter.type; }
 		public function set type(value:String):void
 		{
-			DataChange.change(this, "type", _bitmapFilter.type, _bitmapFilter.type = value);
+			PropertyEvent.change(this, "type", _bitmapFilter.type, _bitmapFilter.type = value);
 		}
 		
 		[Bindable("propertyChange")]
 		public function get knockout():Boolean { return _bitmapFilter.knockout; }
 		public function set knockout(value:Boolean):void
 		{
-			DataChange.change(this, "knockout", _bitmapFilter.knockout, _bitmapFilter.knockout = value);
+			PropertyEvent.change(this, "knockout", _bitmapFilter.knockout, _bitmapFilter.knockout = value);
 		}
 	}
 }

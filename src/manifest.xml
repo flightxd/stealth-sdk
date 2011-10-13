@@ -48,7 +48,7 @@
 	<!-- data -->
 	<component id="ArrayList"				class="flight.collections.ArrayList"/>
 	<component id="Position"				class="flight.ranges.Position"/>
-	<component id="ListSelection"			class="flight.data.ListSelection"/>
+	<component id="ListSelection"			class="flight.selection.ListSelection"/>
 	<component id="MatrixData"				class="flight.geom.MatrixData"/>
 	<component id="State"					class="flight.states.State"/>
 	<component id="Change"					class="flight.states.Change"/>

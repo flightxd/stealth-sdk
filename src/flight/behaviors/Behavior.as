@@ -11,12 +11,10 @@ package flight.behaviors
 	import flash.events.IEventDispatcher;
 
 	import flight.data.DataBind;
-	import flight.data.DataChange;
+	import flight.events.PropertyEvent;
 	import flight.skins.ISkinnable;
 	import flight.utils.Extension;
 	import flight.utils.getClassName;
-
-	import mx.events.PropertyChangeEvent;
 
 	public class Behavior extends Extension implements IBehavior
 	{
@@ -29,7 +27,7 @@ package flight.behaviors
 		
 		public function Behavior(target:IEventDispatcher = null)
 		{
-			addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
+			addEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange);
 			if (target) {
 				this.target = target;
 			}
@@ -39,7 +37,7 @@ package flight.behaviors
 		public function get name():String { return _name ||= getDefaultName(this); }
 		public function set name(value:String):void
 		{
-			DataChange.change(this, "name", _name, _name = value);
+			PropertyEvent.change(this, "name", _name, _name = value);
 		}
 		private var _name:String;
 		
@@ -50,11 +48,11 @@ package flight.behaviors
 			var target:IEventDispatcher = getTarget();
 			if (target != value) {
 				if (target is ISkinnable) {
-					target.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinChange);
+					target.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinChange);
 				}
 				setTarget(target = value);
 				if (target is ISkinnable) {
-					target.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinChange);
+					target.addEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinChange);
 					partSource = ISkinnable(target).skin;
 				} else {
 					partSource = target;
@@ -80,7 +78,7 @@ package flight.behaviors
 		{
 		}
 		
-		private function onSkinChange(event:PropertyChangeEvent):void
+		private function onSkinChange(event:PropertyEvent):void
 		{
 			if (event.property == "skin") {
 				partSource = IEventDispatcher(event.newValue);
@@ -96,28 +94,28 @@ package flight.behaviors
 			}
 			if (_partSource != value) {
 				if (_partSource) {
-					_partSource.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPartChange);
+					_partSource.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinPartChange);
 				}
-				DataChange.queue(this, "partSource", _partSource, _partSource = value);
+				PropertyEvent.queue(this, "partSource", _partSource, _partSource = value);
 				if (_partSource) {
-					_partSource.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onSkinPartChange);
+					_partSource.addEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinPartChange);
 					for (var i:String in skinParts) {
 						this[i] = i in _partSource ? _partSource[i] : null;
 					}
 				}
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _partSource:IEventDispatcher;
 		
-		private function onSkinPartChange(event:PropertyChangeEvent):void
+		private function onSkinPartChange(event:PropertyEvent):void
 		{
 			if (event.property in skinParts) {
 				this[event.property] = _partSource[event.property];
 			}
 		}
 		
-		private function onPropertyChange(event:PropertyChangeEvent):void
+		private function onPropertyChange(event:PropertyEvent):void
 		{
 			if (event.property in skinParts) {
 				partRemoved(String(event.property), InteractiveObject(event.oldValue));

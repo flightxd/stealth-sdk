@@ -15,11 +15,11 @@ package flight.graphics
 	import flash.geom.Rectangle;
 
 	import flight.collections.ArrayList;
-	import flight.data.DataChange;
 	import flight.display.Shape;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
+	import flight.events.PropertyEvent;
 	import flight.graphics.paint.IFill;
 	import flight.graphics.paint.IStroke;
 	import flight.graphics.paint.Paint;
@@ -29,8 +29,6 @@ package flight.graphics
 	import flight.layouts.LayoutElement;
 	import flight.states.IStateful;
 	import flight.states.State;
-
-	import mx.events.PropertyChangeEvent;
 
 	[Event(name="resize", type="flight.events.LayoutEvent")]
 	[Event(name="validate", type="flight.events.InvalidationEvent")]
@@ -56,7 +54,7 @@ package flight.graphics
 		public function get maskType():String { return _maskType; }
 		public function set maskType(value:String):void
 		{
-			DataChange.change(this, "maskType", _maskType, _maskType = value);
+			PropertyEvent.change(this, "maskType", _maskType, _maskType = value);
 		}
 		private var _maskType:String = MaskType.CLIP;
 		
@@ -82,7 +80,7 @@ package flight.graphics
 					state = newState;
 					state.source = this;
 					state.execute();
-					DataChange.change(this, "currentState", _currentState, _currentState = state.name);
+					PropertyEvent.change(this, "currentState", _currentState, _currentState = state.name);
 				}
 			}
 		}
@@ -121,12 +119,12 @@ package flight.graphics
 			
 			if (_fill != value) {
 				if (_fill && _fill is IEventDispatcher) {
-					IEventDispatcher(_fill).removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onFillChange);
+					IEventDispatcher(_fill).removeEventListener(PropertyEvent.PROPERTY_CHANGE, onFillChange);
 				}
-				DataChange.change(this, "fill", _fill, _fill = value);
+				PropertyEvent.change(this, "fill", _fill, _fill = value);
 				invalidate();
 				if (_fill && IEventDispatcher) {
-					IEventDispatcher(_fill).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onFillChange);
+					IEventDispatcher(_fill).addEventListener(PropertyEvent.PROPERTY_CHANGE, onFillChange);
 				}
 			}
 		}
@@ -140,27 +138,27 @@ package flight.graphics
 			
 			if (_stroke != value) {
 				if (_stroke && _stroke is IEventDispatcher) {
-					IEventDispatcher(_stroke).removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onStrokeChange);
+					IEventDispatcher(_stroke).removeEventListener(PropertyEvent.PROPERTY_CHANGE, onStrokeChange);
 				}
-				DataChange.change(this, "stroke", _stroke, _stroke = value);
+				PropertyEvent.change(this, "stroke", _stroke, _stroke = value);
 				invalidate();
 				if (_stroke && _stroke is IEventDispatcher) {
-					IEventDispatcher(_stroke).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onStrokeChange);
+					IEventDispatcher(_stroke).addEventListener(PropertyEvent.PROPERTY_CHANGE, onStrokeChange);
 				}
 			}
 		}
 		private var _stroke:IStroke;
 		
-		private function onFillChange(event:PropertyChangeEvent):void
+		private function onFillChange(event:PropertyEvent):void
 		{
 			invalidate();
-			DataChange.change(this, "fill", _fill, _fill, true);
+			PropertyEvent.change(this, "fill", _fill, _fill, true);
 		}
 		
-		private function onStrokeChange(event:PropertyChangeEvent):void
+		private function onStrokeChange(event:PropertyEvent):void
 		{
 			invalidate();
-			DataChange.change(this, "stroke", _stroke, _stroke, true);
+			PropertyEvent.change(this, "stroke", _stroke, _stroke, true);
 		}
 		
 		public function draw(graphics:Graphics):void
@@ -270,7 +268,7 @@ package flight.graphics
 		public function get transformX():Number { return _transformX; }
 		public function set transformX(value:Number):void
 		{
-			DataChange.change(this, "transformX", _transformX, _transformX = value);
+			PropertyEvent.change(this, "transformX", _transformX, _transformX = value);
 		}
 		private var _transformX:Number = 0;
 		
@@ -281,7 +279,7 @@ package flight.graphics
 		public function get transformY():Number { return _transformY; }
 		public function set transformY(value:Number):void
 		{
-			DataChange.change(this, "transformY", _transformY, _transformY = value);
+			PropertyEvent.change(this, "transformY", _transformY, _transformY = value);
 		}
 		private var _transformY:Number = 0;
 		
@@ -337,10 +335,10 @@ package flight.graphics
 			transform.matrix = matrix;
 			if (_transformX || _transformY) {
 				var oldMatrix:Matrix = transform.matrix;
-				DataChange.queue(this, "rotation", oldValue, super.rotation);
+				PropertyEvent.queue(this, "rotation", oldValue, super.rotation);
 				updateTransform(oldMatrix);
 			} else {
-				DataChange.change(this, "rotation", oldValue, super.rotation);
+				PropertyEvent.change(this, "rotation", oldValue, super.rotation);
 			}
 		}
 		
@@ -363,10 +361,10 @@ package flight.graphics
 			transform.matrix = matrix;
 			if (_transformX || _transformY) {
 				var oldMatrix:Matrix = transform.matrix;
-				DataChange.queue(this, "rotation", oldValue, super.rotation);
+				PropertyEvent.queue(this, "rotation", oldValue, super.rotation);
 				updateTransform(oldMatrix);
 			} else {
-				DataChange.change(this, "rotation", oldValue, super.rotation);
+				PropertyEvent.change(this, "rotation", oldValue, super.rotation);
 			}
 		}
 		
@@ -404,8 +402,8 @@ package flight.graphics
 			anchorX -= newMatrix.a * _transformX + newMatrix.c * _transformY + newMatrix.tx;
 			anchorY -= newMatrix.d * _transformY + newMatrix.b * _transformX + newMatrix.ty;
 			
-			DataChange.queue(this, "x", super.x, super.x += anchorX);
-			DataChange.change(this, "y", super.y, super.y += anchorY);
+			PropertyEvent.queue(this, "x", super.x, super.x += anchorX);
+			PropertyEvent.change(this, "y", super.y, super.y += anchorY);
 		}
 		
 		

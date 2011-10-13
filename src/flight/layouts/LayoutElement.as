@@ -13,13 +13,11 @@ package flight.layouts
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 
-	import flight.data.DataChange;
 	import flight.display.IInvalidating;
 	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
-
-	import mx.events.PropertyChangeEvent;
+	import flight.events.PropertyEvent;
 
 	dynamic public class LayoutElement implements ILayoutElement
 	{
@@ -29,7 +27,7 @@ package flight.layouts
 		{
 			this.target = target;
 			target.addEventListener(LayoutEvent.MEASURE, onMeasure, false, 20);
-			_measured.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMeasuredChange);
+			_measured.addEventListener(PropertyEvent.PROPERTY_CHANGE, onMeasuredChange);
 		}
 		
 		[Bindable("propertyChange")]
@@ -69,7 +67,7 @@ package flight.layouts
 				updateWidth();
 				updateHeight();
 			}
-			DataChange.change(target, "freeform", _freeform, _freeform = value);
+			PropertyEvent.change(target, "freeform", _freeform, _freeform = value);
 		}
 		private var _freeform:Boolean = false;
 		
@@ -111,7 +109,7 @@ package flight.layouts
 				value = Bounds.constrainWidth(_measured, value);
 			}
 			if (_minWidth != value) {
-				DataChange.queue(target, "minWidth", _minWidth, _minWidth = value);
+				PropertyEvent.queue(target, "minWidth", _minWidth, _minWidth = value);
 				updateWidth();
 			}
 		}
@@ -129,7 +127,7 @@ package flight.layouts
 				value = Bounds.constrainHeight(_measured, value);
 			}
 			if (_minHeight != value) {
-				DataChange.queue(target, "minHeight", _minHeight, _minHeight = value);
+				PropertyEvent.queue(target, "minHeight", _minHeight, _minHeight = value);
 				updateHeight();
 			}
 		}
@@ -147,7 +145,7 @@ package flight.layouts
 				value = Bounds.constrainWidth(_measured, value);
 			}
 			if (_maxWidth != value) {
-				DataChange.queue(target, "maxWidth", _maxWidth, _maxWidth = value);
+				PropertyEvent.queue(target, "maxWidth", _maxWidth, _maxWidth = value);
 				updateWidth();
 			}
 		}
@@ -165,7 +163,7 @@ package flight.layouts
 				value = Bounds.constrainHeight(_measured, value);
 			}
 			if (_maxHeight != value) {
-				DataChange.queue(target, "maxHeight", _maxHeight, _maxHeight = value);
+				PropertyEvent.queue(target, "maxHeight", _maxHeight, _maxHeight = value);
 				updateHeight();
 			}
 		}
@@ -183,18 +181,18 @@ package flight.layouts
 			}
 			
 			if (_margin) {
-				_margin.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMarginChange);
+				_margin.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onMarginChange);
 			}
-			DataChange.change(target, "margin", _margin, _margin = value);
+			PropertyEvent.change(target, "margin", _margin, _margin = value);
 			if (_margin) {
-				_margin.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMarginChange);
+				_margin.addEventListener(PropertyEvent.PROPERTY_CHANGE, onMarginChange);
 			}
 		}
 		private var _margin:Box;
 		
-		private function onMarginChange(event:PropertyChangeEvent):void
+		private function onMarginChange(event:PropertyEvent):void
 		{
-			DataChange.change(target, "margin", _margin, _margin, true);
+			PropertyEvent.change(target, "margin", _margin, _margin, true);
 		}
 		
 		/**
@@ -207,7 +205,7 @@ package flight.layouts
 			if (value > 1) {
 				value /= 100;
 			}
-			DataChange.change(target, "percentWidth", _percentWidth, _percentWidth = value);
+			PropertyEvent.change(target, "percentWidth", _percentWidth, _percentWidth = value);
 		}
 		private var _percentWidth:Number;
 		
@@ -221,7 +219,7 @@ package flight.layouts
 			if (value > 1) {
 				value /= 100;
 			}
-			DataChange.change(target, "percentHeight", _percentHeight, _percentHeight = value);
+			PropertyEvent.change(target, "percentHeight", _percentHeight, _percentHeight = value);
 		}
 		private var _percentHeight:Number;
 		
@@ -263,7 +261,7 @@ package flight.layouts
 		public function set contentWidth(value:Number):void
 		{
 			if (!_contained) {
-				DataChange.change(target, "contentWidth", _contentWidth, _contentWidth = value);
+				PropertyEvent.change(target, "contentWidth", _contentWidth, _contentWidth = value);
 			} else {
 				width = value;
 			}
@@ -284,7 +282,7 @@ package flight.layouts
 		public function set contentHeight(value:Number):void
 		{
 			if (!_contained) {
-				DataChange.change(target, "contentHeight", _contentHeight, _contentHeight = value);
+				PropertyEvent.change(target, "contentHeight", _contentHeight, _contentHeight = value);
 			} else {
 				height = value;
 			}
@@ -307,7 +305,7 @@ package flight.layouts
 			} else {
 				bounds = target;
 			}
-			DataChange.change(this, "nativeRect", _nativeRect, _nativeRect = bounds.getRect(target) || emptyRect);
+			PropertyEvent.change(this, "nativeRect", _nativeRect, _nativeRect = bounds.getRect(target) || emptyRect);
 		}
 		private static var emptyRect:Rectangle = new Rectangle();
 		
@@ -316,12 +314,12 @@ package flight.layouts
 		public function set contained(value:Boolean):void
 		{
 			if (_contained != value) {
-				DataChange.queue(target, "contained", _contained, _contained = value);
+				PropertyEvent.queue(target, "contained", _contained, _contained = value);
 				minWidth = _explicit.minWidth;
 				minHeight = _explicit.minHeight;
 				maxWidth = _explicit.maxWidth;
 				maxHeight = _explicit.maxHeight;
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _contained:Boolean = true;
@@ -330,7 +328,7 @@ package flight.layouts
 		public function get nativeSizing():Boolean { return _nativeSizing; }
 		public function set nativeSizing(value:Boolean):void
 		{
-			DataChange.queue(target, "nativeSizing", _nativeSizing, _nativeSizing = value);
+			PropertyEvent.queue(target, "nativeSizing", _nativeSizing, _nativeSizing = value);
 			if (value) {
 				updateNativeRect();
 				if (target.scaleX != 1) {
@@ -344,7 +342,7 @@ package flight.layouts
 				updateWidth();
 				updateHeight();
 			}
-			DataChange.change();
+			PropertyEvent.change();
 		}
 		private var _nativeSizing:Boolean;
 		
@@ -352,7 +350,7 @@ package flight.layouts
 		public function get snapToPixel():Boolean { return _snapToPixel; }
 		public function set snapToPixel(value:Boolean):void
 		{
-			DataChange.change(target, "snapToPixel", _snapToPixel, _snapToPixel = value);
+			PropertyEvent.change(target, "snapToPixel", _snapToPixel, _snapToPixel = value);
 			if (_snapToPixel) {
 				target.x = Math.round(target.x);
 				target.y = Math.round(target.y);
@@ -366,7 +364,7 @@ package flight.layouts
 		public function get left():Number { return _left; }
 		public function set left(value:Number):void
 		{
-			DataChange.change(target, "left", _left, _left = value);
+			PropertyEvent.change(target, "left", _left, _left = value);
 		}
 		private var _left:Number;
 		
@@ -374,7 +372,7 @@ package flight.layouts
 		public function get top():Number { return _top; }
 		public function set top(value:Number):void
 		{
-			DataChange.change(target, "top", _top, _top = value);
+			PropertyEvent.change(target, "top", _top, _top = value);
 		}
 		private var _top:Number;
 		
@@ -382,7 +380,7 @@ package flight.layouts
 		public function get right():Number { return _right; }
 		public function set right(value:Number):void
 		{
-			DataChange.change(target, "right", _right, _right = value);
+			PropertyEvent.change(target, "right", _right, _right = value);
 		}
 		private var _right:Number;
 		
@@ -390,7 +388,7 @@ package flight.layouts
 		public function get bottom():Number { return _bottom; }
 		public function set bottom(value:Number):void
 		{
-			DataChange.change(target, "bottom", _bottom, _bottom = value);
+			PropertyEvent.change(target, "bottom", _bottom, _bottom = value);
 		}
 		private var _bottom:Number;
 		
@@ -398,7 +396,7 @@ package flight.layouts
 		public function get hPercent():Number { return _hPercent; }
 		public function set hPercent(value:Number):void
 		{
-			DataChange.change(target, "hPercent", _hPercent, _hPercent = value);
+			PropertyEvent.change(target, "hPercent", _hPercent, _hPercent = value);
 		}
 		private var _hPercent:Number;
 		
@@ -406,7 +404,7 @@ package flight.layouts
 		public function get vPercent():Number { return _vPercent; }
 		public function set vPercent(value:Number):void
 		{
-			DataChange.change(target, "vPercent", _vPercent, _vPercent = value);
+			PropertyEvent.change(target, "vPercent", _vPercent, _vPercent = value);
 		}
 		private var _vPercent:Number;
 		
@@ -414,7 +412,7 @@ package flight.layouts
 		public function get hOffset():Number { return _hOffset; }
 		public function set hOffset(value:Number):void
 		{
-			DataChange.change(target, "hOffset", _hOffset, _hOffset = value);
+			PropertyEvent.change(target, "hOffset", _hOffset, _hOffset = value);
 		}
 		private var _hOffset:Number;
 		
@@ -422,7 +420,7 @@ package flight.layouts
 		public function get vOffset():Number { return _vOffset; }
 		public function set vOffset(value:Number):void
 		{
-			DataChange.change(target, "vOffset", _vOffset, _vOffset = value);
+			PropertyEvent.change(target, "vOffset", _vOffset, _vOffset = value);
 		}
 		private var _vOffset:Number;
 		
@@ -430,7 +428,7 @@ package flight.layouts
 		public function get dock():String { return _dock; }
 		public function set dock(value:String):void
 		{
-			DataChange.change(target, "dock", _dock, _dock = value);
+			PropertyEvent.change(target, "dock", _dock, _dock = value);
 		}
 		private var _dock:String;
 		
@@ -438,7 +436,7 @@ package flight.layouts
 		public function get tile():String { return _tile; }
 		public function set tile(value:String):void
 		{
-			DataChange.change(target, "tile", _tile, _tile = value);
+			PropertyEvent.change(target, "tile", _tile, _tile = value);
 		}
 		private var _tile:String;
 		
@@ -597,7 +595,7 @@ package flight.layouts
 			return complex;
 		}
 		
-		private function onMeasuredChange(event:PropertyChangeEvent):void
+		private function onMeasuredChange(event:PropertyEvent):void
 		{
 			switch (event.property) {
 				case "width": updateWidth(); break;
@@ -632,7 +630,7 @@ package flight.layouts
 			}
 			if (_y != value) {
 				positioning = true;
-				DataChange.change(target, "y", _y, target.y = _y = value);
+				PropertyEvent.change(target, "y", _y, target.y = _y = value);
 				positioning = false;
 			}
 		}
@@ -650,9 +648,9 @@ package flight.layouts
 				}
 				invalidate();
 				if (_contained) {
-					DataChange.queue(target, "contentWidth", _width, value);
+					PropertyEvent.queue(target, "contentWidth", _width, value);
 				}
-				DataChange.change(target, "width", _width, _width = value);
+				PropertyEvent.change(target, "width", _width, _width = value);
 			}
 		}
 		
@@ -669,9 +667,9 @@ package flight.layouts
 				}
 				invalidate();
 				if (_contained) {
-					DataChange.queue(target, "contentHeight", _height, value);
+					PropertyEvent.queue(target, "contentHeight", _height, value);
 				}
-				DataChange.change(target, "height", _height, _height = value);
+				PropertyEvent.change(target, "height", _height, _height = value);
 			}
 		}
 		

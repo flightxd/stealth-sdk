@@ -14,9 +14,8 @@ package flight.layouts
 	import flight.display.IInvalidating;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
+	import flight.events.PropertyEvent;
 	import flight.utils.Extension;
-
-	import mx.events.PropertyChangeEvent;
 
 	public class Layout extends Extension implements ILayout, IInvalidating
 	{
@@ -76,7 +75,7 @@ package flight.layouts
 		{
 			target.addEventListener(LayoutEvent.MEASURE, onMeasure, false, 20, true);
 			target.addEventListener(LayoutEvent.UPDATE, onLayout, false, 20, true);
-			target.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange, false, 0, true);
+			target.addEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange, false, 0, true);
 			target.content.addEventListener(ListEvent.LIST_CHANGE, onContentChange, false, 0, true);
 			target.content.addEventListener(ListEvent.ITEM_CHANGE, onItemChange, false, 0, true);
 			target.invalidate(LayoutEvent.MEASURE);
@@ -87,7 +86,7 @@ package flight.layouts
 		{
 			target.removeEventListener(LayoutEvent.MEASURE, onMeasure);
 			target.removeEventListener(LayoutEvent.UPDATE, onLayout);
-			target.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
+			target.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange);
 			target.content.removeEventListener(ListEvent.LIST_CHANGE, onContentChange);
 			target.content.removeEventListener(ListEvent.ITEM_CHANGE, onItemChange);
 			target.invalidate(LayoutEvent.MEASURE);
@@ -106,7 +105,7 @@ package flight.layouts
 		}
 		private var contentWatch:Object = {};
 		
-		private function onPropertyChange(event:PropertyChangeEvent):void
+		private function onPropertyChange(event:PropertyEvent):void
 		{
 			switch (targetWatch[event.property]) {
 				case null: break;
@@ -123,7 +122,7 @@ package flight.layouts
 		private function onItemChange(event:ListEvent):void
 		{
 			if (!updating) {
-				for each (var propertyChange:PropertyChangeEvent in event.items) {
+				for each (var propertyChange:PropertyEvent in event.items) {
 					switch (contentWatch[propertyChange.property]) {
 						case null: break;
 						case false: target.invalidate(LayoutEvent.UPDATE);				// break purposely excluded

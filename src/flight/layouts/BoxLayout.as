@@ -11,10 +11,8 @@ package flight.layouts
 	import flash.geom.Rectangle;
 
 	import flight.containers.IContainer;
-	import flight.data.DataChange;
 	import flight.events.LayoutEvent;
-
-	import mx.events.PropertyChangeEvent;
+	import flight.events.PropertyEvent;
 
 	public class BoxLayout extends Layout
 	{
@@ -71,12 +69,12 @@ package flight.layouts
 			
 			if (_padding != value) {
 				if (_padding) {
-					_padding.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
+					_padding.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onPaddingChange);
 				}
-				DataChange.change(this, "padding", _padding, _padding = value);
+				PropertyEvent.change(this, "padding", _padding, _padding = value);
 				invalidate(LayoutEvent.UPDATE);
 				if (_padding) {
-					_padding.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPaddingChange);
+					_padding.addEventListener(PropertyEvent.PROPERTY_CHANGE, onPaddingChange);
 				}
 			}
 		}
@@ -91,7 +89,7 @@ package flight.layouts
 			padding = value;
 		}
 		
-		private function onPaddingChange(event:PropertyChangeEvent):void
+		private function onPaddingChange(event:PropertyEvent):void
 		{
 			invalidate(LayoutEvent.UPDATE);
 		}
@@ -101,7 +99,7 @@ package flight.layouts
 		public function get hAlign():String { return _hAlign; }
 		public function set hAlign(value:String):void
 		{
-			DataChange.change(this, "hAlign", _hAlign, _hAlign = value);
+			PropertyEvent.change(this, "hAlign", _hAlign, _hAlign = value);
 			invalidate(LayoutEvent.UPDATE);
 		}
 		private var _hAlign:String = Align.LEFT;
@@ -111,7 +109,7 @@ package flight.layouts
 		public function get vAlign():String { return _vAlign; }
 		public function set vAlign(value:String):void
 		{
-			DataChange.change(this, "vAlign", _vAlign, _vAlign = value);
+			PropertyEvent.change(this, "vAlign", _vAlign, _vAlign = value);
 			invalidate(LayoutEvent.UPDATE);
 		}
 		private var _vAlign:String = Align.TOP;

@@ -12,9 +12,7 @@ package flight.layouts
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 
-	import flight.data.DataChange;
-
-	import mx.events.PropertyChangeEvent;
+	import flight.events.PropertyEvent;
 
 	/**
 	 * The Bounds class holds values related to a object's dimensions.
@@ -42,7 +40,7 @@ package flight.layouts
 		public function get x():Number { return _x; }
 		public function set x(value:Number):void
 		{
-			DataChange.change(this, "x", _x, _x = value);
+			PropertyEvent.change(this, "x", _x, _x = value);
 		}
 		private var _x:Number = 0;
 		
@@ -55,7 +53,7 @@ package flight.layouts
 		public function get y():Number { return _y; }
 		public function set y(value:Number):void
 		{
-			DataChange.change(this, "y", _y, _y = value);
+			PropertyEvent.change(this, "y", _y, _y = value);
 		}
 		private var _y:Number = 0;
 		
@@ -67,7 +65,7 @@ package flight.layouts
 		public function set width(value:Number):void
 		{
 			value = constrainWidth(this, value);
-			DataChange.change(this, "width", _width, _width = value);
+			PropertyEvent.change(this, "width", _width, _width = value);
 		}
 		private var _width:Number;
 		
@@ -79,7 +77,7 @@ package flight.layouts
 		public function set height(value:Number):void
 		{
 			value = constrainHeight(this, value);
-			DataChange.change(this, "height", _height, _height = value);
+			PropertyEvent.change(this, "height", _height, _height = value);
 		}
 		private var _height:Number;
 		
@@ -91,9 +89,9 @@ package flight.layouts
 		public function set minWidth(value:Number):void
 		{
 			if (_maxWidth < value) {
-				DataChange.queue(this, "maxWidth", _maxWidth, _maxWidth = value);
+				PropertyEvent.queue(this, "maxWidth", _maxWidth, _maxWidth = value);
 			}
-			DataChange.queue(this, "minWidth", _minWidth, _minWidth = value);
+			PropertyEvent.queue(this, "minWidth", _minWidth, _minWidth = value);
 			width = _width;
 		}
 		private var _minWidth:Number = 0;
@@ -106,9 +104,9 @@ package flight.layouts
 		public function set minHeight(value:Number):void
 		{
 			if (_maxHeight < value) {
-				DataChange.queue(this, "maxHeight", _maxHeight, _maxHeight = value);
+				PropertyEvent.queue(this, "maxHeight", _maxHeight, _maxHeight = value);
 			}
-			DataChange.queue(this, "minHeight", _minHeight, _minHeight = value);
+			PropertyEvent.queue(this, "minHeight", _minHeight, _minHeight = value);
 			height = _height;
 		}
 		private var _minHeight:Number = 0;
@@ -121,9 +119,9 @@ package flight.layouts
 		public function set maxWidth(value:Number):void
 		{
 			if (_minWidth > value) {
-				DataChange.queue(this, "minWidth", _minWidth, _minWidth = value);
+				PropertyEvent.queue(this, "minWidth", _minWidth, _minWidth = value);
 			}
-			DataChange.queue(this, "maxWidth", _maxWidth, _maxWidth = value);
+			PropertyEvent.queue(this, "maxWidth", _maxWidth, _maxWidth = value);
 			width = _width;
 		}
 		private var _maxWidth:Number = int.MAX_VALUE;
@@ -136,9 +134,9 @@ package flight.layouts
 		public function set maxHeight(value:Number):void
 		{
 			if (_minHeight > value) {
-				DataChange.queue(this, "minHeight", _minHeight, _minHeight = value);
+				PropertyEvent.queue(this, "minHeight", _minHeight, _minHeight = value);
 			}
-			DataChange.queue(this, "maxHeight", _maxHeight, _maxHeight = value);
+			PropertyEvent.queue(this, "maxHeight", _maxHeight, _maxHeight = value);
 			height = _height;
 		}
 		private var _maxHeight:Number = int.MAX_VALUE;
@@ -221,15 +219,15 @@ package flight.layouts
 				aspectRatio = bounds.width == bounds.height ? 1 : bounds.width / bounds.height;
 			}
 			aspectRatios[bounds] = aspectRatio;
-			IEventDispatcher(bounds).addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onBoundsChange, false, 20, true);
+			IEventDispatcher(bounds).addEventListener(PropertyEvent.PROPERTY_CHANGE, onBoundsChange, false, 20, true);
 		}
 		
 		public static function unlockAspectRatio(bounds:IBounds):void
 		{
-			IEventDispatcher(bounds).removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onBoundsChange);
+			IEventDispatcher(bounds).removeEventListener(PropertyEvent.PROPERTY_CHANGE, onBoundsChange);
 		}
 		
-		private static function onBoundsChange(event:PropertyChangeEvent):void
+		private static function onBoundsChange(event:PropertyEvent):void
 		{
 			if (!boundsChanging) {
 				boundsChanging = true;

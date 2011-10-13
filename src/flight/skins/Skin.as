@@ -17,10 +17,10 @@ package flight.skins
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
 	import flight.containers.IContainer;
-	import flight.data.DataChange;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
+	import flight.events.PropertyEvent;
 	import flight.graphics.MaskType;
 	import flight.layouts.Bounds;
 	import flight.layouts.DockLayout;
@@ -29,8 +29,6 @@ package flight.skins
 	import flight.layouts.IMeasureable;
 	import flight.states.State;
 	import flight.utils.Extension;
-
-	import mx.events.PropertyChangeEvent;
 
 	/**
 	 * Skin is a convenient base class for many skins, swappable graphic
@@ -44,7 +42,7 @@ package flight.skins
 		{
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
-			_measured.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10);
+			_measured.addEventListener(PropertyEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10);
 			
 			bindTarget("width");
 			bindTarget("height");
@@ -68,7 +66,7 @@ package flight.skins
 		public function get alpha():Number { return _alpha; }
 		public function set alpha(value:Number):void
 		{
-			DataChange.change(this, "alpha", _alpha, _alpha = value);
+			PropertyEvent.change(this, "alpha", _alpha, _alpha = value);
 		}
 		private var _alpha:Number = 1;
 		
@@ -76,7 +74,7 @@ package flight.skins
 		public function get mask():DisplayObject { return _mask; }
 		public function set mask(value:DisplayObject):void
 		{
-			DataChange.change(this, "mask", _mask, _mask = value);
+			PropertyEvent.change(this, "mask", _mask, _mask = value);
 		}
 		private var _mask:DisplayObject = null;
 		
@@ -84,7 +82,7 @@ package flight.skins
 		public function get maskType():String { return _maskType; }
 		public function set maskType(value:String):void
 		{
-			DataChange.change(this, "maskType", _maskType, _maskType = value);
+			PropertyEvent.change(this, "maskType", _maskType, _maskType = value);
 		}
 		private var _maskType:String = MaskType.CLIP;
 		
@@ -92,7 +90,7 @@ package flight.skins
 		public function get blendMode():String { return _blendMode; }
 		public function set blendMode(value:String):void
 		{
-			DataChange.change(this, "blendMode", _blendMode, _blendMode = value);
+			PropertyEvent.change(this, "blendMode", _blendMode, _blendMode = value);
 		}
 		private var _blendMode:String = BlendMode.NORMAL;
 		
@@ -100,7 +98,7 @@ package flight.skins
 		public function get filters():Array { return _filters; }
 		public function set filters(value:Array):void
 		{
-			DataChange.change(this, "filters", _filters, _filters = value);
+			PropertyEvent.change(this, "filters", _filters, _filters = value);
 		}
 		private var _filters:Array;
 		
@@ -126,7 +124,7 @@ package flight.skins
 					state = newState;
 					state.source = this;
 					state.execute();
-					DataChange.change(this, "currentState", _currentState, _currentState = state.name);
+					PropertyEvent.change(this, "currentState", _currentState, _currentState = state.name);
 				}
 			}
 		}
@@ -216,11 +214,11 @@ package flight.skins
 				if (_layout) {
 					_layout.target = null;
 				}
-				DataChange.queue(this, "layout", _layout, _layout = value);
+				PropertyEvent.queue(this, "layout", _layout, _layout = value);
 				if (_layout) {
 					_layout.target = target ? this : null;
 				}
-				DataChange.change();
+				PropertyEvent.change();
 			}
 		}
 		private var _layout:ILayout = new DockLayout();
@@ -229,8 +227,8 @@ package flight.skins
 		public function get width():Number { return _width; }
 		public function set width(value:Number):void
 		{
-			DataChange.queue(this, "contentWidth", _width, value);
-			DataChange.change(this, "width", _width, _width = value);
+			PropertyEvent.queue(this, "contentWidth", _width, value);
+			PropertyEvent.change(this, "width", _width, _width = value);
 			invalidate();
 		}
 		private var _width:Number = 0;
@@ -239,8 +237,8 @@ package flight.skins
 		public function get height():Number { return _height; }
 		public function set height(value:Number):void
 		{
-			DataChange.queue(this, "contentHeight", _height, value);
-			DataChange.change(this, "height", _height, _height = value);
+			PropertyEvent.queue(this, "contentHeight", _height, value);
+			PropertyEvent.change(this, "height", _height, _height = value);
 			invalidate();
 		}
 		private var _height:Number = 0;
@@ -269,7 +267,7 @@ package flight.skins
 		public function get minWidth():Number { return _minWidth; }
 		public function set minWidth(value:Number):void
 		{
-			DataChange.change(this, "minWidth", _minWidth, _minWidth = value);
+			PropertyEvent.change(this, "minWidth", _minWidth, _minWidth = value);
 		}
 		private var _minWidth:Number = 0;
 		
@@ -277,7 +275,7 @@ package flight.skins
 		public function get minHeight():Number { return _minHeight; }
 		public function set minHeight(value:Number):void
 		{
-			DataChange.change(this, "minHeight", _minHeight, _minHeight = value);
+			PropertyEvent.change(this, "minHeight", _minHeight, _minHeight = value);
 		}
 		private var _minHeight:Number = 0;
 		
@@ -285,7 +283,7 @@ package flight.skins
 		public function get maxWidth():Number { return _maxWidth; }
 		public function set maxWidth(value:Number):void
 		{
-			DataChange.change(this, "maxWidth", _maxWidth, _maxWidth = value);
+			PropertyEvent.change(this, "maxWidth", _maxWidth, _maxWidth = value);
 		}
 		private var _maxWidth:Number = int.MAX_VALUE;
 		
@@ -293,7 +291,7 @@ package flight.skins
 		public function get maxHeight():Number { return _maxHeight; }
 		public function set maxHeight(value:Number):void
 		{
-			DataChange.change(this, "maxHeight", _maxHeight, _maxHeight = value);
+			PropertyEvent.change(this, "maxHeight", _maxHeight, _maxHeight = value);
 		}
 		private var _maxHeight:Number = int.MAX_VALUE;
 		
@@ -303,7 +301,7 @@ package flight.skins
 		public function get measured():IBounds { return _measured; }
 		private var _measured:Bounds = new Bounds(0, 0);
 		
-		private function onMeasuredChange(event:PropertyChangeEvent):void
+		private function onMeasuredChange(event:PropertyEvent):void
 		{
 			if (target is IMeasureable) {
 				var targetMeasured:IBounds = IMeasureable(target).measured;

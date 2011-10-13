@@ -7,7 +7,7 @@
 
 package flight.ranges
 {
-	import flight.data.DataChange;
+	import flight.events.PropertyEvent;
 
 	public class Position extends Progress implements IPosition
 	{
@@ -21,7 +21,7 @@ package flight.ranges
 		public function get stepSize():Number { return _stepSize; }
 		public function set stepSize(value:Number):void
 		{
-			DataChange.change(this, "stepSize", _stepSize, _stepSize = value);
+			PropertyEvent.change(this, "stepSize", _stepSize, _stepSize = value);
 		}
 		private var _stepSize:Number = 1;
 		
@@ -29,7 +29,7 @@ package flight.ranges
 		public function get skipSize():Number { return _pageSize; }
 		public function set skipSize(value:Number):void
 		{
-			DataChange.change(this, "skipSize", _pageSize, _pageSize = value);
+			PropertyEvent.change(this, "skipSize", _pageSize, _pageSize = value);
 		}
 		private var _pageSize:Number = 20;
 		

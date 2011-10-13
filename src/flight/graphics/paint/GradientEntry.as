@@ -9,7 +9,7 @@ package flight.graphics.paint
 {
 	import flash.events.EventDispatcher;
 
-	import flight.data.DataChange;
+	import flight.events.PropertyEvent;
 
 	public class GradientEntry extends EventDispatcher 
 	{
@@ -24,7 +24,7 @@ package flight.graphics.paint
 		public function get color():Number { return _color; }
 		public function set color(value:Number):void
 		{
-			DataChange.change(this, "color", _color, _color = value);
+			PropertyEvent.change(this, "color", _color, _color = value);
 		}
 		private var _color:Number;
 		
@@ -35,7 +35,7 @@ package flight.graphics.paint
 			if (isNaN(value)) {
 				value = 1;
 			}
-			DataChange.change(this, "alpha", _alpha, _alpha = value);
+			PropertyEvent.change(this, "alpha", _alpha, _alpha = value);
 		}
 		private var _alpha:Number;
 		
@@ -43,7 +43,7 @@ package flight.graphics.paint
 		public function get ratio():Number { return _ratio; }
 		public function set ratio(value:Number):void
 		{
-			DataChange.change(this, "ratio", _ratio, _ratio = value);
+			PropertyEvent.change(this, "ratio", _ratio, _ratio = value);
 		}
 		private var _ratio:Number;
 	}

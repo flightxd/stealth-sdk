@@ -11,13 +11,11 @@ package flight.collections
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 
-	import flight.data.DataChange;
-	import flight.data.IListSelection;
-	import flight.data.ListSelection;
 	import flight.events.ListEvent;
+	import flight.events.PropertyEvent;
+	import flight.selection.IListSelection;
+	import flight.selection.ListSelection;
 	import flight.utils.callLater;
-
-	import mx.events.PropertyChangeEvent;
 
 	[Event(name="listChange", type="flight.events.ListEvent")]
 	[Event(name="itemChange", type="flight.events.ListEvent")]
@@ -49,7 +47,7 @@ package flight.collections
 		public function get idField():String { return _idField; }
 		public function set idField(value:String):void
 		{
-			DataChange.change(this, "idField", _idField, _idField = value);
+			PropertyEvent.change(this, "idField", _idField, _idField = value);
 		}
 		private var _idField:String;
 		
@@ -199,7 +197,7 @@ package flight.collections
 		public function get queueChanges():Boolean { return _queueChanges; }
 		public function set queueChanges(value:Boolean):void
 		{
-			DataChange.change(this, "queueChanges", _queueChanges, _queueChanges = value);
+			PropertyEvent.change(this, "queueChanges", _queueChanges, _queueChanges = value);
 			if (!_queueChanges && dispatcher) {
 				if (listChangeEvent) {
 					dispatcher.dispatchEvent(listChangeEvent);
@@ -217,7 +215,7 @@ package flight.collections
 		public function get unique():Boolean { return _unique; }
 		public function set unique(value:Boolean):void
 		{
-			DataChange.change(this, "unique", _unique, _unique = value);
+			PropertyEvent.change(this, "unique", _unique, _unique = value);
 		}
 		private var _unique:Boolean;
 		
@@ -396,7 +394,7 @@ package flight.collections
 				dispatcher.addEventListener(ListEvent.LIST_CHANGE, onListChange, false, 10);
 				for each (var item:Object in this) {
 					if (item is IEventDispatcher) {
-						item.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onItemChange, false, 10, true);
+						item.addEventListener(PropertyEvent.PROPERTY_CHANGE, onItemChange, false, 10, true);
 					}
 				}
 			}
@@ -409,7 +407,7 @@ package flight.collections
 				dispatcher.removeEventListener(ListEvent.LIST_CHANGE, onListChange);
 				for each (var item:Object in this) {
 					if (item is IEventDispatcher) {
-						item.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onItemChange);
+						item.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onItemChange);
 					}
 				}
 			}
@@ -420,17 +418,17 @@ package flight.collections
 			var item:Object;
 			for each (item in event.removed) {
 				if (item is IEventDispatcher) {
-					item.removeEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onItemChange);
+					item.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onItemChange);
 				}
 			}
 			for each (item in event.items) {
 				if (item is IEventDispatcher) {
-					item.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onItemChange, false, 10, true);
+					item.addEventListener(PropertyEvent.PROPERTY_CHANGE, onItemChange, false, 10, true);
 				}
 			}
 		}
 		
-		private function onItemChange(event:PropertyChangeEvent):void
+		private function onItemChange(event:PropertyEvent):void
 		{
 			var index:int = indexOf(event.target);
 			itemChange(index, event);
