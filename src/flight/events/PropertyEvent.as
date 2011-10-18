@@ -62,5 +62,10 @@ package flight.events
 		{
 			return new PropertyEvent(type, bubbles, cancelable, source, property, oldValue, newValue);
 		}
+		
+		override public function toString():String
+		{
+			return "[object PropertyEvent(" + property + "=" + newValue + ")]";
+		}
 	}
 }

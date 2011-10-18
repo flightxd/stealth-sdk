@@ -57,9 +57,6 @@
 				<include name="libs/*.swc" />
 				<include name="locale/${flex-sdk.locale}/*.swc" />
 			</library-path>
-			<library-path dir="libs" append="true">
-				<include name="*.swc" />
-			</library-path>
 		</compc>
 	</target>
 	
@@ -72,8 +69,6 @@
 			<namespace uri="http://xd.flightxd.com/2011" manifest="${src.dir}/manifest.xml" />
 			<source-path path-element="${src.dir}" />
 			<library-path dir="${flex-sdk.dir}/frameworks/libs" includes="*.swc" append="true" />
-			<library-path dir="${basedir}/libs" includes="*.swc" append="true" />
-			<examples-path dir="${basedir}/examples" />
 		</asdoc>
 	</target>
 	

@@ -10,9 +10,7 @@ package flight.display
 	import flash.display.DisplayObject;
 	import flash.display.SimpleButton;
 	import flash.events.Event;
-	import flash.events.IEventDispatcher;
 	import flash.filters.BitmapFilter;
-	import flash.utils.Dictionary;
 
 	import flight.collections.ArrayList;
 	import flight.events.InvalidationEvent;
@@ -297,20 +295,12 @@ package flight.display
 			Invalidation.validateNow(this, phase);
 		}
 		
-		public function defer(target:IEventDispatcher, event:String, listener:Function, priority:int = 0):DeferredListener
+		public function defer(method:Function, withPropertyChange:String = null):void
 		{
-			if (!deferredListeners) {
-				deferredListeners = new Dictionary();
-			}
-			if (!deferredListeners[listener]) {
-				deferredListeners[listener] = new DeferredListener(this, listener);
-			}
-			var deferred:DeferredListener = deferredListeners[listener];
-			deferred.priority = priority;
-			deferred.defer(target, event);
-			return deferred;
+			deferred ||= new Deferred(this);
+			deferred.defer(method, withPropertyChange);
 		}
-		private var deferredListeners:Dictionary;
+		private var deferred:Deferred;
 		
 		protected function get created():Boolean { return _created; }
 		private var _created:Boolean;

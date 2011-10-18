@@ -12,7 +12,7 @@ package flight.utils
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
 
-	import flight.display.DeferredListener;
+	import flight.display.Deferred;
 	import flight.display.IInvalidating;
 	import flight.display.Invalidation;
 	import flight.events.InvalidationEvent;
@@ -126,20 +126,12 @@ package flight.utils
 			}
 		}
 		
-		public function defer(target:IEventDispatcher, event:String, listener:Function, priority:int = 0):DeferredListener
+		public function defer(method:Function, withPropertyChange:String = null):void
 		{
-			if (!deferredListeners) {
-				deferredListeners = new Dictionary();
-			}
-			if (!deferredListeners[listener]) {
-				deferredListeners[listener] = new DeferredListener(this, listener);
-			}
-			var deferred:DeferredListener = deferredListeners[listener];
-			deferred.priority = priority;
-			deferred.defer(target, event);
-			return deferred;
+			deferred ||= new Deferred(this);
+			deferred.defer(method, withPropertyChange);
 		}
-		private var deferredListeners:Dictionary;
+		private var deferred:Deferred;
 		
 		
 		// ====== ILifecycle implementation ====== //
