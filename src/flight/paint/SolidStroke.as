@@ -5,26 +5,25 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.graphics.paint
+package flight.paint
 {
 	import flash.display.CapsStyle;
-	import flash.display.GradientType;
 	import flash.display.GraphicsStroke;
 	import flash.display.JointStyle;
 	import flash.display.LineScaleMode;
 
 	import flight.events.PropertyEvent;
 
-	public class GradientStroke extends GradientFill implements IStroke
+	public class SolidStroke extends SolidFill implements IStroke
 	{
 		protected var stroke:GraphicsStroke;
 		
-		public function GradientStroke(weight:Number = 1, type:String = GradientType.LINEAR, entries:* = null, rotation:Number = 0, pixelHinting:Boolean = false)
+		public function SolidStroke(weight:Number = 1, color:uint = 0x000000, alpha:Number = 1, pixelHinting:Boolean = false)
 		{
 			_weight = weight;
 			_pixelHinting = pixelHinting;
-			super(type, entries, rotation);
-			paintData = stroke = new GraphicsStroke(_weight, _pixelHinting, _scaleMode, _caps, _joints, _miterLimit, gradientFill);
+			super(color, alpha);
+			paintData = stroke = new GraphicsStroke(_weight, _pixelHinting, _scaleMode, _caps, _joints, _miterLimit, solidFill);
 		}
 		
 		[Bindable("propertyChange")]

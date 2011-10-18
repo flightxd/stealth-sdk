@@ -5,13 +5,9 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.graphics.paint
+package flight.paint
 {
-	public class SolidColor extends SolidFill
+	public interface IStroke extends IPaint
 	{
-		public function SolidColor(color:uint = 0x000000, alpha:Number = 1)
-		{
-			super(color, alpha);
-		}
 	}
 }

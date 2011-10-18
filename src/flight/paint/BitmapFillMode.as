@@ -5,9 +5,13 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.graphics.paint
+package flight.paint
 {
-	public interface IStroke extends IPaint
+	public class BitmapFillMode
 	{
+		// TODO: Implement CLIP behavior in BitmapFill
+		//public static const CLIP:String = "clip";
+		public static const REPEAT:String = "repeat";
+		public static const SCALE:String = "scale";
 	}
 }

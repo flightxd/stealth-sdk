@@ -10,8 +10,8 @@ package flight.graphics
 	import flash.geom.Matrix;
 
 	import flight.display.IDrawable;
-	import flight.graphics.paint.IFill;
-	import flight.graphics.paint.IStroke;
+	import flight.paint.IFill;
+	import flight.paint.IStroke;
 
 	public interface IGraphicShape extends IGraphicElement, IDrawable
 	{

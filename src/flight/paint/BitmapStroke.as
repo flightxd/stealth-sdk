@@ -5,7 +5,7 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.graphics.paint
+package flight.paint
 {
 	import flash.display.CapsStyle;
 	import flash.display.GraphicsStroke;
@@ -14,16 +14,16 @@ package flight.graphics.paint
 
 	import flight.events.PropertyEvent;
 
-	public class SolidStroke extends SolidFill implements IStroke
+	public class BitmapStroke extends BitmapFill implements IStroke
 	{
 		protected var stroke:GraphicsStroke;
 		
-		public function SolidStroke(weight:Number = 1, color:uint = 0x000000, alpha:Number = 1, pixelHinting:Boolean = false)
+		public function BitmapStroke(weight:Number = 1, source:* = null, fillMode:String = BitmapFillMode.SCALE, pixelHinting:Boolean = false)
 		{
 			_weight = weight;
 			_pixelHinting = pixelHinting;
-			super(color, alpha);
-			paintData = stroke = new GraphicsStroke(_weight, _pixelHinting, _scaleMode, _caps, _joints, _miterLimit, solidFill);
+			super(source, fillMode);
+			paintData = stroke = new GraphicsStroke(_weight, _pixelHinting, _scaleMode, _caps, _joints, _miterLimit, bitmapFill);
 		}
 		
 		[Bindable("propertyChange")]

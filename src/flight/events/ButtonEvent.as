@@ -66,23 +66,23 @@ package flight.events
 		 */
 		public static const RELEASE_OUTSIDE:String = "releaseOutside";
 		
-//		/**
-//		 * Defines the value of the type property of a releaseOutside event object. The releaseOutside
-//		 * event is dispatched when the primary mouse button is released off of the target.
-//		 */
-//		public static const STATE_UP:String = "stateUp";
-//		
-//		/**
-//		 * Defines the value of the type property of a releaseOutside event object. The releaseOutside
-//		 * event is dispatched when the primary mouse button is released off of the target.
-//		 */
-//		public static const STATE_OVER:String = "stateOver";
-//		
-//		/**
-//		 * Defines the value of the type property of a releaseOutside event object. The releaseOutside
-//		 * event is dispatched when the primary mouse button is released off of the target.
-//		 */
-//		public static const STATE_DOWN:String = "stateDown";
+		/**
+		 * Defines the value of the type property of a releaseOutside event object. The releaseOutside
+		 * event is dispatched when the primary mouse button is released off of the target.
+		 */
+		public static const STATE_UP:String = "stateUp";
+		
+		/**
+		 * Defines the value of the type property of a releaseOutside event object. The releaseOutside
+		 * event is dispatched when the primary mouse button is released off of the target.
+		 */
+		public static const STATE_OVER:String = "stateOver";
+		
+		/**
+		 * Defines the value of the type property of a releaseOutside event object. The releaseOutside
+		 * event is dispatched when the primary mouse button is released off of the target.
+		 */
+		public static const STATE_DOWN:String = "stateDown";
 		
 		/**
 		 * An index of all button's that are currently effected by a mouse press.
@@ -131,9 +131,9 @@ package flight.events
 					button.addEventListener(RELEASE,					onCallbackEvent, false, 10, true);
 					button.addEventListener(RELEASE_OUTSIDE,			onCallbackEvent, false, 10, true);
 					button.addEventListener(HOLD,						onCallbackEvent, false, 10, true);
-//					button.addEventListener(STATE_UP,					onCallbackEvent, false, 10, true);
-//					button.addEventListener(STATE_OVER,					onCallbackEvent, false, 10, true);
-//					button.addEventListener(STATE_DOWN,					onCallbackEvent, false, 10, true);
+					button.addEventListener(STATE_UP,					onCallbackEvent, false, 10, true);
+					button.addEventListener(STATE_OVER,					onCallbackEvent, false, 10, true);
+					button.addEventListener(STATE_DOWN,					onCallbackEvent, false, 10, true);
 				}
 			}
 			
@@ -158,9 +158,9 @@ package flight.events
 			button.removeEventListener(RELEASE,					onCallbackEvent);
 			button.removeEventListener(RELEASE_OUTSIDE,			onCallbackEvent);
 			button.removeEventListener(HOLD,					onCallbackEvent);
-//			button.removeEventListener(STATE_UP,				onCallbackEvent);
-//			button.removeEventListener(STATE_OVER,				onCallbackEvent);
-//			button.removeEventListener(STATE_DOWN,				onCallbackEvent);
+			button.removeEventListener(STATE_UP,				onCallbackEvent);
+			button.removeEventListener(STATE_OVER,				onCallbackEvent);
+			button.removeEventListener(STATE_DOWN,				onCallbackEvent);
 			
 			return button;
 		}
@@ -230,7 +230,7 @@ package flight.events
 			pressedX[button] = button.mouseX;
 			pressedY[button] = button.mouseY;
 			dispatchButtonEvent(button, PRESS, event);
-//			dispatchButtonEvent(button, STATE_DOWN, event);
+			dispatchButtonEvent(button, STATE_DOWN, event);
 		}
 		
 		/**
@@ -258,9 +258,9 @@ package flight.events
 			if (pressedIndex[button]) {
 				pressedIndex[button] = 1;
 				dispatchButtonEvent(button, DRAG_OVER, event);
-//				dispatchButtonEvent(button, STATE_DOWN, event);
+				dispatchButtonEvent(button, STATE_DOWN, event);
 			} else if (!event.buttonDown) {
-//				dispatchButtonEvent(button, STATE_OVER, event);
+				dispatchButtonEvent(button, STATE_OVER, event);
 			}
 		}
 		
@@ -275,9 +275,9 @@ package flight.events
 			if (pressedIndex[button]) {
 				pressedIndex[button] = -1;
 				dispatchButtonEvent(button, DRAG_OUT, event);
-//				dispatchButtonEvent(button, STATE_OVER, event);
+				dispatchButtonEvent(button, STATE_OVER, event);
 			} else if (!event.buttonDown) {
-//				dispatchButtonEvent(button, STATE_UP, event);
+				dispatchButtonEvent(button, STATE_UP, event);
 			}
 		}
 		
@@ -290,7 +290,7 @@ package flight.events
 			var button:InteractiveObject = event.currentTarget as InteractiveObject;
 			if (!pressedIndex[button]) {
 				dispatchButtonEvent(button, MouseEvent.ROLL_OVER, event, true);
-//				dispatchButtonEvent(button, STATE_OVER, event);
+				dispatchButtonEvent(button, STATE_OVER, event);
 			}
 		}
 		
@@ -330,10 +330,10 @@ package flight.events
 				
 				if (pressedIndex[button] != -1) {
 					dispatchButtonEvent(button, RELEASE, event as MouseEvent);
-//					dispatchButtonEvent(button, STATE_OVER, event as MouseEvent);
+					dispatchButtonEvent(button, STATE_OVER, event as MouseEvent);
 				} else {
 					dispatchButtonEvent(button, RELEASE_OUTSIDE, event as MouseEvent);
-//					dispatchButtonEvent(button, STATE_UP, event as MouseEvent);
+					dispatchButtonEvent(button, STATE_UP, event as MouseEvent);
 				}
 				
 				clearInterval(holdIntervals[button]);

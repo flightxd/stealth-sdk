@@ -5,13 +5,13 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.graphics.paint
+package flight.paint
 {
-	public class BitmapFillMode
+	public class SolidColor extends SolidFill
 	{
-		// TODO: Implement CLIP behavior in BitmapFill
-		//public static const CLIP:String = "clip";
-		public static const REPEAT:String = "repeat";
-		public static const SCALE:String = "scale";
+		public function SolidColor(color:uint = 0x000000, alpha:Number = 1)
+		{
+			super(color, alpha);
+		}
 	}
 }

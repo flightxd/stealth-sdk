@@ -7,6 +7,8 @@
 
 package flight.graphics
 {
+	import flight.containers.Group;
+
 	public class Graphic extends Group
 	{
 		public var version:Number = 1;

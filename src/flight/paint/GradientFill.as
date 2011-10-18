@@ -5,7 +5,7 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.graphics.paint
+package flight.paint
 {
 	import flash.display.GradientType;
 	import flash.display.GraphicsGradientFill;
@@ -54,7 +54,7 @@ package flight.graphics.paint
 		}
 		private var _type:String;
 		
-		[ArrayElementType("flight.graphics.paint.GradientEntry")]
+		[ArrayElementType("flight.paint.GradientEntry")]
 		[Bindable("propertyChange")]
 		public function get entries():IList { return _entries; }
 		public function set entries(value:*):void

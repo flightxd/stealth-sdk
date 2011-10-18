@@ -19,7 +19,7 @@ package flight.skins
 
 	import flight.containers.IContainer;
 	import flight.events.PropertyEvent;
-	import flight.graphics.Group;
+	import flight.containers.Group;
 	import flight.layouts.Align;
 	import flight.layouts.Box;
 	import flight.layouts.DockLayout;

@@ -5,7 +5,7 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.graphics.paint
+package flight.paint
 {
 	import flash.display.GraphicsPath;
 	import flash.display.IGraphicsData;

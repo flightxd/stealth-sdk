@@ -55,7 +55,7 @@ package flight.containers
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.addEventListener(Event.RESIZE, onStageResize, false, 20, true);
 			onStageResize(null);
-			Invalidation.validateNow();
+			Invalidation.validateNow(this);
 		}
 		
 		private function onAppCreate(event:Event):void

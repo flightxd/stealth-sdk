@@ -20,9 +20,9 @@ package flight.graphics
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.events.PropertyEvent;
-	import flight.graphics.paint.IFill;
-	import flight.graphics.paint.IStroke;
-	import flight.graphics.paint.Paint;
+	import flight.paint.IFill;
+	import flight.paint.IStroke;
+	import flight.paint.Paint;
 	import flight.layouts.Bounds;
 	import flight.layouts.Box;
 	import flight.layouts.IBounds;

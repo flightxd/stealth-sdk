@@ -7,7 +7,7 @@
 
 package flight.containers
 {
-	import flight.graphics.Group;
+	import flight.containers.Group;
 	import flight.layouts.ILayout;
 	import flight.layouts.VerticalLayout;
 

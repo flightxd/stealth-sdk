@@ -5,7 +5,7 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.graphics.shapes
+package flight.graphics
 {
 	import flash.display.GraphicsPath;
 	import flash.geom.Rectangle;

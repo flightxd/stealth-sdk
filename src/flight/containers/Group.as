@@ -5,8 +5,9 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.graphics
+package flight.containers
 {
+	import flight.graphics.*;
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
@@ -19,8 +20,8 @@ package flight.graphics
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.events.PropertyEvent;
-	import flight.graphics.paint.Paint;
-	import flight.graphics.shapes.Rect;
+	import flight.paint.Paint;
+	import flight.graphics.Rect;
 	import flight.layouts.BasicLayout;
 	import flight.layouts.Box;
 	import flight.layouts.BoxLayout;

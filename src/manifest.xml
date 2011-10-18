@@ -10,21 +10,22 @@
 	<component id="GraphicShape"			class="flight.graphics.GraphicShape"/>
 	<component id="GraphicBitmap"			class="flight.graphics.GraphicBitmap"/>
 	<component id="GraphicText"				class="flight.graphics.GraphicText"/>
-	<component id="Rect"					class="flight.graphics.shapes.Rect"/>
-	<component id="Ellipse"					class="flight.graphics.shapes.Ellipse"/>
+	<component id="Rect"					class="flight.graphics.Rect"/>
+	<component id="Ellipse"					class="flight.graphics.Ellipse"/>
+	<component id="Graphic"					class="flight.graphics.Graphic"/>
 	
 	<!-- paint -->
-	<component id="SolidColor"				class="flight.graphics.paint.SolidColor"/>
-	<component id="GradientFill"			class="flight.graphics.paint.GradientFill"/>
-	<component id="LinearGradient"			class="flight.graphics.paint.LinearGradient"/>
-	<component id="RadialGradient"			class="flight.graphics.paint.RadialGradient"/>
-	<component id="BitmapFill"				class="flight.graphics.paint.BitmapFill"/>
-	<component id="SolidColorStroke"		class="flight.graphics.paint.SolidColorStroke"/>
-	<component id="GradientStroke"			class="flight.graphics.paint.GradientStroke"/>
-	<component id="LinearGradientStroke"	class="flight.graphics.paint.LinearGradientStroke"/>
-	<component id="RadialGradientStroke"	class="flight.graphics.paint.RadialGradientStroke"/>
-	<component id="BitmapStroke"			class="flight.graphics.paint.BitmapStroke"/>
-	<component id="GradientEntry"			class="flight.graphics.paint.GradientEntry"/>
+	<component id="SolidColor"				class="flight.paint.SolidColor"/>
+	<component id="GradientFill"			class="flight.paint.GradientFill"/>
+	<component id="LinearGradient"			class="flight.paint.LinearGradient"/>
+	<component id="RadialGradient"			class="flight.paint.RadialGradient"/>
+	<component id="BitmapFill"				class="flight.paint.BitmapFill"/>
+	<component id="SolidColorStroke"		class="flight.paint.SolidColorStroke"/>
+	<component id="GradientStroke"			class="flight.paint.GradientStroke"/>
+	<component id="LinearGradientStroke"	class="flight.paint.LinearGradientStroke"/>
+	<component id="RadialGradientStroke"	class="flight.paint.RadialGradientStroke"/>
+	<component id="BitmapStroke"			class="flight.paint.BitmapStroke"/>
+	<component id="GradientEntry"			class="flight.paint.GradientEntry"/>
 	
 	<!-- layouts -->
 	<component id="DockLayout"				class="flight.layouts.DockLayout"/>
@@ -34,11 +35,10 @@
 	<component id="Box"						class="flight.layouts.Box"/>
 	
 	<!-- containers -->
-	<component id="Group"					class="flight.graphics.Group"/>
+	<component id="Group"					class="flight.containers.Group"/>
 	<component id="HGroup"					class="flight.containers.HGroup"/>
 	<component id="VGroup"					class="flight.containers.VGroup"/>
 	<component id="DockGroup"				class="flight.containers.DockGroup"/>
-	<component id="Graphic"					class="flight.graphics.Graphic"/>
 	<component id="Application"				class="flight.containers.Application"/>
 	
 	<!-- skins -->

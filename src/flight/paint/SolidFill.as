@@ -5,46 +5,39 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.graphics.paint
+package flight.paint
 {
-	import flash.events.EventDispatcher;
+	import flash.display.GraphicsSolidFill;
 
 	import flight.events.PropertyEvent;
 
-	public class GradientEntry extends EventDispatcher 
+	public class SolidFill extends Paint implements IFill
 	{
-		public function GradientEntry(color:Number = 0x000000, alpha:Number = 1, ratio:Number = NaN)
+		protected var solidFill:GraphicsSolidFill;
+		
+		public function SolidFill(color:uint = 0x000000, alpha:Number = 1)
 		{
 			_color = color;
 			_alpha = alpha;
-			_ratio = ratio;
+			paintData = solidFill = new GraphicsSolidFill(_color, _alpha);
 		}
 		
 		[Bindable("propertyChange")]
-		public function get color():Number { return _color; }
-		public function set color(value:Number):void
+		public function get color():uint { return _color; }
+		public function set color(value:uint):void
 		{
+			solidFill.color = value;
 			PropertyEvent.change(this, "color", _color, _color = value);
 		}
-		private var _color:Number;
+		private var _color:uint;
 		
 		[Bindable("propertyChange")]
 		public function get alpha():Number { return _alpha; }
 		public function set alpha(value:Number):void
 		{
-			if (isNaN(value)) {
-				value = 1;
-			}
+			solidFill.alpha = value;
 			PropertyEvent.change(this, "alpha", _alpha, _alpha = value);
 		}
 		private var _alpha:Number;
-		
-		[Bindable("propertyChange")]
-		public function get ratio():Number { return _ratio; }
-		public function set ratio(value:Number):void
-		{
-			PropertyEvent.change(this, "ratio", _ratio, _ratio = value);
-		}
-		private var _ratio:Number;
 	}
 }

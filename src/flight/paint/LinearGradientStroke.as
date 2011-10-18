@@ -5,15 +5,15 @@
  * in accordance with the terms of the license agreement accompanying it.
  */
 
-package flight.graphics.paint
+package flight.paint
 {
 	import flash.display.GradientType;
 
-	public class LinearGradient extends GradientFill
+	public class LinearGradientStroke extends GradientStroke
 	{
-		public function LinearGradient(entries:* = null, rotation:Number = 0)
+		public function LinearGradientStroke(weight:Number = 1, entries:* = null, rotation:Number = 0, pixelHinting:Boolean = false)
 		{
-			super(GradientType.LINEAR, entries, rotation);
+			super(weight, GradientType.LINEAR, entries, rotation, pixelHinting);
 		}
 		
 		/**
