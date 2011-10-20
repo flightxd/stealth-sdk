@@ -10,7 +10,6 @@ package flight.utils
 	import flash.display.DisplayObject;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
-	import flash.utils.Dictionary;
 
 	import flight.display.Deferred;
 	import flight.display.IInvalidating;
@@ -25,8 +24,13 @@ package flight.utils
 	{
 		public function Extension(target:IEventDispatcher = null)
 		{
-			setTarget(target);
 			init();
+			_created = true;
+			create();
+			addEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange, false, -10);
+			bindInvalidation(InvalidationEvent.VALIDATE, -10);
+			bindInvalidation(InvalidationEvent.COMMIT, -10);
+			this["target"] = target;
 		}
 		
 		protected function getTarget():IEventDispatcher { return _target; }
@@ -35,33 +39,30 @@ package flight.utils
 			if (_target != value) {
 				
 				if (_target) {
-					removeEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange);
 					_target.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange);
-					_target.removeEventListener(InvalidationEvent.VALIDATE, dispatchEvent);
-					_target.removeEventListener(InvalidationEvent.COMMIT, dispatchEvent);
+					for (var phase:String in phases) {
+						_target.removeEventListener(phase, dispatchEvent);
+					}
+					
 					detach();
 				}
+				
 				PropertyEvent.queue(this ,"target", _target, _target = value);
 				if ("host" in this) {
 					this["host"] = _target;
 				}
+				for (var property:String in bindings) {
+					bindings[property] = Boolean(_target && property in _target);
+					executeBinding(property);
+				}
+				
 				if (_target) {
-					for (var property:String in bindings) {
-						bindings[property] = property in _target;
-						if (bindings[property]) {
-							this[property] = _target[property];
-						}
+					_target.addEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange, false, -10, true);
+					for (phase in phases) {
+						_target.addEventListener(phase, dispatchEvent, false, phases[phase], true);
+						invalidate(phase);
 					}
-					addEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange, false, -10);
-					_target.addEventListener(PropertyEvent.PROPERTY_CHANGE, onPropertyChange, false, -10);
-					_target.addEventListener(InvalidationEvent.VALIDATE, dispatchEvent, false, -10);
-					_target.addEventListener(InvalidationEvent.COMMIT, dispatchEvent, false, -10);
-					invalidate(InvalidationEvent.VALIDATE);
-					invalidate(InvalidationEvent.COMMIT);
-					if (!_created) {
-						_created = true;
-						create();
-					}
+					
 					attach();
 				}
 				PropertyEvent.change();
@@ -80,40 +81,69 @@ package flight.utils
 		protected function bindTarget(property:String):void
 		{
 			if (property in this) {
-				bindings[property] = _target && property in _target;
-				if (bindings[property]) {
-					this[property] = _target[property];
-				}
+				bindings[property] = Boolean(_target && property in _target);
+				executeBinding(property);
 			} else {
-				throw new Error("Cannot register property " + property + " in " + getClassName(this));
+				throw new Error("Cannot find property " + property + " to bind on " + getClassName(this));
 			}
 		}
 		private var bindings:Object = {};
 		
-		private function onPropertyChange(event:PropertyEvent):void
+		private function executeBinding(property:Object, source:Object = null):Object
 		{
-			var property:String = String(event.property);
 			if (bindings[property]) {
-				bindings[property] = false;
-				var bindTarget:Object = event.target != this ? this : _target;
-				var newValue:Object = bindTarget[property] = event.newValue;
-				if (newValue != event.newValue) {
-					event.target[property] = newValue;
-					event.newValue = newValue;
+				bindings[property] = null;
+				
+				source ||= bindings["><" + property] ? this : _target;
+				var target:Object = source != this ? this : _target;
+				
+				var oldValue:Object = source[property];
+				var newValue:Object = target[property] = oldValue;
+				// reassign if newValue was altered by target
+				if (newValue != oldValue) {
+					source[property] = newValue;
 				}
+				
 				bindings[property] = true;
 			}
+			return newValue;
 		}
+		
+		private function onPropertyChange(event:PropertyEvent):void
+		{
+			if (bindings[event.property] != null && event.source == this) {
+				bindings["><" + event.property] = true;								// mark property as explicitly set: "><" (x) for explicit
+				bindings.setPropertyIsEnumerable("><" + event.property, false);
+			}
+			event.newValue = executeBinding(event.property, event.source);
+		}
+		
+		protected function bindInvalidation(phase:String, priority:int = 0):void
+		{
+			if (phases[phase] == null) {
+				phases[phase] = priority;
+				if (_target) {
+					_target.addEventListener(phase, dispatchEvent, false, priority);
+					invalidate(phase);
+				}
+			}
+		}
+		private var phases:Object = {};
 		
 		
 		// ====== IInvalidating implementation ====== //
 		
 		public function invalidate(phase:String = null):void
 		{
+			phase ||= InvalidationEvent.VALIDATE;
+			if (phases[phase] == null) {
+				return bindInvalidation(phase);
+			}
+			
 			if (_target is IInvalidating) {
 				IInvalidating(_target).invalidate(phase);
 			} else if (_target is DisplayObject) {
-				Invalidation.invalidate(DisplayObject(_target), phase || InvalidationEvent.VALIDATE);
+				Invalidation.invalidate(DisplayObject(_target), phase);
 			}
 		}
 		
@@ -133,17 +163,14 @@ package flight.utils
 		}
 		private var deferred:Deferred;
 		
-		
-		// ====== ILifecycle implementation ====== //
-		
 		protected function get created():Boolean { return _created; }
 		private var _created:Boolean;
 		
-		public final function kill():void
+		final public function kill():void
 		{
 			if (_created) {
 				if (_target) {
-					setTarget(null);
+					this["target"] = null;
 				}
 				destroy();
 				_created = false;

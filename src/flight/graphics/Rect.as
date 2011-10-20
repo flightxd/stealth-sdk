@@ -11,7 +11,6 @@ package flight.graphics
 	import flash.geom.Rectangle;
 
 	import flight.events.PropertyEvent;
-	import flight.graphics.GraphicShape;
 
 	public class Rect extends GraphicShape
 	{

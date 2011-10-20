@@ -12,6 +12,8 @@ package flight.display
 	import flash.events.Event;
 	import flash.utils.Dictionary;
 
+	import flight.containers.Group;
+
 	import flight.utils.callLater;
 	import flight.utils.getClassName;
 

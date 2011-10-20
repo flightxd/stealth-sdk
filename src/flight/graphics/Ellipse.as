@@ -10,11 +10,9 @@ package flight.graphics
 	import flash.display.GraphicsPath;
 	import flash.geom.Rectangle;
 
-	import flight.graphics.GraphicShape;
-
 	public class Ellipse extends GraphicShape
 	{
-		private static var ROUND_RATIO:Number = 2 - 1/Math.SQRT1_2;
+		private static const ROUND_RATIO:Number = 2 - 1/Math.SQRT1_2;
 		
 		public function Ellipse(width:Number = 0, height:Number = 0, fill:* = null, stroke:* = null)
 		{

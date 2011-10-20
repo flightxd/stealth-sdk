@@ -153,8 +153,7 @@ package flight.collections
 		public function swapAt(index1:int, index2:int):void
 		{
 			var item1:Object = this[index1];
-			var item2:Object = this[index2];
-			this[index1] = item2;
+			this[index1] = this[index2];
 			this[index2] = item1;
 			if (dispatcher) {
 				listChange(index1, index2);

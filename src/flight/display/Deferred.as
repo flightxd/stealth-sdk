@@ -48,11 +48,15 @@ package flight.display
 			}
 		}
 		
-		private function onCommit(event:Event):void
+		private function onCommit(event:InvalidationEvent):void
 		{
 			for (var method:* in this) {
 				delete this[method];
-				method();
+				if (method.length) {
+					method(event);
+				} else {
+					method();
+				}
 			}
 		}
 		

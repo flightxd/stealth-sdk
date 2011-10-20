@@ -96,7 +96,7 @@ package flight.components
 				invalidate(LayoutEvent.MEASURE);
 				if (_skin) {
 					_skin.target = this;
-					_skin.addEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinPartChange);
+					_skin.addEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinPartChange, false, 0, true);
 					for (var i:String in skinParts) {
 						this[i] = i in _skin ? _skin[i] : null;
 					}

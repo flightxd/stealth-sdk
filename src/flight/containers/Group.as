@@ -7,26 +7,26 @@
 
 package flight.containers
 {
-	import flight.graphics.*;
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 
 	import flight.collections.ArrayList;
 	import flight.collections.IList;
-	import flight.containers.IContainer;
 	import flight.display.Bitmap;
 	import flight.events.InvalidationEvent;
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.events.PropertyEvent;
-	import flight.paint.Paint;
+	import flight.graphics.GraphicElement;
+	import flight.graphics.IGraphicShape;
 	import flight.graphics.Rect;
+	import flight.layouts.Align;
 	import flight.layouts.BasicLayout;
 	import flight.layouts.Box;
-	import flight.layouts.BoxLayout;
 	import flight.layouts.ILayout;
 	import flight.layouts.ILayoutElement;
+	import flight.paint.Paint;
 	import flight.ranges.IPosition;
 	import flight.ranges.Position;
 
@@ -57,53 +57,71 @@ package flight.containers
 		}
 		
 		/**
-		 * @copy stealth.layout.BoxLayout#padding
+		 * @copy flight.layout.BoxLayout#padding
 		 */
 		[Bindable("propertyChange")]
-		public function get padding():Box { return _layout is BoxLayout ? BoxLayout(_layout).padding : null; }
+		public function get padding():Box { return _padding || (padding = new Box()); }
 		public function set padding(value:*):void
 		{
-			if (_layout is BoxLayout) {
-				BoxLayout(_layout).padding = value;
+			if (!(value is Box)) {
+				value = Box.getInstance(value, _padding);
+			}
+			
+			if (_padding != value) {
+				if (_padding) {
+					_padding.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onPaddingChange);
+				}
+				PropertyEvent.change(this, "padding", _padding, _padding = value);
+				invalidate(LayoutEvent.UPDATE);
+				if (_padding) {
+					_padding.addEventListener(PropertyEvent.PROPERTY_CHANGE, onPaddingChange, false, 0, true);
+				}
 			}
 		}
+		private var _padding:Box;
 		
 		/**
-		 * @copy stealth.layout.BoxLayout#gap
+		 * @copy flight.layout.BoxLayout#gap
 		 */
-		public function get gap():Box { return _layout is BoxLayout ? BoxLayout(_layout).gap : null; }
+		public function get gap():Box { return _padding || (padding = new Box()); }
 		public function set gap(value:*):void
 		{
-			if (_layout is BoxLayout) {
-				BoxLayout(_layout).gap = value;
+			if (!(value is Box)) {
+				value = Box.getDirectional(value, _padding);
 			}
+			padding = value;
+		}
+		
+		private function onPaddingChange(event:PropertyEvent):void
+		{
+			invalidate(LayoutEvent.UPDATE);
 		}
 		
 		/**
-		 * @copy stealth.layout.BoxLayout#hAlign
+		 * @copy flight.layout.BoxLayout#hAlign
 		 */
 		[Bindable("propertyChange")]
 		[Inspectable(enumeration="left,center,right,fill", defaultValue="left", name="hAlign")]
-		public function get hAlign():String { return _layout is BoxLayout ? BoxLayout(_layout).hAlign : null; }
+		public function get hAlign():String { return _hAlign; }
 		public function set hAlign(value:String):void
 		{
-			if (_layout is BoxLayout) {
-				BoxLayout(_layout).hAlign = value;
-			}
+			PropertyEvent.change(this, "hAlign", _hAlign, _hAlign = value);
+			invalidate(LayoutEvent.UPDATE);
 		}
+		private var _hAlign:String = Align.LEFT;
 		
 		/**
-		 * @copy stealth.layout.BoxLayout#vAlign
+		 * @copy flight.layout.BoxLayout#vAlign
 		 */
 		[Bindable("propertyChange")]
 		[Inspectable(enumeration="top,middle,bottom,fill", defaultValue="top", name="vAlign")]
-		public function get vAlign():String { return _layout is BoxLayout ? BoxLayout(_layout).vAlign : null; }
+		public function get vAlign():String { return _vAlign; }
 		public function set vAlign(value:String):void
 		{
-			if (_layout is BoxLayout) {
-				BoxLayout(_layout).vAlign = value;
-			}
+			PropertyEvent.change(this, "vAlign", _vAlign, _vAlign = value);
+			invalidate(LayoutEvent.UPDATE);
 		}
+		private var _vAlign:String = Align.TOP;
 		
 		
 		// ====== background implementation ====== //
@@ -128,7 +146,7 @@ package flight.containers
 					_background.validateNow();
 					_background.width = width;
 					_background.height = height;
-					_background.addEventListener(PropertyEvent.PROPERTY_CHANGE, onShapeChange, false, 10);
+					_background.addEventListener(PropertyEvent.PROPERTY_CHANGE, onShapeChange, false, 10, true);
 					invalidate();
 				}
 			}

@@ -15,7 +15,7 @@ package flight.utils
 		
 		if (!enabled) {
 			enabled = true;
-			Interval.timer.addEventListener(TimerEvent.TIMER, onTimer);
+			Interval.timer.addEventListener(TimerEvent.TIMER, callNow);
 		}
 	}
 }
@@ -29,10 +29,10 @@ internal var enabled:Boolean;
 internal var calls:Dictionary = new Dictionary();
 internal var callsEmpty:Dictionary = new Dictionary();
 
-internal function onTimer(event:TimerEvent):void
+internal function callNow(event:TimerEvent):void
 {
 	enabled = false;
-	Interval.timer.removeEventListener(TimerEvent.TIMER, onTimer);
+	Interval.timer.removeEventListener(TimerEvent.TIMER, callNow);
 	
 	var callsNow:Dictionary = calls;
 	calls = callsEmpty;

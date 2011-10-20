@@ -43,20 +43,22 @@ package flight.behaviors
 		
 		[Bindable("propertyChange")]
 		public function get target():IEventDispatcher { return getTarget(); }
-		public function set target(value:IEventDispatcher):void
+		public function set target(value:IEventDispatcher):void { setTarget(target = value); }
+		
+		override protected function attach():void
 		{
-			var target:IEventDispatcher = getTarget();
-			if (target != value) {
-				if (target is ISkinnable) {
-					target.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinChange);
-				}
-				setTarget(target = value);
-				if (target is ISkinnable) {
-					target.addEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinChange);
-					partSource = ISkinnable(target).skin;
-				} else {
-					partSource = target;
-				}
+			if (target is ISkinnable) {
+				target.addEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinChange, false, 0, true);
+				partSource = ISkinnable(target).skin;
+			} else {
+				partSource = target;
+			}
+		}
+		
+		override protected function detach():void
+		{
+			if (target is ISkinnable) {
+				target.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinChange);
 			}
 		}
 		
@@ -98,7 +100,7 @@ package flight.behaviors
 				}
 				PropertyEvent.queue(this, "partSource", _partSource, _partSource = value);
 				if (_partSource) {
-					_partSource.addEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinPartChange);
+					_partSource.addEventListener(PropertyEvent.PROPERTY_CHANGE, onSkinPartChange, false, 0, true);
 					for (var i:String in skinParts) {
 						this[i] = i in _partSource ? _partSource[i] : null;
 					}

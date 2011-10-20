@@ -71,15 +71,17 @@ package flight.layouts
 				if (_padding) {
 					_padding.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onPaddingChange);
 				}
+				PropertyEvent.queue(this, "gap", _padding, value);
 				PropertyEvent.change(this, "padding", _padding, _padding = value);
 				invalidate(LayoutEvent.UPDATE);
 				if (_padding) {
-					_padding.addEventListener(PropertyEvent.PROPERTY_CHANGE, onPaddingChange);
+					_padding.addEventListener(PropertyEvent.PROPERTY_CHANGE, onPaddingChange, false, 0, true);
 				}
 			}
 		}
 		private var _padding:Box;
 		
+		[Bindable("propertyChange")]
 		public function get gap():Box { return _padding || (padding = new Box()); }
 		public function set gap(value:*):void
 		{

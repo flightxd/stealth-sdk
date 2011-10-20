@@ -27,7 +27,7 @@ package flight.layouts
 		{
 			this.target = target;
 			target.addEventListener(LayoutEvent.MEASURE, onMeasure, false, 20);
-			_measured.addEventListener(PropertyEvent.PROPERTY_CHANGE, onMeasuredChange);
+			_measured.addEventListener(PropertyEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10, true);
 		}
 		
 		[Bindable("propertyChange")]
@@ -185,7 +185,7 @@ package flight.layouts
 			}
 			PropertyEvent.change(target, "margin", _margin, _margin = value);
 			if (_margin) {
-				_margin.addEventListener(PropertyEvent.PROPERTY_CHANGE, onMarginChange);
+				_margin.addEventListener(PropertyEvent.PROPERTY_CHANGE, onMarginChange, false, 0, true);
 			}
 		}
 		private var _margin:Box;

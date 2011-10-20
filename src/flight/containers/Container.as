@@ -138,7 +138,7 @@ package flight.containers
 		public function get contentWidth():Number { return super.width; }
 		public function set contentWidth(value:Number):void { super.width = value; }
 		
-		public function get contentHeight():Number { return super.width; }
+		public function get contentHeight():Number { return super.height; }
 		public function set contentHeight(value:Number):void { super.height = value;}
 		
 		public function get measured():IBounds { return _measured; }

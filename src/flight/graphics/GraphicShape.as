@@ -20,13 +20,13 @@ package flight.graphics
 	import flight.events.LayoutEvent;
 	import flight.events.ListEvent;
 	import flight.events.PropertyEvent;
-	import flight.paint.IFill;
-	import flight.paint.IStroke;
-	import flight.paint.Paint;
 	import flight.layouts.Bounds;
 	import flight.layouts.Box;
 	import flight.layouts.IBounds;
 	import flight.layouts.LayoutElement;
+	import flight.paint.IFill;
+	import flight.paint.IStroke;
+	import flight.paint.Paint;
 	import flight.states.IStateful;
 	import flight.states.State;
 
@@ -124,7 +124,7 @@ package flight.graphics
 				PropertyEvent.change(this, "fill", _fill, _fill = value);
 				invalidate();
 				if (_fill && IEventDispatcher) {
-					IEventDispatcher(_fill).addEventListener(PropertyEvent.PROPERTY_CHANGE, onFillChange);
+					IEventDispatcher(_fill).addEventListener(PropertyEvent.PROPERTY_CHANGE, onFillChange, false, 0, true);
 				}
 			}
 		}
@@ -143,7 +143,7 @@ package flight.graphics
 				PropertyEvent.change(this, "stroke", _stroke, _stroke = value);
 				invalidate();
 				if (_stroke && _stroke is IEventDispatcher) {
-					IEventDispatcher(_stroke).addEventListener(PropertyEvent.PROPERTY_CHANGE, onStrokeChange);
+					IEventDispatcher(_stroke).addEventListener(PropertyEvent.PROPERTY_CHANGE, onStrokeChange, false, 0, true);
 				}
 			}
 		}

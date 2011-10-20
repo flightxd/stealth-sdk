@@ -17,9 +17,9 @@ package flight.skins
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 
+	import flight.containers.Group;
 	import flight.containers.IContainer;
 	import flight.events.PropertyEvent;
-	import flight.containers.Group;
 	import flight.layouts.Align;
 	import flight.layouts.Box;
 	import flight.layouts.DockLayout;
@@ -39,7 +39,7 @@ package flight.skins
 		{
 			bindTarget("width");
 			bindTarget("height");
-			IEventDispatcher(measured).addEventListener(PropertyEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10);
+			IEventDispatcher(measured).addEventListener(PropertyEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10, true);
 		}
 		
 		// ====== ISkin implementation ====== //

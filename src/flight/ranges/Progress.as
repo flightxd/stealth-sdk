@@ -18,7 +18,7 @@ package flight.ranges
 	{
 		public function Progress(length:Number = 100)
 		{
-			this.length = 100;
+			this.length = length;
 		}
 		
 		[Bindable("propertyChange")]

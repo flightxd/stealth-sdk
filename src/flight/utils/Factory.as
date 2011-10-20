@@ -47,7 +47,11 @@ package flight.utils
 		
 		protected function buildTemplate(data:Object = null):*
 		{
-			return new template();
+			var template:Object = new template();
+			if ("data" in template) {
+				template["data"] = data;
+			}
+			return template;
 		}
 		
 		public static function getInstance(value:*, data:Object = null):*

@@ -42,7 +42,7 @@ package flight.skins
 		{
 			addEventListener(LayoutEvent.MEASURE, onMeasure, false, 10);
 			addEventListener(InvalidationEvent.VALIDATE, onRender, false, 10);
-			_measured.addEventListener(PropertyEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10);
+			_measured.addEventListener(PropertyEvent.PROPERTY_CHANGE, onMeasuredChange, false, 10, true);
 			
 			bindTarget("width");
 			bindTarget("height");
@@ -153,13 +153,7 @@ package flight.skins
 		
 		[Bindable("propertyChange")]
 		public function get target():Sprite { return Sprite(getTarget()); }
-		public function set target(value:Sprite):void
-		{
-			setTarget(value);
-			if (_layout) {
-				_layout.target = value ? this : null;
-			}
-		}
+		public function set target(value:Sprite):void { setTarget(value); }
 		
 		public function getSkinPart(partName:String):InteractiveObject
 		{
@@ -177,6 +171,9 @@ package flight.skins
 			target.addEventListener(InvalidationEvent.VALIDATE, dispatchEvent, false, -10);
 			invalidate(LayoutEvent.MEASURE);
 			invalidate(LayoutEvent.UPDATE);
+			if (_layout) {
+				_layout.target = this;
+			}
 		}
 		
 		override protected function detach():void
@@ -185,6 +182,9 @@ package flight.skins
 			_content.removeEventListener(ListEvent.LIST_CHANGE, onContentChange);
 			for (var i:int; i < _content.length; i++) {
 				target.removeChild(DisplayObject(_content.getAt(i)));
+			}
+			if (_layout) {
+				_layout.target = null;
 			}
 		}
 		
@@ -353,5 +353,13 @@ package flight.skins
 			invalidate(LayoutEvent.UPDATE);
 		}
 		private var contentChanging:Boolean;
+		
+		override protected function destroy():void
+		{
+			if (target is ISkinnable) {
+				ISkinnable(target).skin = null;
+			}
+			super.destroy();
+		}
 	}
 }

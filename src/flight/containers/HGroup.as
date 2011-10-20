@@ -7,7 +7,6 @@
 
 package flight.containers
 {
-	import flight.containers.Group;
 	import flight.layouts.HorizontalLayout;
 	import flight.layouts.ILayout;
 

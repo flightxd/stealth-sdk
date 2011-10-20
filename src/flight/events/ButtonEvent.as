@@ -93,15 +93,15 @@ package flight.events
 		private static var pressedX:Dictionary = new Dictionary(true);
 		private static var pressedY:Dictionary = new Dictionary(true);
 		
-		private static var DELAY_INTERVAL:int = 300;
-		private static var HOLD_INTERVAL:int = 30;
+		private static const DELAY_INTERVAL:int = 300;
+		private static const HOLD_INTERVAL:int = 30;
 		
 		/**
 		 * The makeButton static method is the primary method of the ButtonEvent, transforming a
 		 * target InteractiveObject into a Button. By adding the ButtonEvent event types any
 		 * InteractiveObject may become a Button, including Sprites, TextFields, even the Stage.
 		 * 
-		 * @param	object				This InteractiveObject will be modified to respond to the
+		 * @param	button				This InteractiveObject will be modified to respond to the
 		 * 								mouse with the appropriate Button events.
 		 * @param	includeCallbacks	When set to true, any callback methods that are defined will
 		 * 								be triggered automatically. A callback method is a method

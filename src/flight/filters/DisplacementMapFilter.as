@@ -70,7 +70,7 @@ package flight.filters
 		}
 		
 		[Bindable("propertyChange")]
-		public function get scaleX():Number { return _bitmapFilter.componentY; }
+		public function get scaleX():Number { return _bitmapFilter.scaleX; }
 		public function set scaleX(value:Number):void
 		{
 			PropertyEvent.change(this, "scaleX", _bitmapFilter.scaleX, _bitmapFilter.scaleX = value);

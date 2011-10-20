@@ -141,5 +141,13 @@ package flight.layouts
 		{
 			update();
 		}
+		
+		override protected function destroy():void
+		{
+			if (target) {
+				target.layout = null;
+			}
+			super.destroy();
+		}
 	}
 }
