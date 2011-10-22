@@ -8,7 +8,6 @@
 package flight.display
 {
 	import flash.display.DisplayObject;
-	import flash.events.Event;
 	import flash.utils.Dictionary;
 
 	import flight.events.InvalidationEvent;

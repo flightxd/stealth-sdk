@@ -15,6 +15,7 @@ package flight.containers
 	import flash.ui.MultitouchInputMode;
 
 	import flight.display.Invalidation;
+	import flight.utils.callLater;
 
 	[SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]
 	public class Application extends Module
@@ -55,14 +56,14 @@ package flight.containers
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.addEventListener(Event.RESIZE, onStageResize, false, 20, true);
 			onStageResize(null);
-			Invalidation.validateNow(this);
+			validateNow();
 		}
 		
 		private function onAppCreate(event:Event):void
 		{
 			// if this is a root application class
 			if (stage == parent) {
-				initStage();
+				callLater(initStage);
 			}
 		}
 		

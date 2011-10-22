@@ -17,13 +17,13 @@ package flight.events
 		{
 			queue(source, property, oldValue, newValue, force);
 			
-			var change:PropertyEvent = changes;
-			changes = null;
-			
-			while (change) {
+			while (changes) {
+				var change:PropertyEvent = changes;
+				changes = changes.next;
+				
+				change.next = null;
 				source = change.source;
 				source.dispatchEvent(change);
-				change = change.next;
 			}
 		}
 		

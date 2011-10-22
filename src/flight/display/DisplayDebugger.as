@@ -29,7 +29,7 @@ package flight.display
 			root.addEventListener(InvalidationEvent.VALIDATE, onValidate, false, -10, true);
 			//root.addEventListener(InvalidationEvent.VALIDATE, onValidate, true, 0, true);
 			drawing = new Shape();
-			callLater(Invalidation.invalidate, [root, InvalidationEvent.VALIDATE]);
+			callLater(Invalidation.invalidate, 1, root, InvalidationEvent.VALIDATE);
 		}
 		
 		private function onValidate(event:InvalidationEvent):void
@@ -40,7 +40,7 @@ package flight.display
 				redraw();
 //			}
 				
-				callLater(Invalidation.invalidate, [root, InvalidationEvent.VALIDATE]);
+				callLater(Invalidation.invalidate, 1, root, InvalidationEvent.VALIDATE);
 		}
 		
 		private var indices:Dictionary = new Dictionary(true);

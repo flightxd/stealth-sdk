@@ -9,6 +9,7 @@ package flight.states
 {
 	import flight.collections.ArrayList;
 	import flight.commands.IUndoableCommand;
+	import flight.events.PropertyEvent;
 
 	[DefaultProperty("stateChanges")]
 	public class State extends ArrayList implements IUndoableCommand
@@ -31,6 +32,7 @@ package flight.states
 		
 		public function execute():void
 		{
+			source.addEventListener(PropertyEvent.PROPERTY_CHANGE, onTargetChanged, false, 10, true);
 			// TODO: execute includeIn changes first ... move this to a utility invoked before execute()? (or in some other way avoid 'source')
 			// then other changes
 			for each (var change:Change in this) {
@@ -38,7 +40,7 @@ package flight.states
 					if (source && source[change.target]) {
 						change.target = source[change.target];
 					} else {
-						trace("Invalid change in state \"" + name + "\", '" + change.target + "' an invalid target.");
+						//trace("Invalid change in state \"" + name + "\", '" + change.target + "' an invalid target.");
 						continue;
 					}
 				} else if (!change.target) {
@@ -48,8 +50,21 @@ package flight.states
 			}
 		}
 		
+		private function onTargetChanged(event:PropertyEvent):void
+		{
+			for each (var change:Change in this) {
+				if (change.target is String && change.target == event.property) {
+					if (source && source[change.target]) {
+						change.target = source[change.target];
+						change.execute();
+					}
+				}
+			}
+		}
+		
 		public function undo():void
 		{
+			source.removeEventListener(PropertyEvent.PROPERTY_CHANGE, onTargetChanged);
 			for each (var change:Change in this) {
 				change.undo();
 			}

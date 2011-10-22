@@ -9,9 +9,15 @@ package flight.utils
 {
 	import flash.events.TimerEvent;
 
-	public function callLater(method:Function, args:Array = null):void
+	public function callLater(method:Function, ticks:uint = 1, ...args):void
 	{
+		if (!ticks) {
+			method.apply(null, args);
+			return;
+		}
+		
 		calls[method] = args;
+		calls[method].ticks = ticks;
 		
 		if (!enabled) {
 			enabled = true;
@@ -31,15 +37,23 @@ internal var callsEmpty:Dictionary = new Dictionary();
 
 internal function callNow(event:TimerEvent):void
 {
-	enabled = false;
-	Interval.timer.removeEventListener(TimerEvent.TIMER, callNow);
-	
 	var callsNow:Dictionary = calls;
 	calls = callsEmpty;
 	callsEmpty = callsNow;
 	
+	enabled = false;
 	for (var method:Object in callsNow) {
-		method.apply(null, callsNow[method]);
+		
+		if (--callsNow[method].ticks) {
+			enabled = true;
+			calls[method] = callsNow[method];
+		} else {
+			method.apply(null, callsNow[method]);
+		}
 		delete callsNow[method];
+	}
+	
+	if (!enabled) {
+		Interval.timer.removeEventListener(TimerEvent.TIMER, callNow);
 	}
 }

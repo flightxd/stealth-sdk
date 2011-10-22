@@ -239,7 +239,7 @@ package flight.display
 					invalidStages[stage] = true;
 					stage.invalidate();
 				} else {
-					callLater(invalidateStage, arguments);
+					callLater(invalidateStage, 1, stage);
 				}
 			}
 		}
