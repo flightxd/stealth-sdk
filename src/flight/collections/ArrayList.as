@@ -40,10 +40,6 @@ package flight.collections
 		}
 		
 		[Bindable("propertyChange")]
-		public function get selected():IListSelection { return _selected ||= new ListSelection(this); }
-		private var _selected:ListSelection;
-		
-		[Bindable("propertyChange")]
 		public function get idField():String { return _idField; }
 		public function set idField(value:String):void
 		{
@@ -209,14 +205,6 @@ package flight.collections
 			}
 		}
 		private var _queueChanges:Boolean;
-		
-		[Bindable("propertyChange")]
-		public function get unique():Boolean { return _unique; }
-		public function set unique(value:Boolean):void
-		{
-			PropertyEvent.change(this, "unique", _unique, _unique = value);
-		}
-		private var _unique:Boolean;
 		
 		public function set(index:int, item:Object):Object
 		{

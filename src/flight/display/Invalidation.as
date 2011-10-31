@@ -183,17 +183,17 @@ package flight.display
 				initialized[target] = true;
 				
 				if (target is Stage) {
-					target.addEventListener(Event.RENDER, onRender, false, -10, true);		// listen to ALL stage render events, also a permanent listener since they only get
+					target.addEventListener(Event.RENDER, onRender, false, -10, true);				// listen to ALL stage render events, also a permanent listener since they only get
 					// dispatched with a stage.invalidate and add/remove listeners costs some in performance
-					target.addEventListener(Event.RESIZE, onRender, false, -10, true);		// in many environments render and enterFrame events stop firing when stage is resized -
+					target.addEventListener(Event.RESIZE, onRender, false, -10, true);				// in many environments render and enterFrame events stop firing when stage is resized -
 					// listening to resize compensates for this shortcoming and continues to run validation
 				} else {
-					target.addEventListener(Event.ADDED, onAdded, false, 20, true);			// watch for level changes - this is a permanent listener since these changes happen
+					target.addEventListener(Event.ADDED_TO_STAGE, onAdded, false, 20, true);		// watch for level changes - this is a permanent listener since these changes happen
 					// less frequently than invalidation and so require fewer level calculations
 					if (target.stage) {
 						initialize(target.stage);
 					} else {
-						target.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+						target.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage, false, 30, true);
 					}
 				}
 			}
@@ -219,17 +219,18 @@ package flight.display
 		 */
 		private static function onAdded(event:Event):void
 		{
-			if (event.target == event.currentTarget) {
-				var target:DisplayObject = DisplayObject(event.target);
+			var target:DisplayObject = DisplayObject(event.target);
 																					// correctly invalidate newly added display object on all phases
-				for each (var phase:Invalidation in phases) {						// where it was invalidated while off of the display-list (and set at level -1)
-					if (phase.invalid[target]) {
-						phase.invalid[target] = false;
-						phase.invalidate(target);
+			for each (var phase:Invalidation in phases) {							// where it was invalidated while off of the display-list (and set at level -1)
+				if (phase.invalid[target]) {
+					var parent:DisplayObjectContainer = target.parent;
+					while (parent) {
+						phase.invalidContent[parent] = true;
+						parent = parent.parent;
 					}
 				}
-				invalidateStage(target.stage);
 			}
+			invalidateStage(target.stage);
 		}
 		
 		private static function invalidateStage(stage:Stage):void

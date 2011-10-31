@@ -30,7 +30,7 @@ package flight.containers
 	import flight.ranges.IPosition;
 	import flight.ranges.Position;
 
-	[Event(name="validate", type="flight.events.InvalidationEvent")]
+	[Event(name="update", type="flight.events.LayoutEvent")]
 
 	[DefaultProperty("content")]
 	public class Group extends GraphicElement implements IContainer
