@@ -13,8 +13,6 @@ package flight.collections
 
 	import flight.events.ListEvent;
 	import flight.events.PropertyEvent;
-	import flight.selection.IListSelection;
-	import flight.selection.ListSelection;
 	import flight.utils.callLater;
 
 	[Event(name="listChange", type="flight.events.ListEvent")]
@@ -27,7 +25,7 @@ package flight.collections
 		protected var itemChangeEvent:ListEvent;
 		private var itemsWatched:Boolean;
 		
-		public function ArrayList(source:Array = null, idField:String = "id")
+		public function ArrayList(source:Object = null, idField:String = "id")
 		{
 			if (source) {
 				if (source is Array) {
@@ -214,7 +212,7 @@ package flight.collections
 			var value:* = this[index];
 			this[index] = item;
 			if (dispatcher) {
-				listChange(index, index, [item], [value]);
+				listChange(index, index, item, value);
 			}
 			return item;
 		}
@@ -234,7 +232,7 @@ package flight.collections
 			var len:int = super.length-1;
 			var value:* = super.AS3::pop();
 			if (dispatcher) {
-				listChange(len, len, null, [value]);
+				listChange(len, len, null, value);
 			}
 			return value;
 		}
@@ -243,7 +241,7 @@ package flight.collections
 		{
 			var value:* = super.AS3::shift();
 			if (dispatcher) {
-				listChange(0, 0, null, [value]);
+				listChange(0, 0, null, value);
 			}
 			return value;
 		}
@@ -342,13 +340,13 @@ package flight.collections
 			return value;
 		}
 		
-		protected function listChange(from:int, to:int, added:Array = null, removed:Array = null):void
+		protected function listChange(from:int, to:int, items:Object = null, removed:Object = null):void
 		{
 			if (dispatcher) {
 				if (listChangeEvent) {
-					listChangeEvent.append(from, to, added, removed);
+					listChangeEvent.append(from, to, items, removed);
 				} else {
-					listChangeEvent = new ListEvent(ListEvent.LIST_CHANGE, false, false, from, to, added, removed);
+					listChangeEvent = new ListEvent(ListEvent.LIST_CHANGE, false, false, from, to, items, removed);
 				}
 				
 				if (!_queueChanges) {

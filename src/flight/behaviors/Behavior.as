@@ -43,7 +43,7 @@ package flight.behaviors
 		
 		[Bindable("propertyChange")]
 		public function get target():IEventDispatcher { return getTarget(); }
-		public function set target(value:IEventDispatcher):void { setTarget(target = value); }
+		public function set target(value:IEventDispatcher):void { setTarget(value); }
 		
 		override protected function attach():void
 		{

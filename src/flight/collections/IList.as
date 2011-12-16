@@ -27,7 +27,7 @@ package flight.collections
 		function removeAt(index:int, length:uint = 0):*;					// combined removeItemAt, removeItems
 		function set(index:int, item:Object):Object;						// was setItemAt
 		function setIndex(item:Object, index:int):Object;					// was setItemIndex
-		function swap(item1:Object, item2:Object):void						// was swapItems
-		function swapAt(index1:int, index2:int):void						// was swapItemsAt
+		function swap(item1:Object, item2:Object):void;						// was swapItems
+		function swapAt(index1:int, index2:int):void;						// was swapItemsAt
 	}
 }

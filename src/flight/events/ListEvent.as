@@ -14,36 +14,46 @@ package flight.events
 		public static const LIST_CHANGE:String = "listChange";
 		public static const ITEM_CHANGE:String = "itemChange";
 		
-		
-		public function ListEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false, from:int = -1, to:int = -1, items:Array = null, removed:Array = null)
+		public function ListEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false, from:int = -1, to:int = -1, items:Object = null, removed:Object = null)
 		{
 			super(type, bubbles, cancelable);
-
-			if (from < to) {
-				var t:int = from;
-				from = to;
-				to = t;
-			}
-			
-			_from = from;
-			_to = to;
-			_items = items;
-			_removed = removed;
+			set(from, to, items, removed)
 		}
 		
-		public function get from():int { return _from; }
-		private var _from:int;
+		public var from:int;
 		
-		public function get to():int { return _to; }
-		private var _to:int;
+		public var to:int;
 		
-		public function get items():Array { return _items; }
-		private var _items:Array;
+		public var items:Array = [];
 		
-		public function get removed():Array { return _removed; }
-		private var _removed:Array;
+		public var removed:Array = [];
 		
-		public function append(from:int = -1, to:int = -1, items:Array = null, removed:Array = null):void
+		public function set(from:int = -1, to:int = -1, items:Object = null, removed:Object = null):void
+		{
+			if (from < to) {
+				this.from = to;
+				this.to = from;
+			} else {
+				this.from = from;
+				this.to = to;
+			}
+			
+			this.items.length = 0;
+			if (items is Array) {
+				this.items.push.apply(null, items);
+			} else if (items) {
+				this.items.push(items);
+			}
+			
+			this.removed.length = 0;
+			if (removed is Array) {
+				this.removed.push.apply(null, removed);
+			} else if (removed) {
+				this.removed.push(removed);
+			}
+		}
+		
+		public function append(from:int = -1, to:int = -1, items:Object = null, removed:Object = null):void
 		{
 			if (from < to) {
 				var t:int = from;
@@ -51,28 +61,28 @@ package flight.events
 				to = t;
 			}
 			
-			if (_from > from) {
-				_from = from;
+			if (this.from > from) {
+				this.from = from;
 			}
-			if (_to < to) {
-				_to = to;
+			if (this.to < to) {
+				this.to = to;
 			}
 			
-			if (!_items) {
-				_items = items;
+			if (items is Array) {
+				this.items.push.apply(null, items);
 			} else if (items) {
-				_items.push.apply(items);
+				this.items.push(items);
 			}
-			if (!_removed) {
-				_removed = removed;
+			if (removed is Array) {
+				this.removed.push.apply(null, removed);
 			} else if (removed) {
-				_removed.push.apply(removed);
+				this.removed.push(removed);
 			}
 		}
 		
 		override public function clone():Event
 		{
-			return new ListEvent(type, bubbles, cancelable, _from, _to, _items, _removed);
+			return new ListEvent(type, bubbles, cancelable, from, to, items, removed);
 		}
 	}
 }
