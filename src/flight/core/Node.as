@@ -1,670 +1,674 @@
 package flight.core
 {
-	import flash.geom.Rectangle;
+	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
+	import flash.display.Graphics;
+	import flash.display.Stage;
+	import flash.events.Event;
+	import flash.utils.Dictionary;
 
 	import flight.events.Signal;
 
+	import org.osflash.signals.ISignal;
+
 	use namespace stealth;
-	
-	public class Node implements ILayout
+
+	public class Node
 	{
-		stealth static var inv:uint = 0;
-		
-		public static const RENDER:uint =			1 << inv++;
-		public static const UPDATE:uint =			1 << inv++;
-		public static const SIZE:uint =				1 << inv++;
-		public static const COMMIT:uint =			1 << inv++;
-		public static const CREATE:uint =			1 << inv++;
-		
-		stealth var invalid:uint = 0;
-		
-		stealth var root:DisplayNode;
-		stealth var parent:Node;
-		stealth var head:Node;
-		stealth var tail:Node;
-		stealth var next:Node;
-		stealth var prev:Node;
-		
-		stealth var i:Node;
-		
-		
-		public function get signal():Signal { return _signal ||= new Signal(); }
-		public function set signal(value:*):void { if (value is Function) signal.add(value); }
-		private var _signal:Signal;
-		
-		
 		public var id:String;
-		
-		
+
 		public function Node()
 		{
-			invalid = CREATE | SIZE | UPDATE | RENDER;
+			_invalid = CREATE | SIZE | UPDATE | RENDER;
 		}
-		
-		// init forces creation of the node, where otherwise creation is deferred until added to a parent node
-		final public function init():void
+
+
+		public function get visible():Boolean { return _visible; }
+		public function set visible(value:Boolean):void
 		{
-			if (invalid & CREATE) {
-				invalid &= ~CREATE;
-				create();
+			if (_visible != value) {
+				_visible = value;
+				if (~_invalid & RENDER) _invalid |= RENDER;
+				if (_parent && ~_parent._invalid & (SIZE | UPDATE)) {
+					_parent.invalidateSize(true);
+				}
 			}
 		}
+		stealth var _visible:Boolean = true;
+
+
+		public function get alpha():Number { return _alpha; }
+		public function set alpha(value:Number):void
+		{
+			if (value < 0) value = 0;
+			else if (value > 1) value = 1;
+			if (_alpha != value) {
+				_alpha = value;
+				if (~_invalid & RENDER) _invalid |= RENDER;
+			}
+		}
+		stealth var _alpha:Number = 1;
+
+		// TODO: add color transform???
+
+
+		// ====== Size ====== //
+
+
+		public function get width():Number
+		{
+			return _contentWidth * (_scaleX < 0 ? -_scaleX : _scaleX);				// width * absValue of scaleX
+		}
+		public function set width(value:Number):void
+		{
+			scaleX = _contentWidth ? value / _contentWidth : 1;
+		}
+		stealth var _contentWidth:Number = 0;
+
+		public function get height():Number
+		{
+			return _contentHeight * (_scaleY < 0 ? -_scaleY : _scaleY);				// height * absValue of scale
+		}
+		public function set height(value:Number):void
+		{
+			scaleY = _contentHeight ? value / _contentHeight : 1;
+		}
+		stealth var _contentHeight:Number = 0;
 		
+
+		// ====== Lifecycle ====== //
+
+		
+		stealth static const INVALID:uint =		1 << 0;
+		stealth static const CREATE:uint =		1 << 1;
+		stealth static const DESTROY:uint =		1 << 2;
+		stealth static const SIZE:uint =		1 << 3;
+		stealth static const UPDATE:uint =		1 << 4;
+		stealth static const RENDER:uint =		1 << 5;
+		stealth static const TRANSFORM:uint =	1 << 6;
+
+		stealth var _invalid:uint = 0;
+
+		// initialization of the node
+		protected function create():void
+		{
+		}
+
+		// releases memory and assignments setup in initialization and throughout lifecycle
+		protected function destroy():void
+		{
+		}
+
+		// updates size and layout
+		protected function update():void
+		{
+		}
+
+		// renders display
+		protected function render():void
+		{
+		}
+
+		stealth function invalidateSize(update:Boolean = false):void
+		{
+			if (~_invalid & SIZE) {
+				_invalid |= SIZE | (UPDATE * int(update));
+				if (_root && ~_root._invalid & INVALID) _root.invalidateDisplay();
+			} else if (update && ~_invalid & UPDATE) {
+				_invalid |= UPDATE;
+			}
+		}
+
+		// runs the full render pass from this Node through its descendants
+		stealth function validateNow():void
+		{
+			if (_invalid & CREATE) {
+				_invalid &= ~CREATE;
+				create();
+			}
+
+			var n:Node = this;		// current node
+			n._i = n;
+			while (true) {
+				var c:Node = n._i;	// child node
+				if (c) {
+					if (c._invalid & UPDATE) {
+						c._invalid &= ~UPDATE;
+						c.update();
+					}
+					if (c._invalid & RENDER) {
+						c._invalid &= ~RENDER;
+						c.render();
+					}
+
+					n._i = c._next;
+					n = c;
+					n._i = n._head;
+				} else {
+					if (n == this) break;
+					n = n._parent;
+				}
+			}
+		}
+
 		// kill forces destruction of this and all sub-nodes
 		final public function kill():void
 		{
 			// destroy from bottom up
 			var n:Node = this;				// current node
-			n.i = head;
+			n._i = _head;
 			while (true) {
-				var c:Node = n.i;			// child node
+				var c:Node = n._i;			// child node
 				if (c) {
-					n.i = c.next;
+					n._i = c._next;
 					n = c;
-					n.i = n.head;
+					n._i = n._head;
 				} else {
-					var p:Node = n.parent;
-					if (!(n.invalid & CREATE)) {
-						n.invalid |= CREATE;
+					var p:Node = n._parent;
+					if (~n._invalid & DESTROY) {
+						n._invalid |= DESTROY;
 						n.destroy();
+						n._clear();
+						n._added = null;
+						n._removed = null;
+						n._addedToRoot = null;
+						n._removedFromRoot = null;
 					}
 
-					if (n == this) {
-						if (p) p.remove(n);
-						break;
-					}
-					p.remove(n);
+					if (n == this) break;
 					n = p;
 				}
 			}
-		}
-		
-		// initialization of the node
-		protected function create():void
-		{
-		}
-		
-		// releases memory and assignments setup in initialization and throughout lifecycle
-		protected function destroy():void
-		{
-		}
-		
-		// resolves deferred property changes
-		protected function commit():void
-		{
-		}
-		
-		// updates size and layout
-		protected function update():void
-		{
-		}
-		
-		// renders display
-		protected function render():void
-		{
-		}
-		
-		
-		// ... primary cache buster for all layout when width or height change
-		public function invalidateSize():void
-		{
-			if (invalid & SIZE) {
-				if (root && !root.invalid) {
-					root.invalidate();
-				}
-				invalid |= SIZE | UPDATE | RENDER;
-				
-				var p:Node = this;
-				while (p) {
-//					p.invalid |= SIZE | UPDATE | RENDER;
-					// TODO: clear measure cache
-					p = p.parent;
-				}
-			}
-		}
-		
-		// TODO: remove in favor of inlining invalidation
-		public function invalidate(phases:uint = 1):void
-		{
-			if (root && !(root.invalid & DisplayNode.DISPLAY)) {
-				root.stage.invalidate();
-				root.invalid |= DisplayNode.DISPLAY;
-			}
-			invalid |= phases;
-		}
-		
-		// runs the full render cycle from this point and below, incl layout etc
-		public function validateNow():void
-		{
-			var n:Node = this;	// current node
-			var c:Node;			// child node
 
-			n.i = n = this;
-			while (true) {
-				c = n.i;
-				if (c) {
-					if (c.invalid & COMMIT) {
-						c.invalid &= ~COMMIT;
-						c.commit();
+			if (_parent) {
+				_parent._remove(n);
+			}
+		}
+
+
+		// ====== Transform ====== //
+
+
+		public function get x():Number { return _x; }
+		public function set x(value:Number):void
+		{
+			if (_x != value) {
+				_x = value;
+				if (_display) _display.x = value;
+				if (~_invalid & TRANSFORM) {
+					_invalid |= TRANSFORM;
+					if (_parent && ~_parent._invalid & (SIZE | UPDATE)) {
+						_parent.invalidateSize(true);
 					}
-
-					n.i = c.next;
-					n = c;
-					n.i = n.head;
-				} else {
-					if (n == this) break;
-					n = n.parent;
-				}
-			}
-
-			n.i = n = this;
-			while (true) {
-				c = n.i;
-				if (c) {
-					if (c.invalid & SIZE) {
-						c.invalid &= ~SIZE;
-						c.size();
-					}
-					if (c.invalid & UPDATE) {
-						c.invalid &= ~UPDATE;
-						c.update();
-					}
-
-					n.i = c.next;
-					n = c;
-					n.i = n.head;
-				} else {
-					if (n == this) break;
-					n = n.parent;
-				}
-			}
-			
-			// render from bottom up
-			n = this;
-			n.i = head;
-			while (true) {
-				c = n.i;
-				if (c) {
-					n.i = c.next;
-					n = c;
-					n.i = n.head;
-				} else {
-					if (n.invalid & RENDER) {
-						n.invalid &= ~RENDER;
-						n.render();
-					}
-					
-					if (n == this) break;
-					n = n.parent;
 				}
 			}
 		}
+		stealth var _x:Number = 0;
+
+		public function get y():Number { return _y; }
+		public function set y(value:Number):void
+		{
+			if (_y != value) {
+				_y = value;
+				if (_display) _display.y = value;
+				if (~_invalid & TRANSFORM) {
+					_invalid |= TRANSFORM;
+					if (_parent && ~_parent._invalid & (SIZE | UPDATE)) {
+						_parent.invalidateSize(true);
+					}
+				}
+			}
+		}
+		stealth var _y:Number = 0;
+
+		public function get z():Number { return _z; }
+		public function set z(value:Number):void
+		{
+			if (_z != value) {
+				_z = value;
+				if (_display) _display.z = value;
+				if (~_invalid & TRANSFORM) {
+					_invalid |= TRANSFORM;
+					if (_parent && ~_parent._invalid & (SIZE | UPDATE)) {
+						_parent.invalidateSize(true);
+					}
+				}
+			}
+		}
+		stealth var _z:Number = 0;
+
+		public function get scaleX():Number { return _scaleX; }
+		public function set scaleX(value:Number):void
+		{
+			if (_scaleX != value) {
+				_scaleX = value;
+				if (_display) _display.scaleX = value;
+				if (~_invalid & TRANSFORM) {
+					_invalid |= TRANSFORM;
+					if (_parent && ~_parent._invalid & (SIZE | UPDATE)) {
+						_parent.invalidateSize(true);
+					}
+				}
+			}
+		}
+		stealth var _scaleX:Number = 1;
+
+		public function get scaleY():Number { return _scaleY; }
+		public function set scaleY(value:Number):void
+		{
+			if (_scaleY != value) {
+				_scaleY = value;
+				if (_display) _display.scaleY = value;
+				if (~_invalid & TRANSFORM) {
+					_invalid |= TRANSFORM;
+					if (_parent && ~_parent._invalid & (SIZE | UPDATE)) {
+						_parent.invalidateSize(true);
+					}
+				}
+			}
+		}
+		stealth var _scaleY:Number = 1;
+
+		public function get scaleZ():Number { return _scaleZ; }
+		public function set scaleZ(value:Number):void
+		{
+			if (_scaleZ != value) {
+				_scaleZ = value;
+				if (_display) _display.scaleZ = value;
+				if (~_invalid & TRANSFORM) {
+					_invalid |= TRANSFORM;
+					if (_parent && ~_parent._invalid & (SIZE | UPDATE)) {
+						_parent.invalidateSize(true);
+					}
+				}
+			}
+		}
+		stealth var _scaleZ:Number = 1;
+
+		public function get rotationX():Number { return _rotationX; }
+		public function set rotationX(value:Number):void
+		{
+			if (_rotationX != value) {
+				_rotationX = value;
+				if (_display) _display.rotationX = value;
+				if (~_invalid & TRANSFORM) {
+					_invalid |= TRANSFORM;
+				}
+			}
+		}
+		stealth var _rotationX:Number = 0;
+
+		public function get rotationY():Number { return _rotationY; }
+		public function set rotationY(value:Number):void
+		{
+			if (_rotationY != value) {
+				_rotationY = value;
+				if (_display) _display.rotationY = value;
+				if (~_invalid & TRANSFORM) {
+					_invalid |= TRANSFORM;
+					if (_parent && ~_parent._invalid & (SIZE | UPDATE)) {
+						_parent.invalidateSize(true);
+					}
+				}
+			}
+		}
+		stealth var _rotationY:Number = 0;
+
+		public function get rotationZ():Number { return _rotationZ; }
+		public function set rotationZ(value:Number):void
+		{
+			if (_rotationZ != value) {
+				_rotationZ = value;
+				if (_display) _display.rotation = value;
+				if (~_invalid & TRANSFORM) {
+					_invalid |= TRANSFORM;
+					if (_parent && ~_parent._invalid & (SIZE | UPDATE)) {
+						_parent.invalidateSize(true);
+					}
+				}
+			}
+		}
+		stealth var _rotationZ:Number = 0;
+
+		public function get rotation():Number { return _rotationZ; }
+		public function set rotation(value:Number):void
+		{
+			rotationZ = value;
+		}
 
 
-		public function getLength():uint { return _getLength; }
-		private var _getLength:uint;
-		
-		public function getParent():Node
-		{
-			return parent;
-		}
-		
-		public function getHead():Node
-		{
-			return head;
-		}
-		
-		public function getTail():Node
-		{
-			return tail;
-		}
-		
-		public function getNext(after:Node = null):Node
-		{
-			return after ? after.next : next;
-		}
-		
-		public function getPrev(before:Node = null):Node
-		{
-			return before ? before.prev : prev;
-		}
-		
-		public function add(node:Node, before:Node = null):Node
+
+		// ====== Containment ====== //
+
+
+		public function get added():ISignal { return _added ||= new Signal(); }
+		public function set added(value:*):void{ added.add(value); }
+		stealth var _added:ISignal;
+
+		public function get removed():ISignal { return _removed ||= new Signal(); }
+		public function set removed(value:*):void{ removed.add(value); }
+		stealth var _removed:ISignal;
+
+		public function get addedToRoot():ISignal { return _addedToRoot ||= new Signal(); }
+		public function set addedToRoot(value:*):void{ addedToRoot.add(value); }
+		stealth var _addedToRoot:ISignal;
+
+		public function get removedFromRoot():ISignal { return _removedFromRoot ||= new Signal(); }
+		public function set removedFromRoot(value:*):void{ removedFromRoot.add(value); }
+		stealth var _removedFromRoot:ISignal;
+
+		stealth var _i:Node;
+		stealth var _root:Node;
+		stealth var _parent:Node;
+		stealth var _prev:Node;
+		stealth var _next:Node;
+		stealth var _length:uint;
+		stealth var _head:Node;
+		stealth var _tail:Node;
+
+		stealth function _add(node:Node, before:Node = null):Node
 		{
 			if (!node) return null;
-			if (node.parent) {
-				node.prev ? node.prev.next = node.next : node.parent.head = node.next;
-				node.next ? node.next.prev = node.prev : node.parent.tail = node.prev;
-				node.prev = node.next = null;
-				if (node.parent != this) {
-					//node.removed();
-					node.parent._getLength--;
+			if (node._parent) {
+
+				if (node._parent != this) {
+					if (node._removed)	node._removed.dispatch();
+					if (node._root)		node.removeFromRoot();
+					node._parent._length--;
+					if (~node._parent._invalid & (SIZE | UPDATE)) {
+						node._parent.invalidateSize(true);
+					}
 				}
+
+				node._prev ? node._prev._next = node._next : node._parent._head = node._next;
+				node._next ? node._next._prev = node._prev : node._parent._tail = node._prev;
+				node._prev = node._next = null;
+
+			} else if (node._invalid & CREATE) {
+				node._invalid &= ~CREATE;
+				node.create();
 			}
-			
-			if (before && before.parent == this) {
-				if (head == before) {
-					head = node;
-				} else {
-					node.prev = before.prev;
-					node.prev.next = node;
-				}
-				node.next = before;
-				before.prev = node;
+
+			if (before && before._parent == this) {
+				if (before != _head) {
+					node._prev = before._prev;
+					node._prev._next = node;
+				} else _head = node;
+
+				node._next = before;
+				before._prev = node;
 			} else {
-				if (tail) {
-					node.prev = tail;
-					tail.next = node;
-				} else {
-					head = node;
-				}
-				tail = node;
+				if (_tail) {
+					node._prev = _tail;
+					_tail._next = node;
+				} else _head = node;
+				_tail = node;
 			}
-			
-			if (node.parent != this) {
-				node.parent = this;
-				var root:DisplayNode = this.root;
-				if (root != node.root) {
-					var n:Node = node;		// current node
-					n.i = n;
-					while (true) {
-						var c:Node = n.i;	// child node
-						if (c) {
-							c.root = root;
-							//c.addedToStage();
-							
-							n.i = c.next;
-							n = c;
-							n.i = n.head;
-						} else if (n != node) {
-							n = n.parent;
-						} else {
-							break;
-						}
-					}
-				}
-				
-				_getLength++;
-				if (node.invalid & CREATE) {
-					node.invalid &= ~CREATE;
-					node.create();
-				}
-				//node.added();
+
+			if (node._parent != this) {
+				node._parent = this;
+				_length++;
+
+				if (_root) node.addToRoot(_root);
+				if (node._added) node._added.dispatch();
 			}
-			
+
+			if (~_invalid & (SIZE | UPDATE)) {
+				invalidateSize(true);
+			}
 			return node;
 		}
-		
-		public function contains(node:Node):Boolean
+
+		stealth function _contains(node:Node):Boolean
 		{
-			return node.parent == this;
+			return node._parent == this;
 		}
-		
-		public function swap(node1:Node, node2:Node):void
+
+		stealth function _swap(node1:Node, node2:Node):void
 		{
-			if (int(!node1) | int(!node2) ||
-				int(!node1.parent) | int(!node1.parent)) return;
+			if (int(!node1)				   | int(!node2) ||
+				int(node1._parent != this) | int(node2._parent != this)) return;
 
-			var prev1:Node = node1.prev;
-			var next1:Node = node1.next;
-			var prev2:Node = node2.prev;
-			var next2:Node = node2.next;
+			var prev1:Node = node1._prev;
+			var next1:Node = node1._next;
+			var prev2:Node = node2._prev;
+			var next2:Node = node2._next;
 
-			node2.prev = prev1 == node2 ? node1 : prev1;
-			prev1 ? node2.prev.next = node2 : head = node2;
-			node2.next = next1 == node2 ? node1 : next1;
-			next1 ? node2.next.prev = node2 : tail = node2;
+			node2._prev = prev1 == node2 ? node1 : prev1;
+			node2._next = next1 == node2 ? node1 : next1;
+			node1._prev = prev2 == node1 ? node2 : prev2;
+			node1._next = next2 == node1 ? node2 : next2;
 
-			node1.prev = prev2 == node1 ? node2 : prev2;
-			prev2 ? node1.prev.next = node1 : head = node1;
-			node1.next = next2 == node1 ? node2 : next2;
-			next2 ? node1.next.prev = node1 : tail = node1;
-		}
-		
-		public function remove(node:Node):Node
-		{
-			if (!node || node.parent != this) return null;
-			_getLength--;
-			node.prev ? node.prev.next = node.next : head = node.next;
-			node.next ? node.next.prev = node.prev : tail = node.prev;
-			node.prev = node.next = null;
-			//node.removed();
-			node.parent = null;
-			
-			if (root != null) {
-				// remove from bottom up
-				var n:Node = node;		// current node
-				n.i = head;
-				while (true) {
-					var c:Node = n.i;	// child node
-					if (c) {
-						n.i = c.next;
-						n = c;
-						n.i = n.head;
-					} else {
-						//n.removedFromStage();
-						n.root = null;
-						
-						if (n == this) break;
-						n = n.parent;
-					}
-				}
+			prev1 ? node2._prev._next = node2 : _head = node2;
+			next1 ? node2._next._prev = node2 : _tail = node2;
+			prev2 ? node1._prev._next = node1 : _head = node1;
+			next2 ? node1._next._prev = node1 : _tail = node1;
+
+			if (~_invalid & (SIZE | UPDATE)) {
+				invalidateSize(true);
 			}
-			
+		}
+
+		stealth function _remove(node:Node):Node
+		{
+			if (!node || node._parent != this) return null;
+
+			if (node._removed)	node._removed.dispatch();
+			if (node._root)		node.removeFromRoot();
+
+			node._prev ? node._prev._next = node._next : _head = node._next;
+			node._next ? node._next._prev = node._prev : _tail = node._prev;
+			node._prev = node._next = null;
+			node._parent = null;
+			_length--;
+
+			if (~_invalid & (SIZE | UPDATE)) {
+				invalidateSize(true);
+			}
 			return node;
 		}
-		
-		public function clear():void
+
+		stealth function _clear():void
 		{
-			var root:DisplayNode = this.root;
-			var node:Node = head;
-			head = tail = null;
-			_getLength = 0;
+			var node:Node = _head;
 			while (node) {
-				var next:Node = node.next;
-				node.prev = node.next = null;
-				//node.removed();
-				node.parent = null;
-				
-				if (root != null) {
-					// remove from bottom up
-					var n:Node = node;		// current node
-					n.i = head;
-					while (true) {
-						var c:Node = n.i;	// child node
-						if (c) {
-							n.i = c.next;
-							n = c;
-							n.i = n.head;
-						} else {
-							//n.removedFromStage();
-							n.root = null;
-							
-							if (n == this) break;
-							n = n.parent;
-						}
-					}
-				}
-				
+				if (node._removed)	node._removed.dispatch();
+				if (node._root)		node.removeFromRoot();
+				node = node._next;
+			}
+
+			node = _head;
+			while (node) {
+				var next:Node = node._next;
+				node._prev = null;
+				node._next = null;
+				node._parent = null;
 				node = next;
 			}
-		}
-		
-		// ====== Transform ====== //
-		public function get x():Number { return _x; }
-		public function set x(value:Number):void { _x = value; }
-		private var _x:Number = 0;
-		
-		public function get y():Number { return _y; }
-		public function set y(value:Number):void { _y = value; }
-		private var _y:Number = 0;
-		
-		public function get z():Number { return _z; }
-		public function set z(value:Number):void { _z = value; }
-		private var _z:Number = 0;
-		
-		public function get scaleX():Number { return _scaleX; }
-		public function set scaleX(value:Number):void { _scaleX = value; }
-		private var _scaleX:Number = 1;
-		
-		public function get scaleY():Number { return _scaleY; }
-		public function set scaleY(value:Number):void { _scaleY = value; }
-		private var _scaleY:Number = 1;
-		
-		public function get scaleZ():Number { return _scaleZ; }
-		public function set scaleZ(value:Number):void { _scaleZ = value; }
-		private var _scaleZ:Number = 1;
-		
-		public function get rotationX():Number { return _rotationX; }
-		public function set rotationX(value:Number):void { _rotationX = value; }
-		private var _rotationX:Number = 0;
-		
-		public function get rotationY():Number { return _rotationY; }
-		public function set rotationY(value:Number):void { _rotationY = value; }
-		private var _rotationY:Number = 0;
-		
-		public function get rotationZ():Number { return _rotationZ; }
-		public function set rotationZ(value:Number):void { _rotationZ = value; }
-		private var _rotationZ:Number = 0;
-		
-		public function get rotation():Number { return _rotationZ; }
-		public function set rotation(value:Number):void { _rotationZ = value; }
-		
-		
-		
-		// ====== Layout ====== //
-		stealth var visible:Boolean;
-		stealth var freeform:Boolean;
-		// make getters/setters with shortcuts
-		stealth var marginTop:Number = 0;
-		stealth var marginRight:Number = 0;
-		stealth var marginBottom:Number = 0;
-		stealth var marginLeft:Number = 0;
-		
-		stealth var top:Number;
-		stealth var right:Number;
-		stealth var bottom:Number;
-		stealth var left:Number;
-		stealth var horizontal:Number;
-		stealth var vertical:Number;
-		
-		
-		
-		stealth var layout:ILayout;
-		stealth var paddingTop:Number = 0;
-		stealth var paddingRight:Number = 0;
-		stealth var paddingBottom:Number = 0;
-		stealth var paddingLeft:Number = 0;
-		stealth var hGap:Number = 0;
-		stealth var vGap:Number = 0;
-		
-		
-		// TODO: determine these settings on layout vs on child
-		// TODO: make these smaller data-types? uint: 0, 1, 2 ... begin, middle, end ... fill & justify
-		stealth var hAlign:String;//creation 815 ms, 27876 kb - 484, 0
-		stealth var vAlign:String;//creation 644 ms, 27644 kb - 484, 0
-		
-		
-		
-		// ====== Size ====== //
-//		public function get width():Number { return stealth::width; }
-//		public function set width(value:Number):void
-//		{
-//			stealth::preferredWidth = value;
-//			invalidate(Node.UPDATE);
-//		}
-		public function get width():Number {
-//			if (!layout && invalid & UPDATE)
-//				validateNow();
-			return _width;
-		}
-		public function set width(value:Number):void
-		{
-			if (_width != value) {
-				_width = preferredWidth = value;
-				if (root && !root.invalid) root.invalidate();
-				invalid |= UPDATE;
+
+			_head = null;
+			_tail = null;
+			_length = 0;
+
+			if (~_invalid & (SIZE | UPDATE)) {
+				invalidateSize(true);
 			}
 		}
-		private var _width:Number = 0;
-		
-		public function get height():Number {
-//			if (!layout && invalid & UPDATE)
-//				validateNow();
-			return _height;}
-		
-		public function set height(value:Number):void
+
+		stealth function addToRoot(r:Node):void
 		{
-			if (_height != value) {
-				_height = preferredHeight = value;
-				if (root && !root.invalid) root.invalidate();
-				invalid |= UPDATE;
-				trace("setttt", invalid);
-			}
-		}
-		private var _height:Number = 0;
-		
-		public function get contentWidth():Number
-		{
-//			if (!layout && invalid & UPDATE)
-//				validateNow();
-			return _contentWidth;
-		}
-		private var _contentWidth:Number = 0;
-		
-		public function get contentHeight():Number
-		{
-//			if (!layout && invalid & UPDATE)
-//				validateNow();
-			return _contentHeight;
-		}
-		private var _contentHeight:Number = 0;
-		
-		protected var preferredWidth:Number;		// explicit
-		protected var preferredHeight:Number;		// explicit
-		
-		// TODO: implement
-		public var percentWidth:Number;				// explicit
-		public var percentHeight:Number;			// explicit
-		
-		// TODO: implement
-		private var _minWidth:Number = 0;
-		private var _minHeight:Number = 0;
-		
-		//
-		stealth var sizeMode:uint = SizeMode.SCALE;
-		
-		
-		public function setSize(w:Number = NaN, h:Number = NaN):void
-		{
-			
-		}
-		
-		// measurement cache
-		private var nSize:Rectangle;
-		
-		private var wWidth:Number;
-		private var wSize:Rectangle;
-		
-		private var hHeight:Number;
-		private var hSize:Rectangle;
-		
-		private var whWidth:Number;
-		private var whHeight:Number;
-		private var whSize:Rectangle;
-		
-		/*
-		1) invalidate size with change in preferredSize, measuredSize
-		2) validate size with call to setSize/updateSize
-		3) update invalid size before calculating layout
-		
-		updateSize() + 'virtual' == setSize() + measure()
-		 */
-		public function size(w:Number = NaN, h:Number = NaN, commit:Boolean = true):Rectangle
-		{
-			// lookup measurement in cache
-			if (w == w) {				// !isNaN(w)
-				if (h == h) {			// !isNaN(h)
-					if (w == whWidth && h == whHeight) return whSize;
+			if (_root == r) return;
+
+			var n:Node = this;		// current node
+			n._i = n;
+			while (true) {
+				var c:Node = n._i;	// child node
+				if (c) {
+					c._root = r;
+					if (c._addedToRoot) {
+						c._addedToRoot.dispatch();
+					}
+
+					n._i = c._next;
+					n = c;
+					n._i = n._head;
+				} else if (n != this) {
+					n = n._parent;
 				} else {
-					if (w == wWidth) return wSize;
+					break;
 				}
-			} else if (h == h) {		// !isNaN(h)
-				if (h == hHeight) return hSize;
-			} else if (nSize) {
-				return nSize;
 			}
-			
-			// BEGIN DUPLICATE CODE
-			// TODO: update coordinates based on rotation/scale (parent coord space) ... for 'measure' & 'setSize' 
-			// 90 or 270, swap
-			// 0 or 180, don't swap
-			// anything else does both 90 & 0, then combines the result proportionally
-			
-			// TODO: lookup measurement in cache here?? includes min/max and preferred
-			if (w == w) {
-				w -= marginLeft + marginRight;
-				w = w <= _minWidth ? _minWidth : w;
-			} else if (preferredWidth == preferredWidth) {
-				w = preferredWidth;
-				w = w <= _minWidth ? _minWidth : w;
-			}
-			
-			if (h == h) {
-				h -= marginTop + marginBottom;
-				h = h <= _minHeight ? _minHeight : h;
-			} else if (preferredHeight == preferredHeight) {
-				h = preferredHeight;
-				h = h <= _minHeight ? _minHeight : h;
-			}
-			
-			// TODO: lookup measurement in cache here??
-			var measured:Rectangle = layout ? layout.measureContent(head, w, h) : measure(w, h);
-			measured.width = measured.width <= _minWidth ? _minWidth : measured.width;
-			measured.height = measured.height <= _minHeight ? _minHeight : measured.height;
-			
-			// END DUPLICATE CODE
-			
-			if (commit) {
-				// TODO: add snapToPixel
-				if (w != w) {
-					_contentWidth = w = measured.width;
-				} else {
-					_contentWidth = w < measured.width ? measured.width : w;
-				}
-				
-				var hSizeMode:uint = (sizeMode & SizeMode.HMASK);
-				if (hSizeMode == (SizeMode.SCALE & SizeMode.HMASK)) {
-					_contentWidth = measured.width;
-					_width = w;
-					scaleX = _contentWidth ? _width / _contentWidth : 1;
-				} else if (hSizeMode == (SizeMode.CONSTRAIN & SizeMode.HMASK)) {
-					_width = _contentWidth;
-				} else {
-					_width = w;
-				}
-				
-				if (h != h) {
-					_contentHeight = h = measured.height;
-				} else {
-					_contentHeight = h < measured.width ? measured.width : h;
-				}
-				
-				var vSizeMode:uint = (sizeMode & SizeMode.VMASK);
-				if (vSizeMode == (SizeMode.SCALE & SizeMode.VMASK)) {
-					_contentHeight = measured.height;
-					_height = h;
-					scaleY = _contentHeight ? _height / _contentHeight : 1;
-				} else if (vSizeMode == (SizeMode.CONSTRAIN & SizeMode.VMASK)) {
-					_height = _contentHeight;
-				} else {
-					_height = h;
-				}
-				
-				invalid |= UPDATE;		// TODO: is this all?
-			}
-			trace("!!! Size:", commit, measured.width, measured.height, _width, _height, _contentWidth, _contentHeight);
-			measured.width += marginLeft + marginRight;
-			measured.height += marginTop + marginBottom;
-			// TODO: update coordinates based on rotation/scale (parent coord space) ... for 'measure' & 'setSize' 
-			// 90 or 270, swap
-			// 0 or 180, don't swap
-			// anything else does both 90 & 0, then combines the result proportionally
-			return measured;
 		}
-		
-		protected function measure(w:Number = NaN, h:Number = NaN):Rectangle
+
+		stealth function removeFromRoot():void
 		{
-			return measured;
+			if (!_root) return;
+
+			// remove from bottom up
+			var n:Node = this;		// current node
+			n._i = _head;
+			while (true) {
+				var c:Node = n._i;	// child node
+				if (c) {
+					n._i = c._next;
+					n = c;
+					n._i = n._head;
+				} else {
+					if (n._removedFromRoot) {
+						n._removedFromRoot.dispatch();
+					}
+					n._root = null;
+
+					if (n == this) break;
+					n = n._parent;
+				}
+			}
 		}
-		private static var measured:Rectangle = new Rectangle();
-		
-		
-		// TODO: implement BasicLayout right in the core node class
-		public function measureContent(content:Node, w:Number = NaN, h:Number = NaN):Rectangle
-		{ return null; }
-		
-		public function sizeContent(content:Node, w:Number, h:Number):void
-		{}
+
+
+
+
+
+		// ====== Display ====== //
+
+
+		stealth static var displayNodes:Dictionary = new Dictionary();
+		stealth var graphics:Graphics;
+
+		public function get display():DisplayObject { return _display; }
+		public function set display(value:DisplayObject):void
+		{
+			if (_display == value) return;
+			if (_display) {
+				_display.removeEventListener(Event.ADDED, onChildAdded, true);
+				_display.removeEventListener(Event.REMOVED, onChildRemoved, true);
+				_display.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+				_clear();
+				id = null;
+				delete displayNodes[_display];
+			}
+
+			_display = value;
+
+			if (_display) {
+				displayNodes[_display] = this;
+				id = _display.name;
+				if ("graphics" in _display) {
+					graphics = _display["graphics"];
+				}
+
+				if (_display is DisplayObjectContainer) {
+					_display.addEventListener(Event.ADDED, onChildAdded, true);
+					_display.addEventListener(Event.REMOVED, onChildRemoved, true);
+
+					var container:DisplayObjectContainer = _display as DisplayObjectContainer;
+					var numChildren:int = container.numChildren;
+					for (var i:int = 0; i < numChildren; i++) {
+						var child:DisplayObject = container.getChildAt(i);
+						if (displayNodes[child]) {
+							_add(displayNodes[child]);
+						}
+					}
+				}
+
+				_display.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+				if (_display.stage) {
+					onAddedToStage(null);
+				}
+			}
+		}
+		stealth var _display:DisplayObject;
+
+		// if no parent, establishes displayNode as a fragment root 
+		private function onAddedToStage(event:Event):void
+		{
+			var stage:Stage = _display.stage;
+
+			// if null parent, establish as fragment root
+			if (_parent) return;
+
+			var level:int = 0;
+			var d:DisplayObject = _display;
+			while (d = d.parent) {
+				++level;
+			}
+			// establish this DisplayNode as the root of this fragment
+			_invalid |= INVALID;
+			stage.invalidate();
+			stage.addEventListener(Event.RENDER, onStageRender, false, level);
+			stage.addEventListener(Event.RESIZE, onStageRender, false, level);
+			_display.addEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
+
+			addToRoot(this);
+
+			// inlined init()
+			if (_invalid & CREATE) {
+				_invalid &= ~CREATE;
+				create();
+			}
+		}
+
+		private function onRemovedFromStage(event:Event):void
+		{
+			var targetStage:Stage = _display.stage;
+			targetStage.removeEventListener(Event.RENDER, onStageRender);
+			targetStage.removeEventListener(Event.RESIZE, onStageRender);
+			_display.removeEventListener(Event.REMOVED_FROM_STAGE, onRemovedFromStage);
+
+			removeFromRoot();
+		}
+
+		private function onChildAdded(event:Event):void
+		{
+			if (event.target.parent != _display) return;
+
+			if (displayNodes[event.target]) {
+				_add(displayNodes[event.target]);
+			}
+		}
+
+		private function onChildRemoved(event:Event):void
+		{
+			if (event.target.parent != _display) return;
+			if (displayNodes[event.target]) {
+				_remove(displayNodes[event.target]);
+			}
+		}
+
+		private function onStageRender(event:Event):void
+		{
+			if (_invalid & INVALID) {
+				validateNow();
+				_invalid &= ~INVALID;
+			}
+		}
+
+		stealth function invalidateDisplay():void
+		{
+			if (~_invalid & INVALID) {
+				_invalid |= INVALID;
+				_display.stage.invalidate();
+			}
+		}
 	}
 }

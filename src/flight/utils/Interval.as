@@ -17,8 +17,8 @@ package flight.utils
 	{
 		private static const display:DisplayObject = new Shape();
 		
-		public static const timer:Interval = new Interval();
-		timer.start();
+		public static const global:Interval = new Interval();
+		global.start();
 		
 		public function Interval(timelineSynced:Boolean = true)
 		{

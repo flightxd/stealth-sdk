@@ -11,7 +11,7 @@ package flight.core
 //		function get shiftSize():Number;
 //		function set shiftSize(value:Number):void;
 		
-		function measureContent(content:Node, w:Number = NaN, h:Number = NaN):Rectangle;
-		function sizeContent(content:Node, w:Number, h:Number):void;
+		function measureLayout(measured:Rectangle, content:Node, w:Number = NaN, h:Number = NaN):void;
+		function updateLayout(content:Node, w:Number, h:Number):void;
 	}
 }

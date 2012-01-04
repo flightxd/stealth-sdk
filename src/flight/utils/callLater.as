@@ -21,7 +21,7 @@ package flight.utils
 		
 		if (!enabled) {
 			enabled = true;
-			Interval.timer.addEventListener(TimerEvent.TIMER, callNow);
+			Interval.global.addEventListener(TimerEvent.TIMER, callNow);
 		}
 	}
 }
@@ -54,6 +54,6 @@ internal function callNow(event:TimerEvent):void
 	}
 	
 	if (!enabled) {
-		Interval.timer.removeEventListener(TimerEvent.TIMER, callNow);
+		Interval.global.removeEventListener(TimerEvent.TIMER, callNow);
 	}
 }
